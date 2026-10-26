@@ -1,0 +1,121 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.5em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\title{Abbring \& Van den Berg (2003), built up step by step}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Plan}
+\begin{enumerate}
+  \item One duration: survival, hazard, integrated hazard
+  \item People differ: unobserved heterogeneity and dynamic selection
+  \item The mixed proportional hazard (MPH) model
+  \item Two durations racing: competing risks
+  \item Adding a treatment: potential outcomes indexed by treatment time, no anticipation
+  \item What we actually observe
+  \item The model of the paper (Model 1a)
+  \item Identification, step by step
+  \item Extensions: heterogeneous effects, multiple spells
+  \item Connections: DiD with staggered adoption, sequential exogeneity, traps
+\end{enumerate}
+
+\section*{Running example}
+\begin{itemize}
+  \item Unemployed people receive benefits.
+  \item The agency can impose a \textbf{sanction}: a temporary benefit cut (e.g.\ for not applying to enough jobs).
+  \item Question: does a sanction make people find a job faster?
+  \item $Y$: unemployment duration. $S$: moment the sanction is imposed.
+\end{itemize}
+
+% =====================================================================
+\section{One duration}
+
+\textbf{Objects}
+\begin{itemize}
+  \item $Y \ge 0$: duration (e.g.\ of unemployment), continuous; $y$: a value.
+  \item Density $f(y)$, CDF $F(y)$.
+  \item Survival function $S(y) := \Pr(Y>y) = 1-F(y)$: share still in the state at $y$.
+\end{itemize}
+
+\subsection{Hazard rate}
+\begin{align}
+  \theta(y) &:= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy \mid Y \ge y)}{dy} \nonumber\\
+  &= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy)}{dy\;\Pr(Y\ge y)} \nonumber\\
+  &= \lim_{dy\downarrow 0} \frac{F(y+dy)-F(y)}{dy}\cdot\frac{1}{S(y)} \nonumber\\
+  &= \frac{f(y)}{S(y)} \label{eq:hazard}
+\end{align}
+\begin{itemize}
+  \item Line 2: definition of conditional probability.
+  \item Line 3: $Y$ continuous, so $\Pr(Y\ge y)=\Pr(Y>y)=S(y)$.
+  \item Meaning: exit rate \emph{among those still in the state} at $y$.
+  \item $\theta(y)\,dy \approx$ probability of leaving in $[y,y+dy)$, given still there at $y$.
+  \item A rate, not a probability: can exceed 1.
+\end{itemize}
+
+\subsection{Integrated hazard and survival}
+Since $S = 1-F$, we have $S'(y) = -f(y)$. So from \eqref{eq:hazard}:
+\begin{align}
+  \theta(y) = \frac{f(y)}{S(y)} = -\frac{S'(y)}{S(y)} = -\frac{d}{dy}\log S(y). \nonumber
+\end{align}
+Integrate from $0$ to $y$, using $S(0)=1$:
+\begin{align}
+  \Theta(y) := \int_0^y \theta(u)\,du
+  &= -\big[\log S(u)\big]_0^y \nonumber\\
+  &= -\log S(y) + \log \underbrace{S(0)}_{=1} \nonumber\\
+  &= -\log S(y) \nonumber\\[4pt]
+  \Longrightarrow\quad S(y) &= e^{-\Theta(y)}, \qquad f(y) = \theta(y)\,e^{-\Theta(y)}. \label{eq:survival}
+\end{align}
+\begin{itemize}
+  \item $\Theta$: integrated (cumulative) hazard.
+  \item $\theta$, $\Theta$, $S$, $f$: four descriptions of the same distribution.
+\end{itemize}
+
+\subsection{Example: constant hazard}
+$\theta(y)=c$:
+\begin{align}
+  \Theta(y) &= cy, \qquad S(y) = e^{-cy} \quad\text{(exponential)} \nonumber\\
+  \Pr(Y>y+u \mid Y>y) &= \frac{S(y+u)}{S(y)} = \frac{e^{-c(y+u)}}{e^{-cy}} = e^{-cu}. \nonumber
+\end{align}
+\begin{itemize}
+  \item Does not depend on $y$: \textbf{memoryless}.
+  \item $\theta$ decreasing in $y$: \textbf{negative duration dependence}. Increasing: \textbf{positive}.
+\end{itemize}
+
+\subsection{Writing $Y$ as a function of a standard random variable}
+Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define the random variable
+\begin{align}
+  E := \Theta(Y). \nonumber
+\end{align}
+Its distribution, for $e \ge 0$:
+\begin{align}
+  \Pr(E > e) &= \Pr\big(\Theta(Y) > e\big) \nonumber\\
+  &= \Pr\big(Y > \Theta^{-1}(e)\big) && \text{($\Theta$ strictly increasing)} \nonumber\\
+  &= S\big(\Theta^{-1}(e)\big) && \text{(definition of $S$)} \nonumber\\
+  &= \exp\!\big(-\Theta(\Theta^{-1}(e))\big) && \text{(by \eqref{eq:survival})} \nonumber\\
+  &= e^{-e}. \nonumber
+\end{align}
+So $E\sim\text{Exp}(1)$ whatever $\theta$ is, and inverting the definition of $E$:
+\begin{align}
+  Y = \Theta^{-1}(E), \qquad E \sim \text{Exp}(1). \label{eq:representation}
+\end{align}
+Conversely, for any $E\sim\text{Exp}(1)$, $Y:=\Theta^{-1}(E)$ has the right distribution:
+\begin{align}
+  \Pr(Y>y) = \Pr\big(\Theta^{-1}(E) > y\big) = \Pr\big(E > \Theta(y)\big) = e^{-\Theta(y)} = S(y). \nonumber
+\end{align}
+\begin{itemize}
+  \item Same idea as the probability integral transform: $F(Y)\sim U(0,1)$.
+    \begin{itemize}
+      \item Indeed $E = \Theta(Y) = -\log S(Y)$, and $S(Y)=1-F(Y)\sim U(0,1)$.
+    \end{itemize}
+  \item \eqref{eq:representation} splits $Y$ into a \textbf{model part} $\Theta$ and a \textbf{standard random part} $E$.
+  \item Used in Section 5: potential outcomes $Y^*(s)=\Theta_s^{-1}(E)$, where the treatment date $s$ changes $\Theta$ only.
+\end{itemize}
+
+\end{document}
