@@ -13,6 +13,8 @@
 \newcommand{\cov}{\operatorname{Cov}}
 \newcommand{\var}{\operatorname{Var}}
 \newcommand{\why}[1]{\text{\small[#1]}}
+\newcommand{\whynow}[1]{\par\noindent\textit{$\rightarrow$ Why now:} #1\par}
+\newcommand{\takeaway}[1]{\par\noindent\textbf{Takeaway $\rightarrow$ next:} #1\par}
 
 \title{Abbring \& Van den Berg (2003), built up step by step}
 \date{}
@@ -42,8 +44,18 @@
   \item Question: what is the causal effect of the benefits reduction on the \textbf{transition rate to work}?
 \end{itemize}
 
+\section*{Road map: why each section is needed}
+\begin{itemize}
+  \item The effect is on a \emph{rate} $\Rightarrow$ we need the language of rates (Section 1).
+  \item Workers differ in ways we do not see, and those still unemployed are selected $\Rightarrow$ Sections 2--3.
+  \item Before treatment, two things compete: finding a job vs.\ the benefits reduction $\Rightarrow$ Section 4.
+  \item Define the causal effect and what we observe $\Rightarrow$ Sections 5--6.
+  \item Put it together and show the effect is identified $\Rightarrow$ Sections 7--8.
+\end{itemize}
+
 % =====================================================================
 \section{One duration}
+\whynow{the paper's effect is on a \emph{transition rate}. Before anything else: what is a rate for one duration, and how does it relate to probabilities?}
 
 \textbf{Objects}
 \begin{itemize}
@@ -53,6 +65,7 @@
 \end{itemize}
 
 \subsection{Hazard rate}
+\whynow{this is the object the treatment effect will act on.}
 \begin{align}
   \theta(y) &:= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy \mid Y \ge y)}{dy} && \why{definition} \nonumber\\
   &= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy)}{dy\;\Pr(Y\ge y)} && \why{conditional probability: $\Pr(A\mid B)=\Pr(A\cap B)/\Pr(B)$} \nonumber\\
@@ -66,6 +79,7 @@
 \end{itemize}
 
 \subsection{Integrated hazard and survival}
+\whynow{we model hazards, but data and likelihoods are about probabilities. We need the map from $\theta$ back to $S$ and $f$; it is used in every later derivation.}
 \begin{align}
   \theta(y) &= \frac{f(y)}{S(y)} && \why{by \eqref{eq:hazard}} \nonumber\\
   &= -\frac{S'(y)}{S(y)} && \why{$S=1-F$, so $S'=-f$} \nonumber\\
@@ -84,6 +98,7 @@
 \end{itemize}
 
 \subsection{Example: constant hazard}
+\whynow{the simplest benchmark; it defines ``duration dependence'', which Section 2 will show is hard to read from data.}
 \begin{align}
   \theta(y) = c \quad\Longrightarrow\quad \Theta(y) &= cy, \qquad S(y)=e^{-cy} && \why{integrate; then \eqref{eq:survival}} \nonumber\\
   \Pr(Y>y+u \mid Y>y) &= \frac{S(y+u)}{S(y)} && \why{conditional probability; $\{Y>y+u\}\subset\{Y>y\}$} \nonumber\\
@@ -95,6 +110,7 @@
 \end{itemize}
 
 \subsection{Writing $Y$ as a function of a standard random variable}
+\whynow{the paper defines potential outcomes this way (Section 5), and it shows that treatment timing contains pure chance (Section 7).}
 Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E := \Theta(Y)$. For $e\ge0$:
 \begin{align}
   \Pr(E > e) &= \Pr\big(\Theta(Y) > e\big) && \why{definition of $E$} \nonumber\\
@@ -108,9 +124,11 @@ Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E 
   \item Same idea as $F(Y)\sim U(0,1)$: indeed $E=-\log S(Y)$.
   \item $Y$ = model part $\Theta$ applied to a standard random part $E$. Used in Sections 5 and 7.
 \end{itemize}
+\takeaway{with one homogeneous population, the hazard is directly read from data via $\theta=f/S$. Next: what if people differ in ways we do not observe?}
 
 % =====================================================================
 \section{Unobserved heterogeneity and dynamic selection}
+\whynow{workers differ in unobserved ways (e.g.\ motivation). The paper compares treated and not-yet-treated workers \emph{among those still unemployed}. So we must know what heterogeneity does to the group that is still there.}
 
 \textbf{Model}
 \begin{itemize}
@@ -120,6 +138,7 @@ Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E 
 \end{itemize}
 
 \subsection{Population survival and hazard}
+\whynow{we only observe the population, not each type. Compute what the population hazard looks like.}
 \begin{align}
   \bar S(y) := \Pr(Y>y) &= \E\big[\Pr(Y>y\mid V)\big] && \why{law of iterated expectations (LIE)} \nonumber\\
   &= \E\big[e^{-\Lambda(y)V}\big] && \why{by \eqref{eq:survival}, conditional on $V$} \nonumber\\[4pt]
@@ -129,6 +148,7 @@ Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E 
 \end{align}
 
 \subsection{Who survives: the type distribution among survivors}
+\whynow{interpret the ratio in \eqref{eq:pophazard}: it is about \emph{who is left}.}
 \begin{align}
   dG(v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,dG(v)}{\Pr(Y>y)} && \why{Bayes' rule} \nonumber\\
   &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{plug in the two survivals above} \label{eq:survivortypes}\\[4pt]
@@ -140,13 +160,69 @@ Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E 
   \item High-$v$ people have lower weights: they leave first.
 \end{itemize}
 
-\subsection{The mean type among survivors falls}
-Write $m(\ell) := \E[Ve^{-\ell V}]/\E[e^{-\ell V}]$, so $\E[V\mid Y>y]=m(\Lambda(y))$.
+\subsection{A name for the object that keeps appearing: the Laplace transform}
+\whynow{every formula above contains $\E[e^{-aV}]$ for some $a$. Naming it and learning its properties is what makes all identification arguments below work.}
+
+\textbf{Definition}
 \begin{align}
-  m'(\ell) &= \frac{-\E[V^2e^{-\ell V}]\,\E[e^{-\ell V}] + \E[Ve^{-\ell V}]^2}{\E[e^{-\ell V}]^2} && \why{quotient rule; differentiate under $\E$} \nonumber\\
-  &= -\Big(\E[V^2\mid\cdot] - \E[V\mid\cdot]^2\Big) && \why{each ratio is a survivor moment, as in \eqref{eq:survivortypes}} \nonumber\\
-  &= -\var(V\mid Y>y) \le 0 && \why{definition of variance} \nonumber\\[2pt]
-  \frac{d}{dy}\E[V\mid Y>y] &= m'(\Lambda(y))\,\lambda(y) = -\lambda(y)\var(V\mid Y>y) && \why{chain rule} \nonumber
+  \Lap(a) := \E\big[e^{-aV}\big] = \int_0^\infty e^{-av}\,dG(v), \qquad a\ge0. \label{eq:laplace}
+\end{align}
+\begin{itemize}
+  \item Reading in our model: $a=\Lambda(y)$ is the accumulated baseline hazard.
+    \begin{itemize}
+      \item $e^{-av}$: probability that a type-$v$ person is still unemployed.
+      \item $\Lap(a)$: share of the whole population still unemployed. Indeed $\bar S(y)=\Lap(\Lambda(y))$.
+    \end{itemize}
+  \item Same family as the moment generating function: $\Lap(a)=M_V(-a)$, $M_V(u):=\E[e^{uV}]$.
+    \begin{itemize}
+      \item Always exists, since $V\ge0$ gives $0<e^{-aV}\le1$.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Examples}
+
+Two types: $v_1$ with probability $p$, $v_2$ with probability $1-p$:
+\begin{align}
+  \Lap(a) &= p\,e^{-av_1}+(1-p)\,e^{-av_2} && \why{expectation of a discrete r.v.} \nonumber
+\end{align}
+Gamma with mean 1 and variance $1/k$:
+\begin{align}
+  \Lap(a) &= \int_0^\infty e^{-av}\,\frac{k^kv^{k-1}e^{-kv}}{\Gamma(k)}\,dv && \why{definition \eqref{eq:laplace}} \nonumber\\
+  &= \frac{k^k}{(k+a)^k}\int_0^\infty \frac{(k+a)^kv^{k-1}e^{-(k+a)v}}{\Gamma(k)}\,dv && \why{multiply and divide by $(k+a)^k$} \nonumber\\
+  &= \Big(1+\frac{a}{k}\Big)^{-k} && \why{integrand is a Gamma$(k,k+a)$ density} \nonumber
+\end{align}
+
+\textbf{Properties}
+\begin{align}
+  \Lap(0) &= \E[1] = 1 && \why{definition} \nonumber\\
+  \Lap'(a) &= -\E\big[Ve^{-aV}\big] < 0 && \why{differentiate under $\E$; $<0$ if $\Pr(V>0)>0$} \nonumber\\
+  \Lap^{(k)}(a) &= (-1)^k\,\E\big[V^ke^{-aV}\big] && \why{repeat $k$ times} \nonumber\\
+  -\Lap'(0) &= \E[V] && \why{set $a=0$: derivatives at 0 give moments} \nonumber\\[4pt]
+  -\frac{\Lap'(a)}{\Lap(a)} &= \frac{\E[Ve^{-aV}]}{\E[e^{-aV}]} = \E[V\mid\text{survived to }a] && \why{by \eqref{eq:survivortypes}} \label{eq:survmean}\\
+  \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\Lambda(y)\big) && \why{by \eqref{eq:dynsel}} \nonumber
+\end{align}
+Two facts we state without proof:
+\begin{itemize}
+  \item \textbf{Uniqueness:} $\Lap$ determines $G$. Two distributions with the same $\Lap$ are equal.
+  \item \textbf{Analyticity:} for $a>0$, $\Lap$ equals its Taylor series.
+    \begin{itemize}
+      \item So knowing $\Lap$ on \emph{any small interval} pins it down on all of $(0,\infty)$.
+      \item Like a polynomial: a short stretch of its graph fixes the whole graph.
+    \end{itemize}
+\end{itemize}
+\textbf{Why this matters for identification}
+\begin{itemize}
+  \item Survival data are always $\Lap$ evaluated at some index (here $\Lambda(y)$).
+  \item Strategy throughout: learn the index; learn $\Lap$ on an interval; then analyticity + uniqueness give $G$.
+\end{itemize}
+
+\subsection{The mean type among survivors falls}
+\whynow{show the \emph{direction} of the composition effect in \eqref{eq:dynsel}.}
+\begin{align}
+  \E[V\mid Y>y] &= -\frac{d}{da}\log\Lap(a)\Big|_{a=\Lambda(y)} && \why{\eqref{eq:survmean}; chain rule: $(\log\Lap)'=\Lap'/\Lap$} \nonumber\\
+  \frac{d^2}{da^2}\log\Lap(a) &= \frac{\Lap''}{\Lap}-\Big(\frac{\Lap'}{\Lap}\Big)^2 && \why{quotient rule} \nonumber\\
+  &= \E[V^2\mid\cdot]-\E[V\mid\cdot]^2 = \var(V\mid\text{survived to }a) && \why{properties above: survivor moments} \nonumber\\[2pt]
+  \frac{d}{dy}\E[V\mid Y>y] &= -\lambda(y)\,\var(V\mid Y>y)\ \le\ 0 && \why{chain rule: $\Lambda'=\lambda$} \nonumber
 \end{align}
 \begin{itemize}
   \item The population hazard falls \emph{even if no individual hazard falls}. This is \textbf{dynamic selection}.
@@ -163,8 +239,11 @@ Write $m(\ell) := \E[Ve^{-\ell V}]/\E[e^{-\ell V}]$, so $\E[V\mid Y>y]=m(\Lambda
 \end{center}
 {\small Two types with constant hazards 0.3 and 1.5 (equal shares). The population hazard falls from 0.9 to 0.3.}
 
+\takeaway{the observed hazard mixes $\lambda$ (true duration dependence) and $G$ (who is left). Next: can data separate them? Only with structure, which is the MPH model.}
+
 % =====================================================================
 \section{The mixed proportional hazard (MPH) model}
+\whynow{Section 2 showed that $\lambda$ and $G$ are confounded in the observed hazard. Here: what structure lets data separate them? This is the one-duration version of the argument the paper runs with two durations (Section 4).}
 
 \textbf{Model}
 \begin{itemize}
@@ -177,25 +256,19 @@ Write $m(\ell) := \E[Ve^{-\ell V}]/\E[e^{-\ell V}]$, so $\E[V\mid Y>y]=m(\Lambda
 \end{itemize}
 
 \subsection{Survival through the Laplace transform}
-Define the Laplace transform of $G$: $\Lap(a):=\E[e^{-aV}]$, $a\ge0$.
+\whynow{write what the data reveal, $S(y\mid x)$ and $\theta(y\mid x)$, in terms of the unknowns $(\lambda,\varphi,G)$.}
 \begin{align}
   S(y\mid x) &= \E\big[e^{-\varphi(x)\Lambda(y)V}\big] && \why{LIE over $V$; \eqref{eq:survival}; $V\perp X$} \nonumber\\
-  &= \Lap\big(\varphi(x)\Lambda(y)\big) && \why{definition of $\Lap$} \label{eq:mphsurv}\\[4pt]
-  \Lap'(a) &= -\E[Ve^{-aV}] < 0 && \why{differentiate under $\E$} \nonumber\\
-  -\frac{\Lap'(a)}{\Lap(a)} &= \frac{\E[Ve^{-aV}]}{\E[e^{-aV}]} = \E[V\mid\text{survived to index }a] && \why{as in \eqref{eq:survivortypes}} \nonumber\\
-  \theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{as in \eqref{eq:pophazard}, now with $\varphi(x)$} \label{eq:mphhazard}
+  &= \Lap\big(\varphi(x)\Lambda(y)\big) && \why{definition \eqref{eq:laplace}} \label{eq:mphsurv}\\
+  \theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{$-\frac{d}{dy}\log$ of \eqref{eq:mphsurv}; chain rule} \label{eq:mphhazard}
 \end{align}
 \begin{itemize}
-  \item Data reveal one known function, $\Lap$, of a \textbf{single index} $\varphi(x)\Lambda(y)$.
-  \item Facts used below:
-    \begin{itemize}
-      \item $\Lap$ is strictly decreasing (if $\Pr(V>0)>0$);
-      \item $\Lap$ is real-analytic on $(0,\infty)$: known on an interval $\Rightarrow$ known everywhere;
-      \item $\Lap$ determines $G$ uniquely.
-    \end{itemize}
+  \item Data reveal one function $\Lap$ of a \textbf{single index} $\varphi(x)\Lambda(y)$.
+  \item $x$ and $y$ both move the index: this is what the three steps below exploit.
 \end{itemize}
 
 \subsection{Identification (Elbers \& Ridder 1982) in three steps}
+\whynow{recover $\varphi$, then $G$, then $\lambda$ from $S(y\mid x)$. Each step uses one property of $\Lap$ from Section 2.3. Section 4 repeats these steps in two dimensions.}
 \textbf{Step 1: $\varphi$ from short durations.} Assume $\E V<\infty$.
 \begin{align}
   \frac{\theta(y\mid x)}{\theta(y\mid x^*)}
@@ -223,8 +296,11 @@ Define the Laplace transform of $G$: $\Lap(a):=\E[e^{-aV}]$, $a\ge0$.
 
 \textbf{What was assumed:} proportionality, $V\perp X$, $\E V<\infty$, variation in $\varphi(x)$.
 
+\takeaway{with MPH structure and covariates, one duration reveals $\lambda$, $\varphi$ and the full distribution of unobserved types. In the paper, \emph{before} treatment, two durations compete: job vs.\ benefits reduction. Their link through unobserved types is exactly the selection problem. Next: extend the argument to two durations.}
+
 % =====================================================================
 \section{Two durations racing: competing risks}
+\whynow{before any treatment, a worker either finds a job ($Y$) or has benefits reduced ($S$), whichever comes first. If the same unobserved traits drive both (e.g.\ low motivation $\Rightarrow$ slow job finding \emph{and} early reduction), the treated are selected. This section asks: can the dependence between the two be learned from the race alone? No treatment effect is involved yet.}
 
 \textbf{Set-up}
 \begin{itemize}
@@ -236,10 +312,14 @@ Define the Laplace transform of $G$: $\Lap(a):=\E[e^{-aV}]$, $a\ge0$.
   \end{align}
   \item Given $(x,V)$: $Y\perp S$. All dependence runs through $V$.
   \item Bivariate Laplace transform: $\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$; partials $\Lap_a,\Lap_b,\Lap_{ab}$.
+    \begin{itemize}
+      \item Same properties as Section 2.3: derivatives give moments among survivors; uniqueness; analyticity.
+    \end{itemize}
   \item Indices: $a_t(x):=\varphi_Y(x)\Lambda_Y(t)$, \ $b_t(x):=\varphi_S(x)\Lambda_S(t)$.
 \end{itemize}
 
 \subsection{Joint survival}
+\whynow{the model's implication for the two latent durations together.}
 \begin{align}
   \Pr(Y>y,S>s\mid x) &= \E\big[\Pr(Y>y,S>s\mid x,V)\big] && \why{LIE over $V$; $V\perp X$} \nonumber\\
   &= \E\big[\Pr(Y>y\mid x,V)\Pr(S>s\mid x,V)\big] && \why{$Y\perp S\mid(x,V)$} \nonumber\\
@@ -248,6 +328,7 @@ Define the Laplace transform of $G$: $\Lap(a):=\E[e^{-aV}]$, $a\ge0$.
 \end{align}
 
 \subsection{What the data reveal}
+\whynow{we never see both durations, only the first event. Derive which pieces of \eqref{eq:jointsurv} are observable.}
 Probability that nothing has happened by $t$ (the diagonal $y=s=t$):
 \begin{align}
   P_0(t\mid x) := \Pr(Y>t,S>t\mid x) &= \Lap\big(a_t(x),b_t(x)\big) && \why{\eqref{eq:jointsurv} at $y=s=t$} \label{eq:P0}
@@ -262,6 +343,7 @@ Cause-specific hazard of exit (rate of $Y$ happening first, among those with not
 where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $h_S(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
 
 \subsection{Where the dependence of $V_Y,V_S$ lives}
+\whynow{the selection is the dependence of $V_Y$ and $V_S$. Locate it inside the observable $P_0$.}
 Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectations under them.
 \begin{align}
   \partial_a\log\Lap &= \frac{\Lap_a}{\Lap} = -\E_w[V_Y] && \why{chain rule; differentiate under $\E$} \nonumber\\
@@ -275,6 +357,7 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
 \end{itemize}
 
 \subsection{The problem: Tsiatis (1975)}
+\whynow{the dependence sits in $\Lap$, but do the data reveal enough of $\Lap$? Without structure, no.}
 \begin{itemize}
   \item Without structure, any competing-risks data can be generated by \emph{independent} $Y,S$.
   \item Geometry, without covariates:
@@ -289,6 +372,7 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
 \end{center}
 
 \subsection{Identification (Prop.~2) in three steps}
+\whynow{show that MPH + covariates fix the Tsiatis problem: the steps of Section 3.2, in two dimensions.}
 \textbf{Assumptions.} (A3) $\{(\varphi_Y(x),\varphi_S(x))\}$ contains an open set of $\mathbb R^2$. (A4) $\E V_Y,\E V_S<\infty$. Normalize $\varphi_Y(x^*)=\varphi_S(x^*)=1$, $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$.
 
 \textbf{Step 1: $\varphi_Y,\varphi_S$.}
@@ -316,11 +400,14 @@ Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
   \item Iterating, $\Lap$ would be constant, contradicting strict monotonicity.
   \item These three steps are our reconstruction; the paper cites Abbring \& Van den Berg (2003, JRSSB).
 \end{itemize}
+\takeaway{the race alone reveals $\lambda_Y,\lambda_S,\varphi_Y,\varphi_S$ and the joint $G$, i.e.\ how selected those still at risk are. Next: introduce the treatment and define its causal effect.}
 
 % =====================================================================
 \section{Adding a treatment}
+\whynow{so far no causal effect. We need to define ``the effect of a benefits reduction at $s$'', and say when the pre-treatment race of Section 4 is untouched by the treatment.}
 
 \subsection{Potential outcomes indexed by treatment time}
+\whynow{a dynamic treatment is a choice of \emph{date}, so the causal objects are one outcome per date.}
 \begin{itemize}
   \item Treatment = benefits reduction at date $s\in[0,\infty]$; $s=\infty$: never.
   \item One potential outcome per date: $Y^*(s)$, with hazard $\theta_{Y^*(s)}$, integrated hazard $\Theta_{Y^*(s)}$.
@@ -329,6 +416,7 @@ Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
 \end{itemize}
 
 \subsection{No anticipation (Assumption 1)}
+\whynow{for Section 4 to apply before treatment, the future treatment date must not affect the hazard before it.}
 \begin{align}
   \Theta_{Y^*(s)}(y) = \Theta_{Y^*(s')}(y) \qquad\text{for all } y\le\min\{s,s'\}. \nonumber
 \end{align}
@@ -347,9 +435,11 @@ Take $s'=\infty$ and differentiate in $y$:
     \end{itemize}
   \item Prop.~1: without more structure, data cannot distinguish (i) causal effects from selection, nor (ii) anticipation from no anticipation. Hence Assumption 1 is maintained, and selection must be modelled.
 \end{itemize}
+\takeaway{under no anticipation, the period before treatment is a pure race, as in Section 4. Next: what exactly do the data contain?}
 
 % =====================================================================
 \section{What we actually observe}
+\whynow{identification means recovering the model from the data distribution. We need that distribution precisely, including what is censored.}
 
 \textbf{The censoring}
 \begin{itemize}
@@ -376,9 +466,11 @@ Take $s'=\infty$ and differentiate in $y$:
   \item $(P_0,h_Y,h_S)$ = competing-risks data, as in Section 4.
   \item $P_1$ = the only place where the treatment effect can show up.
 \end{itemize}
+\takeaway{pre-treatment data identify the race (Section 4). Post-treatment data $P_1$ must deliver $\delta$. Next: the model linking both.}
 
 % =====================================================================
 \section{The model of the paper (Model 1a)}
+\whynow{combine the pieces: the competing-risks MPH model of Section 4 before treatment, and a causal effect $\delta$ after it.}
 
 \textbf{Assumption 2 (selection on observables and unobservables):} $Y^*(\cdot)\perp S\mid(X,V)$, with $V$ time-invariant.
 
@@ -414,11 +506,20 @@ Take $s'=\infty$ and differentiate in $y$:
   \item $E_S$ moves $S$ around without entering $Y$'s hazard (Assumption 2).
   \item Like an instrument, except that what is excluded is an unobserved \textbf{shock}, not an observed variable.
 \end{itemize}
+\takeaway{the model has a random component in timing (like an instrument) and selection through $V$ (to be learned from the race). Next: show $\delta$ is identified.}
 
 % =====================================================================
 \section{Identification, step by step}
+\whynow{everything is in place. Plan:}
+\begin{itemize}
+  \item A: learn the selection ($G$) from pre-treatment data;
+  \item B: describe who is treated at $s$;
+  \item C: the simplest case, the moment of treatment;
+  \item D: the general case.
+\end{itemize}
 
 \subsection{Step A: the pre-treatment data are the competing-risks model of Section 4}
+\whynow{check that the pre-treatment data are exactly the race of Section 4, so its results apply.}
 \begin{align}
   P_0(t\mid x) &= \E\big[\Pr(Y>t,S>t\mid x,V)\big] && \why{LIE; $V\perp X$} \nonumber\\
   &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(t)V_Y}\,e^{-\varphi_S(x)\Lambda_S(t)V_S}\big] && \why{Assumption 2; before $S$, $\delta$ absent (no anticipation)} \nonumber\\
@@ -430,6 +531,7 @@ Take $s'=\infty$ and differentiate in $y$:
 \end{itemize}
 
 \subsection{Step B: who gets treated at $s$}
+\whynow{the effect is estimated by following the cohort treated at $s$. We need its type distribution.}
 Risk set at $s$:
 \begin{align}
   dG_{R_s}(v) &= \frac{\Pr(R_s\mid x,v)\,dG(v)}{\Pr(R_s\mid x)} && \why{Bayes' rule} \nonumber\\
@@ -447,6 +549,7 @@ Cohort treated at $s$ (in the risk set and treated in $[s,s+ds)$):
 \end{itemize}
 
 \subsection{Step C: the selection problem at the moment of treatment}
+\whynow{the cleanest comparison: right at $s$, compare the just-treated with those not yet treated. This isolates the selection problem in one factor.}
 Exit hazard of the just-treated vs.\ the not-yet-treated, at $s$:
 \begin{align}
   \text{just treated: } &\ \lambda_Y(s)\varphi_Y(x)\delta(s\mid s,x)\,\E_{G_s}[V_Y] && \why{Model 1a, averaged over \eqref{eq:Gs}} \nonumber\\
@@ -465,6 +568,7 @@ Exit hazard of the just-treated vs.\ the not-yet-treated, at $s$:
 \end{itemize}
 
 \subsection{Step D: beyond the moment of treatment (Prop.~3)}
+\whynow{Step C only gives $\delta$ at $t=s$. After $s$ the treated cohort keeps being reshaped by exits, so we need its full survival curve.}
 For $y>s$, let $g(y,s\mid x)$ be the density of ``treated at $s$ and still unemployed at $y$'', and $D:=D(y\mid s,x)$:
 \begin{align}
   g(y,s\mid x)
@@ -495,6 +599,7 @@ Divide by the same expression at $y\downarrow s$ (where $D=0$), as in \eqref{eq:
 \end{enumerate}
 
 \subsection{Summary: what is used where}
+\whynow{collect which assumption did which job.}
 \begin{center}
 \small
 \begin{tabular}{ll}
