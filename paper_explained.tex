@@ -97,6 +97,27 @@
   \item $\theta$, $\Theta$, $S$, $f$: four descriptions of the same distribution.
 \end{itemize}
 
+\subsection{Deeper look: survival = surviving many small coin flips}
+\whynow{\eqref{eq:survival} came out of calculus. Here is what it \emph{means}, and it shows the key fact that every hazard is about a selected group.}
+
+Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,u_n$:
+\begin{align}
+  S(y) &= \prod_{k=1}^n \Pr\big(\text{survive interval }k \mid \text{survived to }u_k\big) && \why{multiplication rule, repeated} \nonumber\\
+  &= \prod_{k=1}^n \big(1-\theta(u_k)\Delta+o(\Delta)\big) && \why{definition of the hazard} \nonumber\\
+  \log S(y) &= \sum_{k=1}^n \log\big(1-\theta(u_k)\Delta+o(\Delta)\big) && \why{log of a product} \nonumber\\
+  &= -\sum_{k=1}^n \theta(u_k)\Delta + o(1) && \why{$\log(1-z)=-z+O(z^2)$} \nonumber\\
+  &\xrightarrow{\;n\to\infty\;} -\int_0^y\theta(u)\,du = -\Theta(y) && \why{Riemann sum} \nonumber
+\end{align}
+\begin{itemize}
+  \item Being still in the state at $y$ = winning a sequence of coin flips, each with exit probability $\theta(u_k)\Delta$.
+  \item Each coin flip is made \emph{only by those who won all earlier ones}.
+    \begin{itemize}
+      \item So a hazard always describes a \textbf{selected group}: the survivors.
+      \item With heterogeneous people this selection changes who is in the group (Section 2).
+    \end{itemize}
+  \item Given the hazard, \emph{when} the exit happens is pure chance (the coin flips). Section 7 exploits this for treatment timing.
+\end{itemize}
+
 \subsection{Example: constant hazard}
 \whynow{the simplest benchmark; it defines ``duration dependence'', which Section 2 will show is hard to read from data.}
 \begin{align}
@@ -234,6 +255,46 @@ Two facts we state without proof:
   \item People still unemployed at month 6 are a selected group. Every comparison made at month 6 inherits this.
 \end{itemize}
 
+\subsection{Deeper look: staying unemployed is evidence about your type}
+\whynow{\eqref{eq:survivortypes} is Bayes' rule. Reading it as learning makes dynamic selection intuitive.}
+\begin{itemize}
+  \item Prior: $G$. ``Data'': the person is still unemployed at $y$. Likelihood of that data: $e^{-\Lambda(y)v}$.
+  \item Posterior $\propto$ prior $\times$ likelihood, which is exactly \eqref{eq:survivortypes}.
+  \item The longer someone stays, the more the evidence points to a low $v$.
+\end{itemize}
+Gamma example (prior Gamma$(k,k)$, mean 1, variance $1/k$):
+\begin{align}
+  dG(v\mid Y>y) &\propto v^{k-1}e^{-kv}\cdot e^{-\Lambda(y)v} && \why{prior $\times$ likelihood} \nonumber\\
+  &= v^{k-1}e^{-(k+\Lambda(y))v} && \why{collect exponents} \nonumber\\
+  \Longrightarrow\ V\mid Y>y &\sim \text{Gamma}\big(k,\ k+\Lambda(y)\big) && \why{recognize the kernel} \nonumber\\
+  \E[V\mid Y>y] &= \frac{k}{k+\Lambda(y)} = \frac{1}{1+\Lambda(y)/k} && \why{mean of Gamma$(k,r)$ is $k/r$} \label{eq:gammapost}
+\end{align}
+\begin{itemize}
+  \item Falls from 1 toward 0 as $\Lambda(y)$ grows.
+  \item Falls faster when $1/k$ (the variance of $V$) is larger: \textbf{more heterogeneity, more selection}.
+  \item No heterogeneity ($k\to\infty$): $\E[V\mid Y>y]=1$ for all $y$, so no selection.
+\end{itemize}
+
+\subsection{Deeper look: two worlds that produce identical data}
+\whynow{show that the confusion between ``trap'' and ``sorting'' is not just possible but \emph{exact}. This is why Section 3 needs extra structure.}
+
+\textbf{World H (heterogeneity, no duration dependence):} $\lambda(y)=1$, $V\sim\text{Gamma}(k,k)$.
+\begin{align}
+  \bar S_H(y) &= \Lap(\Lambda(y)) = \Lap(y) && \why{$\bar S=\Lap(\Lambda)$; $\Lambda(y)=y$} \nonumber\\
+  &= (1+y/k)^{-k} && \why{Gamma Laplace transform, Section 2.3} \nonumber\\
+  \bar\theta_H(y) &= -\frac{d}{dy}\log\bar S_H(y) = \frac{1}{1+y/k} && \why{\eqref{eq:hazard}; derivative of $k\log(1+y/k)$} \nonumber
+\end{align}
+\textbf{World D (duration dependence, no heterogeneity):} $V\equiv1$, $\lambda_D(y)=\frac{1}{1+y/k}$.
+\begin{align}
+  \Theta_D(y) &= \int_0^y\frac{du}{1+u/k} = k\log(1+y/k) && \why{antiderivative} \nonumber\\
+  S_D(y) &= e^{-k\log(1+y/k)} = (1+y/k)^{-k} = \bar S_H(y) && \why{\eqref{eq:survival}} \nonumber
+\end{align}
+\begin{itemize}
+  \item World H: every individual has a \emph{constant} hazard; the fall is pure sorting.
+  \item World D: everyone is identical, and the fall is a true \emph{trap}.
+  \item Same distribution of $Y$. Data on one duration cannot tell them apart.
+\end{itemize}
+
 \begin{center}
   \includegraphics[width=0.85\textwidth]{fig1_dynamic_selection.png}
 \end{center}
@@ -265,6 +326,35 @@ Two facts we state without proof:
 \begin{itemize}
   \item Data reveal one function $\Lap$ of a \textbf{single index} $\varphi(x)\Lambda(y)$.
   \item $x$ and $y$ both move the index: this is what the three steps below exploit.
+\end{itemize}
+
+\subsection{Deeper look: why covariates reveal heterogeneity}
+\whynow{Section 2.6 showed one duration is not enough. Covariates break the tie, but \emph{how}? Answer: heterogeneity leaves a fingerprint on how covariate effects evolve with duration.}
+
+Take the two worlds of Section 2.6 and add a covariate with $\varphi(x)$. Compare groups $x_1,x_2$ with $\varphi_1>\varphi_2$.
+
+\textbf{World D} (no heterogeneity): $\theta(y\mid x)=\lambda_D(y)\varphi(x)$, so
+\begin{align}
+  \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\quad\text{for all }y. && \why{$\lambda_D(y)$ cancels} \nonumber
+\end{align}
+\textbf{World H} (Gamma heterogeneity): $-\Lap'(a)/\Lap(a) = \frac{d}{da}\,k\log(1+a/k) = \frac{1}{1+a/k}$, so
+\begin{align}
+  \theta(y\mid x) &= \lambda(y)\,\varphi(x)\,\frac{1}{1+\varphi(x)\Lambda(y)/k} && \why{\eqref{eq:mphhazard}} \nonumber\\
+  \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{1+\varphi_2\Lambda(y)/k}{1+\varphi_1\Lambda(y)/k} && \why{divide; $\lambda(y)$ cancels} \nonumber\\
+  &\xrightarrow{\;y\downarrow0\;}\frac{\varphi_1}{\varphi_2}, \qquad \xrightarrow{\;y\to\infty\;} 1 && \why{$\Lambda(0)=0$; $\Lambda\to\infty$} \nonumber
+\end{align}
+\begin{itemize}
+  \item With heterogeneity, the covariate effect \textbf{fades} with duration.
+    \begin{itemize}
+      \item The high-$\varphi$ group loses its high-$V$ members faster, so its survivors become more negatively selected.
+    \end{itemize}
+  \item Without heterogeneity it stays constant.
+  \item So the MPH assumption reads: \emph{absent selection, covariate effects would be constant over duration}.
+    \begin{itemize}
+      \item Any change in the ratio over duration is then attributed to selection, which identifies $G$.
+    \end{itemize}
+  \item Step 1 below reads the ``true'' ratio at $y\approx0$, before selection has acted.
+  \item Caveat: if true covariate effects vary with duration (non-proportional), this logic breaks.
 \end{itemize}
 
 \subsection{Identification (Elbers \& Ridder 1982) in three steps}
@@ -356,6 +446,32 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
   \item Dependence (selection) $=$ an \textbf{interaction} of the two indices in $\log P_0$.
 \end{itemize}
 
+\subsection{Deeper look: the fingerprint of selection in the race}
+\whynow{\eqref{eq:crossderiv} is abstract. Translate it into something observable: how a shift in treatment intensity changes the exit rate of those \emph{not} treated.}
+
+Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where reductions happen more often):
+\begin{align}
+  h_Y &= \lambda_Y\varphi_Y\,\E_w[V_Y], \qquad w\propto e^{-aV_Y-bV_S} && \why{\eqref{eq:hY}} \nonumber\\
+  \frac{\partial}{\partial b}\E_w[V_Y] &= -\E_w[V_YV_S]+\E_w[V_Y]\E_w[V_S] && \why{quotient rule, as in Section 2.4} \nonumber\\
+  &= -\cov(V_Y,V_S\mid R_t,x) && \why{definition of covariance} \nonumber\\
+  \Longrightarrow\quad \frac{\partial\log h_Y}{\partial b} &= -\frac{\cov(V_Y,V_S\mid R_t,x)}{\E[V_Y\mid R_t,x]} && \why{$\log$ derivative; $\lambda_Y\varphi_Y$ do not depend on $b$} \label{eq:fingerprint}
+\end{align}
+\begin{itemize}
+  \item Those in the risk set are \emph{untreated}. By no anticipation, treatment intensity has no causal effect on their exit rate.
+  \item So any response of their exit rate to $b$ is \textbf{pure selection}:
+    \begin{itemize}
+      \item more treatment removes high-$V_S$ people from the untreated pool;
+      \item if high $V_S$ goes with high $V_Y$, the untreated survivors are left with lower $V_Y$, so their exit rate falls.
+    \end{itemize}
+  \item No selection ($\cov=0$): shifting treatment intensity leaves the untreated exit rate unchanged.
+  \item This is the IV-like role of covariates:
+    \begin{itemize}
+      \item no variable needs to be excluded from the exit hazard;
+      \item but we must move $b$ \emph{holding $a$ fixed}, i.e.\ $x$ must shift the two indices in different directions (A3).
+    \end{itemize}
+  \item Treatment acts like a competing exit: it removes people from the untreated group, just as job-finding removes people in Section 2.
+\end{itemize}
+
 \subsection{The problem: Tsiatis (1975)}
 \whynow{the dependence sits in $\Lap$, but do the data reveal enough of $\Lap$? Without structure, no.}
 \begin{itemize}
@@ -372,7 +488,7 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
 \end{center}
 
 \subsection{Identification (Prop.~2) in three steps}
-\whynow{show that MPH + covariates fix the Tsiatis problem: the steps of Section 3.2, in two dimensions.}
+\whynow{show that MPH + covariates fix the Tsiatis problem: the steps of Section 3.3, in two dimensions.}
 \textbf{Assumptions.} (A3) $\{(\varphi_Y(x),\varphi_S(x))\}$ contains an open set of $\mathbb R^2$. (A4) $\E V_Y,\E V_S<\infty$. Normalize $\varphi_Y(x^*)=\varphi_S(x^*)=1$, $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$.
 
 \textbf{Step 1: $\varphi_Y,\varphi_S$.}
@@ -526,7 +642,7 @@ Take $s'=\infty$ and differentiate in $y$:
   &= \Lap\big(a_t(x),b_t(x)\big) && \why{as in \eqref{eq:P0}} \nonumber
 \end{align}
 \begin{itemize}
-  \item Same for $h_Y,h_S$. So Prop.~2 (Section 4.5) applies: $\varphi_Y,\varphi_S,\Lambda_Y,\Lambda_S,G$ are identified.
+  \item Same for $h_Y,h_S$. So Prop.~2 (Section 4.6) applies: $\varphi_Y,\varphi_S,\Lambda_Y,\Lambda_S,G$ are identified.
   \item This uses no post-treatment data.
 \end{itemize}
 
