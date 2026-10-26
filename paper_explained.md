@@ -41,28 +41,58 @@
 - $\theta(y)$ decreasing: **negative duration dependence** (the longer unemployed, the harder to leave).
 - $\theta(y)$ increasing: **positive duration dependence** (e.g. benefits running out).
 
-**Why economists model hazards rather than $Y$ directly**
-- Theory delivers rates.
-  - Job search: exit rate $=$ job-offer arrival rate $\times$ Pr(accept offer).
-- Treatment status can change *during* the spell.
-  - Someone sanctioned at month 5 is untreated in months 0–5 and treated after.
-  - A regression of $Y$ on "ever sanctioned" cannot express this.
-    - It also has a built-in bias: people who leave early have no time to be sanctioned.
-  - A hazard is defined moment by moment, so we can write
-    - $\theta(y)$ = baseline for $y \le 5$; baseline $\times\,\delta$ for $y > 5$.
-- Incomplete spells (censoring).
-  - The data end at month 12, and someone is still unemployed then.
-  - We only know $Y > 12$, not $Y$.
-  - With hazards they still count: they were at risk at every month up to 12 and never left.
-    - Their likelihood contribution is $S(12)$.
+**Running example (the paper's)**
+- Unemployed people receive unemployment benefits.
+- The benefit agency can impose a **sanction**: a temporary cut in benefits.
+  - Typically a punishment, e.g. for not applying to enough jobs.
+- Question: does a sanction make people find a job faster?
+- $Y$: unemployment duration. $S$: the moment the sanction is imposed.
+
+**Why model hazards? Reason 1: treatment arrives *during* the spell**
+- Textbook set-up: treatment $D \in \{0,1\}$ is fixed *before* the outcome. Compare $Y$ across $D=1$ and $D=0$.
+- Here, a person is unsanctioned until $S$ and sanctioned afterwards.
+- Tempting fix: $D = 1$ if "sanctioned before finding a job", i.e. $D = \mathbf 1\{S < Y\}$.
+  - Problem: $D$ depends on the outcome $Y$ itself.
+- Example with **zero effect**:
+  - Rule: everyone still unemployed at month 5 gets sanctioned, so $S = 5$ for all.
+  - Then $D = 1 \iff Y > 5$.
+  - So the "sanctioned" all have $Y > 5$, and the "unsanctioned" all have $Y \le 5$.
+  - $\mathbb E[Y \mid D=1] > \mathbb E[Y \mid D=0]$: sanctions *look* like they lengthen unemployment, purely by construction.
+- Hazard formulation: the effect is a change in the exit rate *from the moment of treatment on*.
+  - $\theta(y) = \theta_0(y)$ for $y \le S$, and $\theta(y) = \theta_0(y)\,\delta$ for $y > S$.
+  - $\delta = 1$: no effect. $\delta > 1$: the sanction speeds up exit.
+  - At each moment we only use who is treated *so far*, never the future.
+
+**Why model hazards? Reason 2: incomplete spells (censoring)**
+- The data stop at month 12. Some people are still unemployed then.
+  - For them we only know $Y > 12$.
+- Dropping them is biased: we drop exactly the long spells.
+- Likelihood with $n$ people, where $d_i = 1$ if person $i$'s exit is observed:
+  - exit observed at $y_i$: contributes $f(y_i)$;
+  - still unemployed at 12: contributes $\Pr(Y > 12) = S(12)$.
+  - $\mathcal L = \prod_i f(y_i)^{d_i}\, S(12)^{1-d_i}$
+- Use $f = \theta S$ and $S = e^{-\Theta}$, and write $c_i = \min(y_i, 12)$ for the time person $i$ is observed:
+  - $\log \mathcal L = \sum_i \big[\, d_i \log \theta(y_i) \;-\; \Theta(c_i) \,\big]$
+- Reading:
+  - Everyone contributes $-\Theta$ over the time they were observed at risk.
+  - Only observed exits add $\log\theta$ at the exit moment.
+  - Censored people are used, just without an exit term.
+- In the paper the key censoring is of $S$: if someone finds a job before being sanctioned, we never see when the sanction would have come.
 
 **A way to generate a duration (used in Section 5)**
-- Draw a random "budget" $E \sim \text{Exp}(1)$, i.e. $\Pr(E > e) = e^{-e}$.
-- The person accumulates hazard $\Theta(y)$ as time passes.
-- They exit when the accumulated hazard uses up the budget: $Y = \Theta^{-1}(E)$.
-- Check: $\Pr(Y > y) = \Pr(E > \Theta(y)) = e^{-\Theta(y)} = S(y)$. ✓
-- Why useful:
-  - It separates the **model** ($\Theta$, which can depend on treatment) from **luck** ($E$).
-  - The paper builds potential outcomes this way:
-    - $Y^*(s) = \Theta_s^{-1}(E)$: treating at $s$ changes $\Theta$, while the luck $E$ is always $\text{Exp}(1)$.
-    - (The paper only needs the *distribution* of $E$ to be the same across $s$, not the same draw.)
+- Goal: produce a random $Y$ with a given hazard $\theta(y)$.
+- Recipe:
+  1. Draw $E$ with $\Pr(E > e) = e^{-e}$ (a unit exponential): a random "budget".
+  2. As time passes, the person accumulates hazard $\Theta(y)$, which increases in $y$.
+  3. Exit happens when the accumulated hazard reaches the budget: $Y$ solves $\Theta(Y) = E$, i.e. $Y = \Theta^{-1}(E)$.
+- Why $Y$ has the right distribution:
+  - Still unemployed at $y$ $\iff$ budget not yet used up at $y$ $\iff$ $E > \Theta(y)$ (since $\Theta$ is increasing).
+  - So $\Pr(Y > y) = \Pr(E > \Theta(y)) = e^{-\Theta(y)}$ (plug $e = \Theta(y)$ into step 1).
+  - That is exactly $S(y)$ from above, so $Y$ has hazard $\theta$. ✓
+- Example: constant hazard $c$, so $\Theta(y) = cy$ and $Y = E/c$.
+  - Higher $c$ means the budget is used up faster, so $Y$ is shorter.
+- Why it matters:
+  - $Y$ = (model) applied to (luck).
+  - $\Theta$ carries the economics and may depend on treatment.
+  - $E$ is pure chance with the same distribution for everyone.
+  - Section 5: "treated at $s$" vs "treated later" changes $\Theta$, not the luck.
