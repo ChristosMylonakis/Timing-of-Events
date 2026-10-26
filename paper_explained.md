@@ -64,4 +64,5 @@
 - Why useful:
   - It separates the **model** ($\Theta$, which can depend on treatment) from **luck** ($E$).
   - The paper builds potential outcomes this way:
-    - change $\Theta$ (e.g. treat at $s$ or not), keep the same luck $E$.
+    - $Y^*(s) = \Theta_s^{-1}(E)$: treating at $s$ changes $\Theta$, while the luck $E$ is always $\text{Exp}(1)$.
+    - (The paper only needs the *distribution* of $E$ to be the same across $s$, not the same draw.)
