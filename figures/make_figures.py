@@ -111,8 +111,40 @@ def fig_local_vs_global():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------------------
+# Figure 4: why covariates identify the competing-risks model.
+# The data reveal the Laplace transform L(a, b) = E[exp(-a V_Y - b V_S)] only at the
+# points (a, b) = (phi_Y(x) Lambda_Y(t), phi_S(x) Lambda_S(t)).
+# Without covariates these points form a curve (Tsiatis non-identification);
+# with covariates that shift the two hazards non-proportionally they fill open sets.
+# ---------------------------------------------------------------------------
+def fig_competing_risks_geometry():
+    t = np.linspace(0.01, 2.2, 300)
+    lam_y, lam_s = t, t**1.6
+    rng = np.random.default_rng(0)
+    x = rng.uniform(-0.35, 0.35, size=(1500, 2))
+    phi_y = np.exp(x[:, 0] + 0.3 * x[:, 1])
+    phi_s = np.exp(0.3 * x[:, 0] + x[:, 1])
+
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4.2), sharex=True, sharey=True)
+    ax[0].plot(lam_y, lam_s, color="black", lw=2.5)
+    ax[0].set_title("No covariates: data reveal $L$ only on a curve")
+    ax[1].plot(lam_y, lam_s, color="black", lw=1, ls=":")
+    for tt, c in zip([0.5, 1.0, 1.6], ["tab:blue", "tab:green", "tab:purple"]):
+        ax[1].scatter(phi_y * tt, phi_s * tt**1.6, s=2, alpha=0.4, color=c, label=f"t = {tt}")
+    ax[1].set_title("Covariates: data reveal $L$ on open sets")
+    ax[1].legend(frameon=False, fontsize=9, markerscale=5, loc="upper left")
+    for a in ax:
+        a.set(xlim=(0, 2.6), ylim=(0, 3.6),
+              xlabel=r"$a = \varphi_Y(x)\Lambda_Y(t)$", ylabel=r"$b = \varphi_S(x)\Lambda_S(t)$")
+    fig.tight_layout()
+    fig.savefig(OUT / "fig4_competing_risks_geometry.png", dpi=200)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     fig_dynamic_selection()
     fig_anticipation_equivalence()
     fig_local_vs_global()
+    fig_competing_risks_geometry()
     print("figures written to", OUT)
