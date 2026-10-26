@@ -1,10 +1,18 @@
 \documentclass[11pt]{article}
-\usepackage[margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{amsmath,amssymb,graphicx,booktabs}
 \usepackage{enumitem}
 \setlist{nosep,leftmargin=1.5em}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.6em}
+\setlength{\parskip}{0.5em}
+\graphicspath{{figures/}}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\Lap}{\mathcal{L}}
+\newcommand{\cov}{\operatorname{Cov}}
+\newcommand{\var}{\operatorname{Var}}
+\newcommand{\why}[1]{\text{\small[#1]}}
 
 \title{Abbring \& Van den Berg (2003), built up step by step}
 \date{}
@@ -26,12 +34,12 @@
   \item Connections: DiD with staggered adoption, sequential exogeneity, traps
 \end{enumerate}
 
-\section*{Running example}
+\section*{Running example (the paper's, Sections 1 and 2.4)}
 \begin{itemize}
-  \item Unemployed people receive benefits.
-  \item The agency can impose a \textbf{sanction}: a temporary benefit cut (e.g.\ for not applying to enough jobs).
-  \item Question: does a sanction make people find a job faster?
-  \item $Y$: unemployment duration. $S$: moment the sanction is imposed.
+  \item Unemployed workers receive unemployment benefits.
+  \item At a random time $S$ during the spell, their \textbf{benefits are reduced} (from level $w$ to $b<w$).
+  \item Outcome: unemployment duration $Y$.
+  \item Question: what is the causal effect of the benefits reduction on the \textbf{transition rate to work}?
 \end{itemize}
 
 % =====================================================================
@@ -39,49 +47,47 @@
 
 \textbf{Objects}
 \begin{itemize}
-  \item $Y \ge 0$: duration (e.g.\ of unemployment), continuous; $y$: a value.
+  \item $Y \ge 0$: a continuous duration; $y$: a value.
   \item Density $f(y)$, CDF $F(y)$.
   \item Survival function $S(y) := \Pr(Y>y) = 1-F(y)$: share still in the state at $y$.
 \end{itemize}
 
 \subsection{Hazard rate}
 \begin{align}
-  \theta(y) &:= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy \mid Y \ge y)}{dy} \nonumber\\
-  &= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy)}{dy\;\Pr(Y\ge y)} \nonumber\\
-  &= \lim_{dy\downarrow 0} \frac{F(y+dy)-F(y)}{dy}\cdot\frac{1}{S(y)} \nonumber\\
-  &= \frac{f(y)}{S(y)} \label{eq:hazard}
+  \theta(y) &:= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy \mid Y \ge y)}{dy} && \why{definition} \nonumber\\
+  &= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy)}{dy\;\Pr(Y\ge y)} && \why{conditional probability: $\Pr(A\mid B)=\Pr(A\cap B)/\Pr(B)$} \nonumber\\
+  &= \lim_{dy\downarrow 0} \frac{F(y+dy)-F(y)}{dy}\cdot\frac{1}{S(y)} && \why{$Y$ continuous: $\Pr(Y\ge y)=\Pr(Y>y)$} \nonumber\\
+  &= \frac{f(y)}{S(y)} && \why{definition of the derivative: $F'=f$} \label{eq:hazard}
 \end{align}
 \begin{itemize}
-  \item Line 2: definition of conditional probability.
-  \item Line 3: $Y$ continuous, so $\Pr(Y\ge y)=\Pr(Y>y)=S(y)$.
-  \item Meaning: exit rate \emph{among those still in the state} at $y$.
+  \item Exit rate \emph{among those still in the state} at $y$.
   \item $\theta(y)\,dy \approx$ probability of leaving in $[y,y+dy)$, given still there at $y$.
   \item A rate, not a probability: can exceed 1.
 \end{itemize}
 
 \subsection{Integrated hazard and survival}
-Since $S = 1-F$, we have $S'(y) = -f(y)$. So from \eqref{eq:hazard}:
 \begin{align}
-  \theta(y) = \frac{f(y)}{S(y)} = -\frac{S'(y)}{S(y)} = -\frac{d}{dy}\log S(y). \nonumber
+  \theta(y) &= \frac{f(y)}{S(y)} && \why{by \eqref{eq:hazard}} \nonumber\\
+  &= -\frac{S'(y)}{S(y)} && \why{$S=1-F$, so $S'=-f$} \nonumber\\
+  &= -\frac{d}{dy}\log S(y) && \why{chain rule: $(\log S)'=S'/S$} \nonumber
 \end{align}
-Integrate from $0$ to $y$, using $S(0)=1$:
 \begin{align}
   \Theta(y) := \int_0^y \theta(u)\,du
-  &= -\big[\log S(u)\big]_0^y \nonumber\\
-  &= -\log S(y) + \log \underbrace{S(0)}_{=1} \nonumber\\
-  &= -\log S(y) \nonumber\\[4pt]
-  \Longrightarrow\quad S(y) &= e^{-\Theta(y)}, \qquad f(y) = \theta(y)\,e^{-\Theta(y)}. \label{eq:survival}
+  &= -\big[\log S(u)\big]_0^y && \why{fundamental theorem of calculus} \nonumber\\
+  &= -\log S(y) && \why{$S(0)=1$, so $\log S(0)=0$} \nonumber\\[2pt]
+  \Longrightarrow\quad S(y) &= e^{-\Theta(y)} && \why{exponentiate} \label{eq:survival}\\
+  f(y) &= \theta(y)\,e^{-\Theta(y)} && \why{$f=\theta S$ by \eqref{eq:hazard}} \label{eq:density}
 \end{align}
 \begin{itemize}
-  \item $\Theta$: integrated (cumulative) hazard.
+  \item $\Theta$: integrated hazard.
   \item $\theta$, $\Theta$, $S$, $f$: four descriptions of the same distribution.
 \end{itemize}
 
 \subsection{Example: constant hazard}
-$\theta(y)=c$:
 \begin{align}
-  \Theta(y) &= cy, \qquad S(y) = e^{-cy} \quad\text{(exponential)} \nonumber\\
-  \Pr(Y>y+u \mid Y>y) &= \frac{S(y+u)}{S(y)} = \frac{e^{-c(y+u)}}{e^{-cy}} = e^{-cu}. \nonumber
+  \theta(y) = c \quad\Longrightarrow\quad \Theta(y) &= cy, \qquad S(y)=e^{-cy} && \why{integrate; then \eqref{eq:survival}} \nonumber\\
+  \Pr(Y>y+u \mid Y>y) &= \frac{S(y+u)}{S(y)} && \why{conditional probability; $\{Y>y+u\}\subset\{Y>y\}$} \nonumber\\
+  &= e^{-cu} && \why{plug in $S$} \nonumber
 \end{align}
 \begin{itemize}
   \item Does not depend on $y$: \textbf{memoryless}.
@@ -89,33 +95,428 @@ $\theta(y)=c$:
 \end{itemize}
 
 \subsection{Writing $Y$ as a function of a standard random variable}
-Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define the random variable
+Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E := \Theta(Y)$. For $e\ge0$:
 \begin{align}
-  E := \Theta(Y). \nonumber
-\end{align}
-Its distribution, for $e \ge 0$:
-\begin{align}
-  \Pr(E > e) &= \Pr\big(\Theta(Y) > e\big) \nonumber\\
-  &= \Pr\big(Y > \Theta^{-1}(e)\big) && \text{($\Theta$ strictly increasing)} \nonumber\\
-  &= S\big(\Theta^{-1}(e)\big) && \text{(definition of $S$)} \nonumber\\
-  &= \exp\!\big(-\Theta(\Theta^{-1}(e))\big) && \text{(by \eqref{eq:survival})} \nonumber\\
-  &= e^{-e}. \nonumber
-\end{align}
-So $E\sim\text{Exp}(1)$ whatever $\theta$ is, and inverting the definition of $E$:
-\begin{align}
-  Y = \Theta^{-1}(E), \qquad E \sim \text{Exp}(1). \label{eq:representation}
-\end{align}
-Conversely, for any $E\sim\text{Exp}(1)$, $Y:=\Theta^{-1}(E)$ has the right distribution:
-\begin{align}
-  \Pr(Y>y) = \Pr\big(\Theta^{-1}(E) > y\big) = \Pr\big(E > \Theta(y)\big) = e^{-\Theta(y)} = S(y). \nonumber
+  \Pr(E > e) &= \Pr\big(\Theta(Y) > e\big) && \why{definition of $E$} \nonumber\\
+  &= \Pr\big(Y > \Theta^{-1}(e)\big) && \why{apply $\Theta^{-1}$, strictly increasing} \nonumber\\
+  &= S\big(\Theta^{-1}(e)\big) && \why{definition of $S$} \nonumber\\
+  &= e^{-\Theta(\Theta^{-1}(e))} = e^{-e} && \why{by \eqref{eq:survival}} \nonumber\\[2pt]
+  \Longrightarrow\quad Y &= \Theta^{-1}(E), \qquad E\sim\text{Exp}(1) && \why{invert the definition of $E$} \label{eq:representation}
 \end{align}
 \begin{itemize}
-  \item Same idea as the probability integral transform: $F(Y)\sim U(0,1)$.
-    \begin{itemize}
-      \item Indeed $E = \Theta(Y) = -\log S(Y)$, and $S(Y)=1-F(Y)\sim U(0,1)$.
-    \end{itemize}
-  \item \eqref{eq:representation} splits $Y$ into a \textbf{model part} $\Theta$ and a \textbf{standard random part} $E$.
-  \item Used in Section 5: potential outcomes $Y^*(s)=\Theta_s^{-1}(E)$, where the treatment date $s$ changes $\Theta$ only.
+  \item $E\sim\text{Exp}(1)$ \emph{whatever} $\theta$ is.
+  \item Same idea as $F(Y)\sim U(0,1)$: indeed $E=-\log S(Y)$.
+  \item $Y$ = model part $\Theta$ applied to a standard random part $E$. Used in Sections 5 and 7.
 \end{itemize}
+
+% =====================================================================
+\section{Unobserved heterogeneity and dynamic selection}
+
+\textbf{Model}
+\begin{itemize}
+  \item Individuals differ by an unobserved $V\ge0$, $V\sim G$.
+  \item Individual hazard: $\theta(y\mid V)=\lambda(y)\,V$. Baseline $\lambda$, integrated baseline $\Lambda(y):=\int_0^y\lambda$.
+  \item So $\Theta(y\mid V)=\Lambda(y)V$ and, by \eqref{eq:survival}, $\Pr(Y>y\mid V)=e^{-\Lambda(y)V}$.
+\end{itemize}
+
+\subsection{Population survival and hazard}
+\begin{align}
+  \bar S(y) := \Pr(Y>y) &= \E\big[\Pr(Y>y\mid V)\big] && \why{law of iterated expectations (LIE)} \nonumber\\
+  &= \E\big[e^{-\Lambda(y)V}\big] && \why{by \eqref{eq:survival}, conditional on $V$} \nonumber\\[4pt]
+  \bar\theta(y) &= -\frac{\bar S'(y)}{\bar S(y)} && \why{by \eqref{eq:hazard} and $S'=-f$} \nonumber\\
+  &= \frac{\E\big[\lambda(y)V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$; $\Lambda'=\lambda$} \nonumber\\
+  &= \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{linearity: $\lambda(y)$ is not random} \label{eq:pophazard}
+\end{align}
+
+\subsection{Who survives: the type distribution among survivors}
+\begin{align}
+  dG(v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,dG(v)}{\Pr(Y>y)} && \why{Bayes' rule} \nonumber\\
+  &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{plug in the two survivals above} \label{eq:survivortypes}\\[4pt]
+  \E[V\mid Y>y] &= \frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{integrate $v$ against \eqref{eq:survivortypes}} \nonumber\\[2pt]
+  \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{compare with \eqref{eq:pophazard}} \label{eq:dynsel}
+\end{align}
+\begin{itemize}
+  \item Survivors are the population \textbf{reweighted by their survival probability} $e^{-\Lambda(y)v}$.
+  \item High-$v$ people have lower weights: they leave first.
+\end{itemize}
+
+\subsection{The mean type among survivors falls}
+Write $m(\ell) := \E[Ve^{-\ell V}]/\E[e^{-\ell V}]$, so $\E[V\mid Y>y]=m(\Lambda(y))$.
+\begin{align}
+  m'(\ell) &= \frac{-\E[V^2e^{-\ell V}]\,\E[e^{-\ell V}] + \E[Ve^{-\ell V}]^2}{\E[e^{-\ell V}]^2} && \why{quotient rule; differentiate under $\E$} \nonumber\\
+  &= -\Big(\E[V^2\mid\cdot] - \E[V\mid\cdot]^2\Big) && \why{each ratio is a survivor moment, as in \eqref{eq:survivortypes}} \nonumber\\
+  &= -\var(V\mid Y>y) \le 0 && \why{definition of variance} \nonumber\\[2pt]
+  \frac{d}{dy}\E[V\mid Y>y] &= m'(\Lambda(y))\,\lambda(y) = -\lambda(y)\var(V\mid Y>y) && \why{chain rule} \nonumber
+\end{align}
+\begin{itemize}
+  \item The population hazard falls \emph{even if no individual hazard falls}. This is \textbf{dynamic selection}.
+  \item Hence two explanations for a falling exit rate:
+    \begin{itemize}
+      \item true duration dependence: $\lambda\downarrow$ (e.g.\ skill loss: a \emph{trap});
+      \item composition: $\E[V\mid Y>y]\downarrow$ (sorting on permanent heterogeneity).
+    \end{itemize}
+  \item People still unemployed at month 6 are a selected group. Every comparison made at month 6 inherits this.
+\end{itemize}
+
+\begin{center}
+  \includegraphics[width=0.85\textwidth]{fig1_dynamic_selection.png}
+\end{center}
+{\small Two types with constant hazards 0.3 and 1.5 (equal shares). The population hazard falls from 0.9 to 0.3.}
+
+% =====================================================================
+\section{The mixed proportional hazard (MPH) model}
+
+\textbf{Model}
+\begin{itemize}
+  \item $\theta(y\mid x,V)=\lambda(y)\,\varphi(x)\,V$, with $V\sim G$ and $V\perp X$.
+  \item Three multiplicative pieces: duration ($\lambda$), observed ($\varphi$), unobserved ($V$).
+  \item Normalize $\varphi(x^*)=1$ and $\Lambda(y^*)=1$ for some chosen $x^*,y^*$.
+    \begin{itemize}
+      \item Reason: $(\lambda,\varphi,V)$ and $(c\lambda,\varphi,V/c)$ give the same hazard.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Survival through the Laplace transform}
+Define the Laplace transform of $G$: $\Lap(a):=\E[e^{-aV}]$, $a\ge0$.
+\begin{align}
+  S(y\mid x) &= \E\big[e^{-\varphi(x)\Lambda(y)V}\big] && \why{LIE over $V$; \eqref{eq:survival}; $V\perp X$} \nonumber\\
+  &= \Lap\big(\varphi(x)\Lambda(y)\big) && \why{definition of $\Lap$} \label{eq:mphsurv}\\[4pt]
+  \Lap'(a) &= -\E[Ve^{-aV}] < 0 && \why{differentiate under $\E$} \nonumber\\
+  -\frac{\Lap'(a)}{\Lap(a)} &= \frac{\E[Ve^{-aV}]}{\E[e^{-aV}]} = \E[V\mid\text{survived to index }a] && \why{as in \eqref{eq:survivortypes}} \nonumber\\
+  \theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{as in \eqref{eq:pophazard}, now with $\varphi(x)$} \label{eq:mphhazard}
+\end{align}
+\begin{itemize}
+  \item Data reveal one known function, $\Lap$, of a \textbf{single index} $\varphi(x)\Lambda(y)$.
+  \item Facts used below:
+    \begin{itemize}
+      \item $\Lap$ is strictly decreasing (if $\Pr(V>0)>0$);
+      \item $\Lap$ is real-analytic on $(0,\infty)$: known on an interval $\Rightarrow$ known everywhere;
+      \item $\Lap$ determines $G$ uniquely.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Identification (Elbers \& Ridder 1982) in three steps}
+\textbf{Step 1: $\varphi$ from short durations.} Assume $\E V<\infty$.
+\begin{align}
+  \frac{\theta(y\mid x)}{\theta(y\mid x^*)}
+  &= \varphi(x)\,\frac{(-\Lap'/\Lap)(\varphi(x)\Lambda(y))}{(-\Lap'/\Lap)(\Lambda(y))} && \why{by \eqref{eq:mphhazard}; $\lambda(y)$ cancels; $\varphi(x^*)=1$} \nonumber\\
+  &\xrightarrow{\;y\downarrow0\;} \varphi(x)\,\frac{-\Lap'(0)/\Lap(0)}{-\Lap'(0)/\Lap(0)} = \varphi(x) && \why{$\Lambda(y)\to0$; continuity; $-\Lap'(0)=\E V<\infty$} \nonumber
+\end{align}
+\begin{itemize}
+  \item At $y\approx0$ nobody has been selected out yet, so the ratio is free of selection.
+  \item Uses short durations, where data are thin.
+\end{itemize}
+
+\textbf{Step 2: $G$ at the normalization date.}
+\begin{align}
+  S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{\eqref{eq:mphsurv} with $\Lambda(y^*)=1$} \nonumber
+\end{align}
+\begin{itemize}
+  \item $\varphi(x)$ known from step 1. Varying $x$ traces $\Lap$ on an interval.
+  \item Analytic $\Rightarrow$ $\Lap$ known on $(0,\infty)$ $\Rightarrow$ $G$ known.
+\end{itemize}
+
+\textbf{Step 3: baseline.}
+\begin{align}
+  \Lambda(y) &= \frac{\Lap^{-1}\big(S(y\mid x)\big)}{\varphi(x)} && \why{invert \eqref{eq:mphsurv}; $\Lap$ strictly decreasing} \nonumber
+\end{align}
+
+\textbf{What was assumed:} proportionality, $V\perp X$, $\E V<\infty$, variation in $\varphi(x)$.
+
+% =====================================================================
+\section{Two durations racing: competing risks}
+
+\textbf{Set-up}
+\begin{itemize}
+  \item Two latent durations: $Y$ (exit to work) and $S$ (benefits reduction).
+  \item Only the \textbf{first} event is seen, plus which one it was.
+  \item MPH for each, with \textbf{correlated} unobservables $V=(V_Y,V_S)\sim G$, $V\perp X$:
+  \begin{align}
+    \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y, \qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S. \nonumber
+  \end{align}
+  \item Given $(x,V)$: $Y\perp S$. All dependence runs through $V$.
+  \item Bivariate Laplace transform: $\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$; partials $\Lap_a,\Lap_b,\Lap_{ab}$.
+  \item Indices: $a_t(x):=\varphi_Y(x)\Lambda_Y(t)$, \ $b_t(x):=\varphi_S(x)\Lambda_S(t)$.
+\end{itemize}
+
+\subsection{Joint survival}
+\begin{align}
+  \Pr(Y>y,S>s\mid x) &= \E\big[\Pr(Y>y,S>s\mid x,V)\big] && \why{LIE over $V$; $V\perp X$} \nonumber\\
+  &= \E\big[\Pr(Y>y\mid x,V)\Pr(S>s\mid x,V)\big] && \why{$Y\perp S\mid(x,V)$} \nonumber\\
+  &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(y)V_Y}\,e^{-\varphi_S(x)\Lambda_S(s)V_S}\big] && \why{\eqref{eq:survival} for each} \nonumber\\
+  &= \Lap\big(\varphi_Y(x)\Lambda_Y(y),\,\varphi_S(x)\Lambda_S(s)\big) && \why{definition of $\Lap$} \label{eq:jointsurv}
+\end{align}
+
+\subsection{What the data reveal}
+Probability that nothing has happened by $t$ (the diagonal $y=s=t$):
+\begin{align}
+  P_0(t\mid x) := \Pr(Y>t,S>t\mid x) &= \Lap\big(a_t(x),b_t(x)\big) && \why{\eqref{eq:jointsurv} at $y=s=t$} \label{eq:P0}
+\end{align}
+Cause-specific hazard of exit (rate of $Y$ happening first, among those with nothing yet):
+\begin{align}
+  h_Y(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\ S>t\mid x)}{dt\;P_0(t\mid x)} && \why{definition} \nonumber\\
+  &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{P_0(t\mid x)} && \why{derivative of a survival in $y$} \nonumber\\
+  &= \frac{-\Lap_a(a_t,b_t)\,\varphi_Y(x)\lambda_Y(t)}{\Lap(a_t,b_t)} && \why{chain rule on \eqref{eq:jointsurv}; $\Lambda_Y'=\lambda_Y$} \nonumber\\
+  &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{$-\Lap_a/\Lap$ = survivor mean, as in \eqref{eq:survivortypes}} \label{eq:hY}
+\end{align}
+where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $h_S(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
+
+\subsection{Where the dependence of $V_Y,V_S$ lives}
+Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectations under them.
+\begin{align}
+  \partial_a\log\Lap &= \frac{\Lap_a}{\Lap} = -\E_w[V_Y] && \why{chain rule; differentiate under $\E$} \nonumber\\
+  \partial_b\partial_a\log\Lap &= \frac{\Lap_{ab}}{\Lap}-\frac{\Lap_a\Lap_b}{\Lap^2} && \why{quotient rule} \nonumber\\
+  &= \E_w[V_YV_S]-\E_w[V_Y]\E_w[V_S] && \why{$\Lap_{ab}=\E[V_YV_Se^{\cdots}]$, $\Lap_b/\Lap=-\E_w[V_S]$} \nonumber\\
+  &= \cov(V_Y,V_S\mid R_t,x) && \why{definition of covariance; at $(a,b)=(a_t,b_t)$} \label{eq:crossderiv}
+\end{align}
+\begin{itemize}
+  \item $V_Y\perp V_S$ $\iff$ $\Lap(a,b)=\Lap_Y(a)\Lap_S(b)$ $\iff$ $\log P_0$ additively separable in the two indices.
+  \item Dependence (selection) $=$ an \textbf{interaction} of the two indices in $\log P_0$.
+\end{itemize}
+
+\subsection{The problem: Tsiatis (1975)}
+\begin{itemize}
+  \item Without structure, any competing-risks data can be generated by \emph{independent} $Y,S$.
+  \item Geometry, without covariates:
+    \begin{itemize}
+      \item the data reveal $\Lap$ only at points $(\Lambda_Y(t),\Lambda_S(t))$, i.e.\ along a \textbf{curve};
+      \item a curve cannot pin down a function of two variables, so the dependence is not identified.
+    \end{itemize}
+  \item With covariates moving $\varphi_Y$ and $\varphi_S$ separately: points $(a_t(x),b_t(x))$ fill \textbf{open sets}.
+\end{itemize}
+\begin{center}
+  \includegraphics[width=0.85\textwidth]{fig4_competing_risks_geometry.png}
+\end{center}
+
+\subsection{Identification (Prop.~2) in three steps}
+\textbf{Assumptions.} (A3) $\{(\varphi_Y(x),\varphi_S(x))\}$ contains an open set of $\mathbb R^2$. (A4) $\E V_Y,\E V_S<\infty$. Normalize $\varphi_Y(x^*)=\varphi_S(x^*)=1$, $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$.
+
+\textbf{Step 1: $\varphi_Y,\varphi_S$.}
+\begin{align}
+  \frac{h_Y(t\mid x)}{h_Y(t\mid x^*)} &= \varphi_Y(x)\,\frac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]} && \why{by \eqref{eq:hY}; $\lambda_Y(t)$ cancels} \nonumber\\
+  &\xrightarrow{\;t\downarrow0\;}\varphi_Y(x)\,\frac{\E V_Y}{\E V_Y}=\varphi_Y(x) && \why{risk set $\to$ population; $V\perp X$; (A4)} \nonumber
+\end{align}
+Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
+
+\textbf{Step 2: $G$, including the dependence.}
+\begin{align}
+  P_0(t^*\mid x) &= \Lap\big(\varphi_Y(x),\varphi_S(x)\big) && \why{\eqref{eq:P0} with $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$} \nonumber
+\end{align}
+\begin{itemize}
+  \item Known points fill an open set (A3) $\Rightarrow$ $\Lap$ known there.
+  \item Analytic $\Rightarrow$ known on $(0,\infty)^2$ $\Rightarrow$ joint $G$ known.
+\end{itemize}
+
+\textbf{Step 3: baselines.} For each $t$, $(\Lambda_Y(t),\Lambda_S(t))$ is the unique $(a,b)$ with
+\begin{align}
+  P_0(t\mid x)=\Lap\big(\varphi_Y(x)a,\ \varphi_S(x)b\big)\quad\text{for all }x. && \why{\eqref{eq:P0}; $\Lap,\varphi$'s known} \nonumber
+\end{align}
+\begin{itemize}
+  \item Uniqueness: two solutions would give $\Lap(u,v)=\Lap(ku,mv)$ on $(0,\infty)^2$, $(k,m)\neq(1,1)$.
+  \item Iterating, $\Lap$ would be constant, contradicting strict monotonicity.
+  \item These three steps are our reconstruction; the paper cites Abbring \& Van den Berg (2003, JRSSB).
+\end{itemize}
+
+% =====================================================================
+\section{Adding a treatment}
+
+\subsection{Potential outcomes indexed by treatment time}
+\begin{itemize}
+  \item Treatment = benefits reduction at date $s\in[0,\infty]$; $s=\infty$: never.
+  \item One potential outcome per date: $Y^*(s)$, with hazard $\theta_{Y^*(s)}$, integrated hazard $\Theta_{Y^*(s)}$.
+  \item By \eqref{eq:representation}: $Y^*(s)=\Theta_{Y^*(s)}^{-1}(E)$, $E\sim\text{Exp}(1)$.
+  \item Actual treatment date $S$; observed outcome $Y=Y^*(S)$.
+\end{itemize}
+
+\subsection{No anticipation (Assumption 1)}
+\begin{align}
+  \Theta_{Y^*(s)}(y) = \Theta_{Y^*(s')}(y) \qquad\text{for all } y\le\min\{s,s'\}. \nonumber
+\end{align}
+Take $s'=\infty$ and differentiate in $y$:
+\begin{align}
+  \theta_{Y^*(s)}(y) = \theta_{Y^*(\infty)}(y) \qquad\text{for } y<s. && \why{derivative of both sides} \nonumber
+\end{align}
+\begin{itemize}
+  \item Before treatment, everyone has the \textbf{untreated} hazard, whatever their future date.
+  \item Economic content: people do not act on knowledge of their own future reduction date.
+  \item Violated if, e.g., the date is announced in advance and people search harder before it.
+  \item Not ruled out: reacting to the \emph{policy} (e.g.\ the rate at which reductions happen).
+    \begin{itemize}
+      \item This reaction is in every $Y^*(s)$.
+      \item So the effect is ``treated at $s$ vs.\ later, under this policy'', not ``policy vs.\ no policy''.
+    \end{itemize}
+  \item Prop.~1: without more structure, data cannot distinguish (i) causal effects from selection, nor (ii) anticipation from no anticipation. Hence Assumption 1 is maintained, and selection must be modelled.
+\end{itemize}
+
+% =====================================================================
+\section{What we actually observe}
+
+\textbf{The censoring}
+\begin{itemize}
+  \item $S$ is seen only if $S<Y$: if the worker finds a job first, the reduction date is never seen.
+  \item Paper's data (per $x$): $Q_S(y,s):=\Pr(Y>y,S>s,Y>S)$ and $Q_Y(y):=\Pr(Y>y,Y<S)$. Assume $\Pr(Y=S)=0$.
+\end{itemize}
+
+\textbf{Pre-treatment objects}
+\begin{align}
+  P_0(t) &= \Pr(Y>t,S>t,Y>S)+\Pr(Y>t,S>t,Y<S) && \why{partition by $Y\gtrless S$; $\Pr(Y=S)=0$} \nonumber\\
+  &= Q_S(t,t)+Q_Y(t) && \why{$Y>t,Y<S$ implies $S>t$} \nonumber\\[3pt]
+  h_Y(t) &= \frac{-Q_Y'(t)}{P_0(t)} && \why{$-Q_Y'$: density of untreated exits} \nonumber\\
+  h_S(t) &= \frac{-\partial_sQ_S(y,s)\big|_{y\downarrow t,\,s=t}}{P_0(t)} && \why{density of $S$ at $t$, still unemployed} \nonumber
+\end{align}
+
+\textbf{Post-treatment object: survival of the cohort treated at $s$.} For $y>s$:
+\begin{align}
+  -\partial_sQ_S(y,s) &= \lim_{ds\downarrow0}\frac{\Pr(Y>y,\ s\le S<s+ds,\ Y>S)}{ds} && \why{derivative of $Q_S$ in $s$} \nonumber\\
+  &= \lim_{ds\downarrow0}\frac{\Pr(Y>y,\ s\le S<s+ds)}{ds} && \why{$Y>y>S$ implies $Y>S$} \nonumber\\[3pt]
+  P_1(y\mid s) &:= \Pr(Y>y\mid S=s,\,Y>s) && \why{definition} \nonumber\\
+  &= \frac{\partial_sQ_S(y,s)}{\lim_{y'\downarrow s}\partial_sQ_S(y',s)} && \why{cond.\ probability; $ds$ cancels} \label{eq:P1data}
+\end{align}
+\begin{itemize}
+  \item $(P_0,h_Y,h_S)$ = competing-risks data, as in Section 4.
+  \item $P_1$ = the only place where the treatment effect can show up.
+\end{itemize}
+
+% =====================================================================
+\section{The model of the paper (Model 1a)}
+
+\textbf{Assumption 2 (selection on observables and unobservables):} $Y^*(\cdot)\perp S\mid(X,V)$, with $V$ time-invariant.
+
+\textbf{Model 1a}
+\begin{align}
+  \theta_Y(t\mid s,x,V) &= \begin{cases}\lambda_Y(t)\varphi_Y(x)V_Y & t\le s\\ \lambda_Y(t)\varphi_Y(x)V_Y\,\delta(t\mid s,x) & t>s\end{cases} \nonumber\\
+  \theta_S(t\mid x,V) &= \lambda_S(t)\varphi_S(x)V_S, \qquad (V_Y,V_S)\sim G,\ \ V\perp X. \nonumber
+\end{align}
+\begin{itemize}
+  \item $\delta$: \textbf{the treatment effect}, a multiplier on the exit rate after treatment.
+    \begin{itemize}
+      \item May depend on $t$, $s$ (hence on time since treatment $t-s$), and $x$; not on $V$.
+    \end{itemize}
+  \item No anticipation is built in: $\delta$ only acts for $t>s$.
+  \item Selection on unobservables: $V_Y$ and $V_S$ may be dependent in any way.
+  \item The same $x$ in both hazards: \textbf{no exclusion restriction}.
+  \item $\lambda_Y,\lambda_S,\varphi_Y,\varphi_S,G,\delta$ all nonparametric.
+  \item Plus (A3), (A4) from Section 4.
+\end{itemize}
+
+\textbf{Integrated outcome hazard}, with $D(y\mid s,x):=\int_s^y\lambda_Y(\tau)\delta(\tau\mid s,x)\,d\tau$:
+\begin{align}
+  \Theta_Y(y\mid s,x,V) &= \int_0^s\lambda_Y\varphi_YV_Y\,d\tau+\int_s^y\lambda_Y\varphi_YV_Y\delta\,d\tau && \why{split the integral at $s$} \nonumber\\
+  &= \varphi_Y(x)V_Y\big[\Lambda_Y(s)+D(y\mid s,x)\big] \quad (y>s) && \why{linearity of the integral} \label{eq:ThetaY}
+\end{align}
+
+\textbf{Treatment timing is random given $(x,V)$}
+\begin{align}
+  E_S := \Theta_S(S\mid x,V) = \varphi_S(x)V_S\Lambda_S(S)\ \sim\ \text{Exp}(1),\ \ E_S\perp(x,V) && \why{by \eqref{eq:representation}, conditional on $(x,V)$} \nonumber\\
+  \Longrightarrow\quad S = \Lambda_S^{-1}\!\Big(\frac{E_S}{\varphi_S(x)V_S}\Big) && \why{invert} \nonumber
+\end{align}
+\begin{itemize}
+  \item $E_S$ moves $S$ around without entering $Y$'s hazard (Assumption 2).
+  \item Like an instrument, except that what is excluded is an unobserved \textbf{shock}, not an observed variable.
+\end{itemize}
+
+% =====================================================================
+\section{Identification, step by step}
+
+\subsection{Step A: the pre-treatment data are the competing-risks model of Section 4}
+\begin{align}
+  P_0(t\mid x) &= \E\big[\Pr(Y>t,S>t\mid x,V)\big] && \why{LIE; $V\perp X$} \nonumber\\
+  &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(t)V_Y}\,e^{-\varphi_S(x)\Lambda_S(t)V_S}\big] && \why{Assumption 2; before $S$, $\delta$ absent (no anticipation)} \nonumber\\
+  &= \Lap\big(a_t(x),b_t(x)\big) && \why{as in \eqref{eq:P0}} \nonumber
+\end{align}
+\begin{itemize}
+  \item Same for $h_Y,h_S$. So Prop.~2 (Section 4.5) applies: $\varphi_Y,\varphi_S,\Lambda_Y,\Lambda_S,G$ are identified.
+  \item This uses no post-treatment data.
+\end{itemize}
+
+\subsection{Step B: who gets treated at $s$}
+Risk set at $s$:
+\begin{align}
+  dG_{R_s}(v) &= \frac{\Pr(R_s\mid x,v)\,dG(v)}{\Pr(R_s\mid x)} && \why{Bayes' rule} \nonumber\\
+  &\propto e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{as in Step A} \nonumber
+\end{align}
+Cohort treated at $s$ (in the risk set and treated in $[s,s+ds)$):
+\begin{align}
+  dG_s(v) &\propto \Pr(s\le S<s+ds\mid R_s,x,v)\,dG_{R_s}(v) && \why{Bayes' rule} \nonumber\\
+  &\propto \lambda_S(s)\varphi_S(x)v_S\,ds\;dG_{R_s}(v) && \why{definition of the hazard $\theta_S$} \nonumber\\
+  &\propto v_S\,e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{drop factors not depending on $v$} \label{eq:Gs}
+\end{align}
+\begin{itemize}
+  \item Treated cohort = risk set \textbf{reweighted by the treatment intensity} $v_S$.
+  \item Fully known after Step A.
+\end{itemize}
+
+\subsection{Step C: the selection problem at the moment of treatment}
+Exit hazard of the just-treated vs.\ the not-yet-treated, at $s$:
+\begin{align}
+  \text{just treated: } &\ \lambda_Y(s)\varphi_Y(x)\delta(s\mid s,x)\,\E_{G_s}[V_Y] && \why{Model 1a, averaged over \eqref{eq:Gs}} \nonumber\\
+  \text{not yet treated: } &\ \lambda_Y(s)\varphi_Y(x)\,\E_{R_s}[V_Y] && \why{\eqref{eq:hY}} \nonumber
+\end{align}
+\begin{align}
+  \E_{G_s}[V_Y] &= \frac{\E_{R_s}[V_YV_S]}{\E_{R_s}[V_S]} && \why{\eqref{eq:Gs}: $G_s$ = $G_{R_s}$ reweighted by $v_S$} \nonumber\\
+  &= \E_{R_s}[V_Y]+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_S]} && \why{$\E[XY]=\E X\E Y+\cov(X,Y)$} \nonumber\\[3pt]
+  \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\Big(1+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_Y]\E_{R_s}[V_S]}\Big) && \why{divide; $\lambda_Y\varphi_Y$ cancel} \nonumber\\
+  &= \delta(s\mid s,x)\cdot\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(a_s,b_s)} && \why{survivor moments from Section 4.3} \nonumber
+\end{align}
+\begin{itemize}
+  \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
+  \item Selection factor $=1$ iff $V_Y,V_S$ uncorrelated in the risk set: then timing is as good as random at $s$.
+  \item The selection factor is known from Step A, so $\delta(s\mid s,x)$ is identified.
+\end{itemize}
+
+\subsection{Step D: beyond the moment of treatment (Prop.~3)}
+For $y>s$, let $g(y,s\mid x)$ be the density of ``treated at $s$ and still unemployed at $y$'', and $D:=D(y\mid s,x)$:
+\begin{align}
+  g(y,s\mid x)
+  &= \E\big[f_S(s\mid x,V)\,\Pr(Y>y\mid S=s,x,V)\big] && \why{LIE; Assumption 2} \nonumber\\
+  &= \E\big[\lambda_S(s)\varphi_SV_Se^{-b_sV_S}\cdot e^{-\varphi_YV_Y[\Lambda_Y(s)+D]}\big] && \why{\eqref{eq:density}; \eqref{eq:survival} with \eqref{eq:ThetaY}} \nonumber\\
+  &= \lambda_S(s)\varphi_S\,\E\big[V_S\,e^{-(a_s+\varphi_YD)V_Y-b_sV_S}\big] && \why{linearity; $a_s=\varphi_Y\Lambda_Y(s)$} \nonumber\\
+  &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(a_s+\varphi_Y(x)D,\ b_s\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \nonumber
+\end{align}
+Divide by the same expression at $y\downarrow s$ (where $D=0$), as in \eqref{eq:P1data}:
+\begin{align}
+  P_1(y\mid s,x) &= \frac{\Lap_b\big(a_s+\varphi_Y(x)D(y\mid s,x),\ b_s\big)}{\Lap_b(a_s,b_s)} && \why{the $\lambda_S\varphi_S$ cancel} \nonumber\\
+  &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{rewrite with weights \eqref{eq:Gs}} \label{eq:P1model}
+\end{align}
+\begin{itemize}
+  \item Left side: data. Right side: everything known from Step A, except $D$.
+  \item Strictly decreasing in $D$ $\Rightarrow$ invert for $D(y\mid s,x)$.
+  \item Then $\delta(y\mid s,x)=\partial_yD(y\mid s,x)/\lambda_Y(y)$ \quad \why{fundamental theorem of calculus}.
+  \item This is the paper's eq.~(10), divided by its value at $y\downarrow s$.
+\end{itemize}
+\textbf{Two selection problems, both handled by knowing $G$}
+\begin{enumerate}
+  \item Selection \emph{into} treatment at $s$: the $v_S$-tilt in \eqref{eq:Gs}.
+  \item Selection \emph{out} after $s$: in \eqref{eq:P1model}, survivors of the treated cohort drift to low $V_Y$, as in Section 2.
+    \begin{itemize}
+      \item Present whenever $V_Y$ varies, even with random timing.
+      \item So naive hazard ratios at later $y$ are not $\delta$.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Summary: what is used where}
+\begin{center}
+\small
+\begin{tabular}{ll}
+  \toprule
+  Assumption & Where it is used \\
+  \midrule
+  No anticipation & Step A: before $S$ there is no $\delta$, so a clean competing-risks problem \\
+  Assumption 2 & Steps A, B, D: independence given $V$; treated = risk set reweighted by $v_S$ \\
+  MPH, $V\perp X$ & Step A: everything is $\Lap$ of indices \\
+  $\E V<\infty$ (A4) & Step A, step 1: short-duration hazard ratios \\
+  Open set (A3) & Step A, step 2: trace $\Lap$ in 2-D $\Rightarrow$ dependence of $V_Y,V_S$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+  \item Not used: an excluded instrument, selection on observables, parametric forms, multiple spells.
+\end{itemize}
+
+\begin{minipage}{\textwidth}
+\centering
+  \includegraphics[width=0.75\textwidth]{fig3_local_vs_global.png}\\
+\raggedright{\small Intuition. Left: causal effect, no selection; exits bunch right after treatment at every $S$ (local). Right: no effect, pure selection; $S$ and $Y$ correlated overall (global).}
+\end{minipage}
 
 \end{document}
