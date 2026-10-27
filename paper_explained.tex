@@ -138,9 +138,24 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
 
 \textbf{Model}
 \begin{itemize}
-  \item Individuals differ by an unobserved $V\ge0$, $V\sim G$.
-  \item Individual hazard: $\theta(y\mid V)=\lambda(y)\,V$. Baseline $\lambda$, integrated baseline $\Lambda(y):=\int_0^y\lambda$.
-  \item So $\Theta(y\mid V)=\Lambda(y)V$ and, by \eqref{eq:survival}, $\Pr(Y>y\mid V)=e^{-\Lambda(y)V}$.
+  \item Individuals differ by an unobserved type $V\ge0$ (motivation, skills, \ldots), fixed during the spell.
+  \item $G$: distribution of $V$ in the population, $G(v)=\Pr(V\le v)$.
+    \begin{itemize}
+      \item Notation: $dG(v)$ = ``probability that $V$ is (around) $v$'': $\Pr(V=v)$ if discrete, $g(v)\,dv$ if continuous.
+      \item So $\int h(v)\,dG(v)=\E[h(V)]$.
+    \end{itemize}
+  \item Section 1 applies to \emph{each type}: $\theta(y\mid V)=f(y\mid V)/S(y\mid V)$.
+  \item \textbf{Assumption:} this conditional hazard has the form
+  \begin{align}
+    \theta(y\mid V)=\lambda(y)\,V. \nonumber
+  \end{align}
+    \begin{itemize}
+      \item $\lambda(y)=\theta(y\mid V=1)=f(y\mid V=1)/S(y\mid V=1)$: the \textbf{baseline}, the hazard of the $V=1$ type.
+      \item Common time profile for all; $V$ scales its level.
+      \item ``$V=1$ type'' needs a normalization, since $(\lambda,V)$ and $(c\lambda,V/c)$ give the same hazard.
+    \end{itemize}
+  \item Integrated baseline $\Lambda(y):=\int_0^y\lambda$. So $\Theta(y\mid V)=\Lambda(y)V$ and, by \eqref{eq:survival}, $\Pr(Y>y\mid V)=e^{-\Lambda(y)V}$.
+  \item The \textbf{population} hazard $\bar\theta=\bar f/\bar S$ (Section 1 applied to everyone pooled) is \emph{not} assumed. It is derived below.
 \end{itemize}
 
 \subsection{Population survival and hazard}
@@ -155,15 +170,36 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
 
 \subsection{Who survives: the type distribution among survivors}
 \whynow{interpret the ratio in \eqref{eq:pophazard}: it is about \emph{who is left}.}
+
+Discrete types first (sums), then the general case.
 \begin{align}
-  dG(v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,dG(v)}{\Pr(Y>y)} && \why{Bayes' rule} \nonumber\\
-  &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{plug in the two survivals above} \label{eq:survivortypes}\\[4pt]
-  \E[V\mid Y>y] &= \frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{integrate $v$ against \eqref{eq:survivortypes}} \nonumber\\[2pt]
-  \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{compare with \eqref{eq:pophazard}} \label{eq:dynsel}
+  \Pr(V=v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,\Pr(V=v)}{\Pr(Y>y)} && \why{Bayes' rule} \nonumber\\
+  &= \frac{e^{-\Lambda(y)v}\,\Pr(V=v)}{\sum_{v'}e^{-\Lambda(y)v'}\Pr(V=v')} && \why{type survival; denominator by LIE} \nonumber\\
+  &= \frac{e^{-\Lambda(y)v}\,\Pr(V=v)}{\E[e^{-\Lambda(y)V}]} && \why{definition of $\E$} \nonumber
 \end{align}
 \begin{itemize}
-  \item Survivors are the population \textbf{reweighted by their survival probability} $e^{-\Lambda(y)v}$.
-  \item High-$v$ people have lower weights: they leave first.
+  \item New share of a type = old share $\times$ its survival probability, renormalized.
+  \item Example ($\lambda=1$, types $0.3$ and $1.5$, half each, $y=2$):
+    \begin{itemize}
+      \item shares $(0.5,\,0.5)$ $\times$ survival $(e^{-0.6},\,e^{-3})\approx(0.55,\,0.05)$ $\rightarrow$ renormalize $\rightarrow$ $(0.92,\,0.08)$.
+    \end{itemize}
+  \item Interpretation: the probability that a person \emph{still unemployed at $y$} is of type $v$.
+    \begin{itemize}
+      \item Equivalently, the share of type $v$ among those still unemployed.
+      \item The conditioning event (still unemployed) is observed; $V$ is not.
+      \item So it cannot be counted in data. It is computed from $G$ and $\Lambda$, which must first be identified (Section 3).
+      \item Once identified: a posterior on each long-term unemployed person's type. This is the logic behind profiling the long-term unemployed.
+    \end{itemize}
+\end{itemize}
+General case: replace $\Pr(V=v)$ by $dG(v)$ and sums by integrals:
+\begin{align}
+  dG(v\mid Y>y) &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{same steps} \label{eq:survivortypes}\\[4pt]
+  \E[V\mid Y>y] &= \int v\,dG(v\mid Y>y)=\frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{mean under \eqref{eq:survivortypes}} \nonumber\\[2pt]
+  \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{same ratio as in \eqref{eq:pophazard}} \label{eq:dynsel}
+\end{align}
+\begin{itemize}
+  \item Example: $\E[V\mid Y>2]=0.92\cdot0.3+0.08\cdot1.5\approx0.40$, versus $\E[V]=0.9$. So $\bar\theta(2)\approx0.40$ vs.\ $\bar\theta(0)=0.9$.
+  \item Observed hazard uses \textbf{survivors only}: $\lambda(y)\E[V\mid Y>y]$, not $\lambda(y)\E[V]$.
 \end{itemize}
 
 \subsection{A name for the object that keeps appearing: the Laplace transform}
