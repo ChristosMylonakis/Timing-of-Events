@@ -338,7 +338,7 @@ Two facts we state without proof:
 \end{itemize}
 
 \subsection{Survival through the Laplace transform}
-\whynow{write what the data reveal, $S(y\mid x)$ and $\theta(y\mid x)$, in terms of the unknowns $(\lambda,\varphi,G)$.}
+\whynow{write what the data reveal, $S(y\mid x)$ (equivalently its hazard $\theta(y\mid x)$), in terms of the unknowns $(\lambda,\varphi,G)$.}
 \begin{align}
   S(y\mid x) &= \E\big[e^{-\varphi(x)\Lambda(y)V}\big] && \why{LIE over $V$; \eqref{eq:survival}; $V\perp X$} \nonumber\\
   &= \Lap\big(\varphi(x)\Lambda(y)\big) && \why{definition \eqref{eq:laplace}} \label{eq:mphsurv}\\
@@ -347,7 +347,7 @@ Two facts we state without proof:
 \begin{itemize}
   \item Data: $S(y\mid x)$ for all $(y,x)$. The new information relative to Section 2.5 is the $x$ dimension.
     \begin{itemize}
-      \item $\theta(y\mid x)$ is \emph{not} extra information: $\theta=-\partial_y\log S$ and $S=e^{-\Theta}$ (Section 1). We use whichever form makes an argument simpler.
+      \item $\theta(y\mid x)$ is \emph{not} extra information. Section 1: $S(y)=e^{-\Theta(y)}$ with $\Theta(y)=\int_0^y\theta$, and conversely $\theta=-\partial_y\log S$. Knowing the whole function $\theta$ $\iff$ knowing the whole function $S$. We use whichever form makes an argument simpler.
     \end{itemize}
   \item Data reveal one function $\Lap$ of a \textbf{single index} $\varphi(x)\Lambda(y)$.
   \item $x$ and $y$ both move the index: this is what the three steps below exploit.
