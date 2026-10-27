@@ -449,12 +449,25 @@ This section studies the race alone. No treatment effect is involved yet.
 \textbf{Set-up}
 \begin{itemize}
   \item Two latent durations: $Y$ (exit to work) and $S$ (benefits reduction).
-  \item Only the \textbf{first} event is seen, plus which one it was.
+    \begin{itemize}
+      \item Here $Y$ is the time to a job \emph{if never treated} ($=Y^*(\infty)$ in Section 5).
+    \end{itemize}
+  \item Only the \textbf{first} event of the race is seen, plus which one it was.
+    \begin{itemize}
+      \item If $Y$ comes first: $S$ is censored.
+      \item If $S$ comes first: we do see a job time later, but it is a \emph{treated} outcome, not this $Y$. It is used in Sections 6--8, not here.
+      \item So the pair of latent durations $(Y,S)$ is never seen in full.
+    \end{itemize}
   \item MPH for each, with \textbf{correlated} unobservables $V=(V_Y,V_S)\sim G$, $V\perp X$:
   \begin{align}
     \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y, \qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S. \nonumber
   \end{align}
-  \item Given $(x,V)$: $Y\perp S$. All dependence runs through $V$.
+  \item \textbf{Assumption} (race version of the paper's Assumption 2, Section 7): $Y\perp S\mid(x,V)$.
+    \begin{itemize}
+      \item Given observed $x$ and unobserved type $V$, the luck in job timing is unrelated to the luck in reduction timing.
+      \item All dependence between $Y$ and $S$ runs through $(x,V)$: selection on observables and unobservables.
+      \item Rules out shocks outside $V$ that hit both (e.g.\ a bad week that lowers job finding \emph{and} triggers a reduction).
+    \end{itemize}
   \item Bivariate Laplace transform: $\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$; partials $\Lap_a,\Lap_b,\Lap_{ab}$.
     \begin{itemize}
       \item Same properties as Section 2.3: derivatives give moments among survivors; uniqueness; analyticity.
