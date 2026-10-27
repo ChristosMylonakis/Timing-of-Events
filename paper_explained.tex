@@ -159,48 +159,49 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
 \end{itemize}
 
 \subsection{Population survival and hazard}
-\whynow{we only observe the population, not each type. Compute what the population hazard looks like.}
+\whynow{we only observe the population, not each type. Compute the population hazard from the type hazards. Take discrete types $v$ with shares $\Pr(V=v)$.}
 \begin{align}
-  \bar S(y) := \Pr(Y>y) &= \E\big[\Pr(Y>y\mid V)\big] && \why{law of iterated expectations (LIE)} \nonumber\\
-  &= \E\big[e^{-\Lambda(y)V}\big] && \why{by \eqref{eq:survival}, conditional on $V$} \nonumber\\[4pt]
-  \bar\theta(y) &= -\frac{\bar S'(y)}{\bar S(y)} && \why{by \eqref{eq:hazard} and $S'=-f$} \nonumber\\
-  &= \frac{\E\big[\lambda(y)V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$; $\Lambda'=\lambda$} \nonumber\\
-  &= \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{linearity: $\lambda(y)$ is not random} \label{eq:pophazard}
+  \bar S(y) := \Pr(Y>y) &= \sum_v S(y\mid v)\Pr(V=v) && \why{LIE (law of total probability)} \nonumber\\
+  \bar f(y) &= \sum_v f(y\mid v)\Pr(V=v) && \why{$f=-S'$; differentiate the sum} \nonumber\\
+  \bar\theta(y) = \frac{\bar f(y)}{\bar S(y)} &= \sum_v \frac{f(y\mid v)\Pr(V=v)}{\bar S(y)} && \why{\eqref{eq:hazard} for the population} \nonumber\\
+  &= \sum_v \theta(y\mid v)\,\underbrace{\frac{S(y\mid v)\Pr(V=v)}{\bar S(y)}}_{=:\,w_y(v)} && \why{$f(y\mid v)=\theta(y\mid v)S(y\mid v)$, by \eqref{eq:hazard}} \label{eq:pophazard}
 \end{align}
+\begin{itemize}
+  \item The population hazard is a \textbf{weighted average of the type hazards}.
+  \item The weights $w_y(v)$ are \emph{not} the population shares $\Pr(V=v)$: each share is multiplied by the type's survival $S(y\mid v)$.
+  \item Weights sum to 1: $\sum_v S(y\mid v)\Pr(V=v)=\bar S(y)$.
+\end{itemize}
 
-\subsection{Who survives: the type distribution among survivors}
-\whynow{interpret the ratio in \eqref{eq:pophazard}: it is about \emph{who is left}.}
-
-Discrete types first (sums), then the general case.
+\subsection{What the weights are: the type mix among survivors}
+\whynow{interpret the weights $w_y(v)$ in \eqref{eq:pophazard}.}
 \begin{align}
   \Pr(V=v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,\Pr(V=v)}{\Pr(Y>y)} && \why{Bayes' rule} \nonumber\\
-  &= \frac{e^{-\Lambda(y)v}\,\Pr(V=v)}{\sum_{v'}e^{-\Lambda(y)v'}\Pr(V=v')} && \why{type survival; denominator by LIE} \nonumber\\
-  &= \frac{e^{-\Lambda(y)v}\,\Pr(V=v)}{\E[e^{-\Lambda(y)V}]} && \why{definition of $\E$} \nonumber
+  &= \frac{S(y\mid v)\,\Pr(V=v)}{\bar S(y)} = w_y(v) && \why{definitions of $S(y\mid v)$, $\bar S$} \label{eq:survivortypes}
 \end{align}
 \begin{itemize}
-  \item New share of a type = old share $\times$ its survival probability, renormalized.
-  \item Example ($\lambda=1$, types $0.3$ and $1.5$, half each, $y=2$):
+  \item $w_y(v)$ = probability that a person \emph{still unemployed at $y$} is of type $v$ = share of type $v$ among survivors.
+  \item Bayes flips the conditioning:
     \begin{itemize}
-      \item shares $(0.5,\,0.5)$ $\times$ survival $(e^{-0.6},\,e^{-3})\approx(0.55,\,0.05)$ $\rightarrow$ renormalize $\rightarrow$ $(0.92,\,0.08)$.
+      \item $S(y\mid v)=\Pr(\text{still there}\mid\text{type }v)$: given the type, chance to survive;
+      \item $w_y(v)=\Pr(\text{type }v\mid\text{still there})$: given survival, chance of the type.
     \end{itemize}
-  \item Interpretation: the probability that a person \emph{still unemployed at $y$} is of type $v$.
-    \begin{itemize}
-      \item Equivalently, the share of type $v$ among those still unemployed.
-      \item The conditioning event (still unemployed) is observed; $V$ is not.
-      \item So it cannot be counted in data. It is computed from $G$ and $\Lambda$, which must first be identified (Section 3).
-      \item Once identified: a posterior on each long-term unemployed person's type. This is the logic behind profiling the long-term unemployed.
-    \end{itemize}
+  \item $V$ is unobserved, so $w_y(v)$ cannot be counted in data; it follows from $G$ and $\Lambda$ once identified (Section 3).
+  \item Example ($\lambda=1$, types $0.3$ and $1.5$, half each, $y=2$): $S(2\mid v)\approx(0.55,\,0.05)$, so $w_2\approx(0.92,\,0.08)$.
 \end{itemize}
-General case: replace $\Pr(V=v)$ by $dG(v)$ and sums by integrals:
+Now use the model $\theta(y\mid v)=\lambda(y)v$ and $S(y\mid v)=e^{-\Lambda(y)v}$ in \eqref{eq:pophazard}:
 \begin{align}
-  dG(v\mid Y>y) &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{same steps} \label{eq:survivortypes}\\[4pt]
-  \E[V\mid Y>y] &= \int v\,dG(v\mid Y>y)=\frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{mean under \eqref{eq:survivortypes}} \nonumber\\[2pt]
-  \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{same ratio as in \eqref{eq:pophazard}} \label{eq:dynsel}
+  \bar\theta(y) &= \sum_v \lambda(y)\,v\;\Pr(V=v\mid Y>y) && \why{\eqref{eq:pophazard} and \eqref{eq:survivortypes}} \nonumber\\
+  &= \lambda(y)\sum_v v\,\Pr(V=v\mid Y>y) && \why{linearity: $\lambda(y)$ does not depend on $v$} \nonumber\\
+  &= \lambda(y)\,\E[V\mid Y>y] && \why{definition of a conditional mean} \label{eq:dynsel}\\
+  \E[V\mid Y>y] &= \frac{\sum_v v\,e^{-\Lambda(y)v}\Pr(V=v)}{\sum_v e^{-\Lambda(y)v}\Pr(V=v)} = \frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{plug in \eqref{eq:survivortypes}; definition of $\E$} \label{eq:survmeanexp}
 \end{align}
 \begin{itemize}
-  \item Example: $\E[V\mid Y>2]=0.92\cdot0.3+0.08\cdot1.5\approx0.40$, versus $\E[V]=0.9$. So $\bar\theta(2)\approx0.40$ vs.\ $\bar\theta(0)=0.9$.
-  \item Observed hazard uses \textbf{survivors only}: $\lambda(y)\E[V\mid Y>y]$, not $\lambda(y)\E[V]$.
+  \item Example: $\E[V\mid Y>2]\approx0.92\cdot0.3+0.08\cdot1.5\approx0.40$, versus $\E[V]=0.9$. So $\bar\theta(2)\approx0.40$ vs.\ $\bar\theta(0)=0.9$.
+  \item The observed hazard uses \textbf{survivors only}: $\lambda(y)\E[V\mid Y>y]$, not $\lambda(y)\E[V]$.
 \end{itemize}
+{\small\textbf{Note (continuous $V$).} Replace $\Pr(V=v)$ by $dG(v)$ and sums by integrals. Then
+\[ dG(v\mid Y>y)=\frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]}, \]
+and \eqref{eq:dynsel}--\eqref{eq:survmeanexp} are unchanged.}
 
 \subsection{A name for the object that keeps appearing: the Laplace transform}
 \whynow{every formula above contains $\E[e^{-aV}]$ for some $a$. Naming it and learning its properties is what makes all identification arguments below work.}
@@ -240,7 +241,7 @@ Gamma with mean 1 and variance $1/k$:
   \Lap'(a) &= -\E\big[Ve^{-aV}\big] < 0 && \why{differentiate under $\E$; $<0$ if $\Pr(V>0)>0$} \nonumber\\
   \Lap^{(k)}(a) &= (-1)^k\,\E\big[V^ke^{-aV}\big] && \why{repeat $k$ times} \nonumber\\
   -\Lap'(0) &= \E[V] && \why{set $a=0$: derivatives at 0 give moments} \nonumber\\[4pt]
-  -\frac{\Lap'(a)}{\Lap(a)} &= \frac{\E[Ve^{-aV}]}{\E[e^{-aV}]} = \E[V\mid\text{survived to }a] && \why{by \eqref{eq:survivortypes}} \label{eq:survmean}\\
+  -\frac{\Lap'(a)}{\Lap(a)} &= \frac{\E[Ve^{-aV}]}{\E[e^{-aV}]} = \E[V\mid\text{survived to }a] && \why{by \eqref{eq:survmeanexp}} \label{eq:survmean}\\
   \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\Lambda(y)\big) && \why{by \eqref{eq:dynsel}} \nonumber
 \end{align}
 Two facts we state without proof:
@@ -277,10 +278,12 @@ Two facts we state without proof:
 \end{itemize}
 
 \subsection{Deeper look: staying unemployed is evidence about your type}
-\whynow{\eqref{eq:survivortypes} is Bayes' rule. Reading it as learning makes dynamic selection intuitive.}
+\whynow{\eqref{eq:survivortypes} is Bayes' rule. Reading it as learning about one person's type makes dynamic selection intuitive.}
 \begin{itemize}
-  \item Prior: $G$. ``Data'': the person is still unemployed at $y$. Likelihood of that data: $e^{-\Lambda(y)v}$.
-  \item Posterior $\propto$ prior $\times$ likelihood, which is exactly \eqref{eq:survivortypes}.
+  \item Prior: $\Pr(V=v)$, the type mix at entry into unemployment (before we know anything about the person).
+  \item Information: the person is still unemployed at $y$.
+  \item Likelihood of that information given type $v$: $S(y\mid v)$. (A probability of an event, not a density.)
+  \item Posterior $\propto$ prior $\times$ likelihood: exactly \eqref{eq:survivortypes}.
   \item The longer someone stays, the more the evidence points to a low $v$.
 \end{itemize}
 Gamma example (prior Gamma$(k,k)$, mean 1, variance $1/k$):
@@ -449,7 +452,7 @@ Cause-specific hazard of exit (rate of $Y$ happening first, among those with not
   h_Y(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\ S>t\mid x)}{dt\;P_0(t\mid x)} && \why{definition} \nonumber\\
   &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{P_0(t\mid x)} && \why{derivative of a survival in $y$} \nonumber\\
   &= \frac{-\Lap_a(a_t,b_t)\,\varphi_Y(x)\lambda_Y(t)}{\Lap(a_t,b_t)} && \why{chain rule on \eqref{eq:jointsurv}; $\Lambda_Y'=\lambda_Y$} \nonumber\\
-  &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{$-\Lap_a/\Lap$ = survivor mean, as in \eqref{eq:survivortypes}} \label{eq:hY}
+  &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{$-\Lap_a/\Lap$ = survivor mean, as in \eqref{eq:survmeanexp}} \label{eq:hY}
 \end{align}
 where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $h_S(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
 
