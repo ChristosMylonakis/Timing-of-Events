@@ -414,7 +414,37 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 
 % =====================================================================
 \section{Two durations racing: competing risks}
-\whynow{before any treatment, a worker either finds a job ($Y$) or has benefits reduced ($S$), whichever comes first. If the same unobserved traits drive both (e.g.\ low motivation $\Rightarrow$ slow job finding \emph{and} early reduction), the treated are selected. This section asks: can the dependence between the two be learned from the race alone? No treatment effect is involved yet.}
+\whynow{Section 3 learned the heterogeneity of \emph{one} duration. The treatment brings a second one.}
+
+\textbf{Where the second duration comes from}
+\begin{itemize}
+  \item The treatment is itself a duration: the benefits reduction is not assigned at a fixed date, it \emph{arrives} at a random time $S$ with its own hazard.
+  \item So two durations run at once: $Y$ (time to a job) and $S$ (time to the reduction).
+  \item Two phases:
+    \begin{itemize}
+      \item \textbf{before $S$:} a race; whichever comes first ends it (\textbf{competing risks}, this section);
+      \item \textbf{after $S$:} $Y$ continues under treatment; the effect $\delta$ shows up here (Sections 7--8).
+    \end{itemize}
+\end{itemize}
+
+\textbf{Why it is a hurdle}
+\begin{itemize}
+  \item \textbf{Censoring:} if the job comes first, we never see when the reduction would have come.
+  \item \textbf{Endogeneity:} the same unobserved traits may drive both (low motivation $\Rightarrow$ slow job finding \emph{and} early reduction), so $V_Y$ and $V_S$ are correlated. This \emph{is} the selection problem.
+  \item \textbf{Negative result} (Tsiatis, Section 4.5): race data alone cannot reveal that correlation.
+\end{itemize}
+
+\textbf{Why modelling it is also the solution}
+\begin{itemize}
+  \item If $S$ were exogenous ($V_S\perp V_Y$), ``reduced yet?'' would be an ordinary time-varying covariate in $Y$'s hazard, and Section 3 would suffice.
+  \item It is not, so we model $S$'s own process: the paper's dynamic \textbf{selection equation} (as in Heckman's selection model). This buys:
+    \begin{itemize}
+      \item \textbf{A clean window:} before $S$ there is no causal effect (no anticipation, Section 5), so the race reflects only the joint heterogeneity of $(V_Y,V_S)$.
+      \item \textbf{The correlation becomes identifiable:} MPH plus covariates beat Tsiatis (Section 4.6), the two-duration version of Section 3.
+      \item \textbf{Instrument-like variation:} given $(x,V)$, the timing of $S$ still contains pure luck (Section 7).
+    \end{itemize}
+\end{itemize}
+This section studies the race alone. No treatment effect is involved yet.
 
 \textbf{Set-up}
 \begin{itemize}
