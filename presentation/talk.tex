@@ -10,6 +10,7 @@
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Lap}{\mathcal{L}}
 \newcommand{\var}{\operatorname{Var}}
+\newcommand{\cov}{\operatorname{Cov}}
 \newcommand{\why}[1]{\text{\scriptsize[#1]}}
 
 \title{Duration Models: From Hazards to Treatment Effects}
@@ -66,14 +67,17 @@
   $Y\ge0$ continuous, $S(y):=\Pr(Y>y)$ survival, $f$ density.
   \begin{align*}
     \theta(y) &:= \lim_{dy\downarrow0}\frac{\Pr(y\le Y<y+dy\mid Y\ge y)}{dy} = \frac{f(y)}{S(y)} && \why{conditional probability} \\
-    &= -\frac{d}{dy}\log S(y) && \why{$S'=-f$} \\
-    \Theta(y) &:= \int_0^y\theta(u)\,du = -\log S(y) && \why{integrate; $S(0)=1$} \\
+    \Theta(y) &:= \int_0^y\theta(u)\,du = \int_0^y -\frac{S'(u)}{S(u)}\,du = -\log S(y) && \why{$S'=-f$; $S(0)=1$} \\
     \Longrightarrow\quad S(y) &= e^{-\Theta(y)}
   \end{align*}
   \begin{itemize}
     \item $\theta(y)$: exit rate \emph{among those still unemployed}. The effect will act on $\theta$.
-    \item Constant hazard $\theta=c$: $S(y)=e^{-cy}$, memoryless.
-    \item $\theta$ decreasing: \textbf{negative duration dependence}.
+    \item \textbf{Duration dependence}: how $\theta(y)$ changes with time already spent.
+      \begin{itemize}
+        \item $\theta$ increasing: \emph{positive} (the longer unemployed, the more likely to leave).
+        \item $\theta$ decreasing: \emph{negative} (the longer unemployed, the less likely to leave).
+        \item $\theta$ constant: none. $S(y)=e^{-cy}$, memoryless.
+      \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -85,7 +89,7 @@
   What we observe is the \textbf{population}:
   \begin{align*}
     \bar S(y) &= \E\big[S(y\mid V)\big]=\E\big[e^{-\Lambda(y)V}\big] && \why{LIE} \\
-    \bar\theta(y) &= -\frac{\bar S'(y)}{\bar S(y)} = \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$}
+    \bar\theta(y) &= \frac{\bar f(y)}{\bar S(y)} = -\frac{\bar S'(y)}{\bar S(y)} = \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$}
   \end{align*}
   \begin{itemize}
     \item The ratio is an average of $V$, weighting each type by its survival $e^{-\Lambda(y)V}$.
@@ -165,4 +169,257 @@
   \end{columns}
 \end{frame}
 
+% =====================================================================
+\section{Mixed proportional hazard}
+\begin{frame}{Covariates separate sorting from duration dependence}
+  \textbf{MPH model:} $\theta(y\mid x,V)=\lambda(y)\,\varphi(x)\,V$, \ $V\perp X$. Data: $S(y\mid x)$ for all $(y,x)$.
+  \[ S(y\mid x)=\Lap\big(\varphi(x)\Lambda(y)\big): \quad \text{one } \Lap \text{ and one } \Lambda \text{ must fit \emph{all} groups.} \]
+  Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$, decreasing. Compare $\varphi_1>\varphi_2$:
+  \begin{align*}
+    \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))} && \why{$\lambda(y)$ cancels} \\
+    &< \frac{\varphi_1}{\varphi_2}\ \ (y>0), \qquad =\frac{\varphi_1}{\varphi_2}\ \ (y=0) && \why{$\varphi_1\Lambda>\varphi_2\Lambda$, $m$ decreasing}
+  \end{align*}
+  \begin{itemize}
+    \item At the same duration, the high-$\varphi$ group is further along: its sorting is more advanced.
+    \item Duration dependence hits both groups equally and cancels. Sorting does not.
+    \item So the \textbf{drift of the ratio below $\varphi_1/\varphi_2$ measures sorting}.
+    \item MPH reads: \emph{absent sorting, covariate effects would be constant over duration}.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{MPH identification in three steps \hfill {\small Elbers \& Ridder (1982)}}
+  Normalize $\varphi(x^*)=1$, $\Lambda(y^*)=1$. Assume $\E V<\infty$ and variation in $\varphi(x)$.
+  \begin{align*}
+    \textbf{1. }\ \frac{\theta(y\mid x)}{\theta(y\mid x^*)} &\xrightarrow{\;y\downarrow0\;}\varphi(x) && \why{nobody sorted yet: $m(0)/m(0)=1$} \\[4pt]
+    \textbf{2. }\ S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{$\Lambda(y^*)=1$} \\[4pt]
+    \textbf{3. }\ \Lambda(y) &= \Lap^{-1}\big(S(y\mid x)\big)\big/\varphi(x) && \why{$\Lap$ strictly decreasing}
+  \end{align*}
+  \begin{itemize}
+    \item Step 2: varying $x$ traces $\Lap$ on an interval $\Rightarrow$ (analyticity) everywhere $\Rightarrow$ (uniqueness) $G$.
+    \item One duration with covariates reveals $\lambda$, $\varphi$ and $G$.
+    \item Price: proportionality, $V\perp X$, $\E V<\infty$; identification leans on short durations.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{Two durations}
+\begin{frame}{A second duration: the treatment}
+  \textbf{Where it comes from}
+  \begin{itemize}
+    \item A treatment that \emph{arrives} at a random time $S$, with its own hazard, is itself a duration.
+    \item Before $S$: a race between $Y$ (job) and $S$ (treatment), \textbf{competing risks}.
+    \item After $S$: $Y$ continues under treatment. The effect shows up here.
+  \end{itemize}
+  \textbf{Why it is a hurdle}
+  \begin{itemize}
+    \item Censoring: if the job comes first, $S$ is never seen.
+    \item Endogeneity: the same unobserved traits may drive both.
+    \item Tsiatis (1975): race data alone cannot reveal that dependence.
+  \end{itemize}
+  \textbf{Why modelling it is the solution}
+  \begin{itemize}
+    \item If $S$ were exogenous, it would be an ordinary time-varying covariate.
+    \item Otherwise, model $S$'s hazard: a dynamic \textbf{selection equation}.
+      \begin{itemize}
+        \item Before $S$ there is no effect yet: a clean window to learn the selection.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{The race: model and data}
+  \[ \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y,\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S,\qquad (V_Y,V_S)\sim G. \]
+  \textbf{Assumption:} $Y\perp S\mid(x,V)$. All dependence runs through $(x,V)$.
+  \begin{align*}
+    \Pr(Y>y,S>s\mid x) &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_S\Lambda_S(s)V_S}\big] && \why{LIE; assumption} \\
+    &= \Lap\big(\varphi_Y(x)\Lambda_Y(y),\ \varphi_S(x)\Lambda_S(s)\big) && \why{$\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$}
+  \end{align*}
+  Only the first event is seen. With $a_t=\varphi_Y\Lambda_Y(t)$, $b_t=\varphi_S\Lambda_S(t)$:
+  \begin{align*}
+    P_0(t\mid x) &:= \Pr(\text{nothing yet by }t\mid x)=\Lap(a_t,b_t) \\
+    h_Y(t\mid x) &:= \text{exit rate among those with nothing yet} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x]
+  \end{align*}
+  \begin{itemize}
+    \item $R_t$: the risk set, still unemployed and untreated at $t$.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Where the selection lives}
+  Selection = dependence of $V_Y$ and $V_S$ among those at risk:
+  \begin{align*}
+    \frac{\partial^2\log P_0}{\partial a\,\partial b} &= \cov(V_Y,V_S\mid R_t,x) && \why{quotient rule} \\
+    \frac{\partial\log h_Y}{\partial b} &= -\frac{\cov(V_Y,V_S\mid R_t,x)}{\E[V_Y\mid R_t,x]} && \why{hold $a$ fixed}
+  \end{align*}
+  \begin{itemize}
+    \item Raise treatment intensity, hold the exit index fixed. Those at risk are untreated, so no causal channel.
+    \item Any response of their exit rate is \textbf{pure selection}.
+  \end{itemize}
+  \textbf{Assumption 3:} $\{(\varphi_Y(x),\varphi_S(x))\}$ contains an open set of $\mathbb R^2$.
+  \begin{itemize}
+    \item E.g.\ $\varphi_j=e^{x'\beta_j}$, two covariates: direction $d=(\beta_{Y2},-\beta_{Y1})$ gives $d'\beta_Y=0$, $d'\beta_S\neq0$ iff $(\beta_Y\ \beta_S)$ full rank.
+    \item \textbf{vs.\ exclusion restriction:} no variable is excluded; a \emph{direction} is, and it is learned from data.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Tsiatis' problem and how covariates solve it}
+  \begin{columns}[T]
+    \begin{column}{0.42\textwidth}
+      \begin{itemize}
+        \item The surface $\Lap(a,b)$ = Pr(nothing yet) at indices $(a,b)$. Selection lives in its shape.
+        \item Each (group $x$, duration $t$) gives its height $P_0(t\mid x)$ at one location.
+        \item \textbf{No covariates:} locations lie on one curve $t\mapsto(\Lambda_Y(t),\Lambda_S(t))$. Cannot pin down a surface.
+        \item \textbf{Covariates (Assn.~3):} locations fill a 2-D patch $\Rightarrow$ surface $\Rightarrow$ $G$.
+      \end{itemize}
+      \medskip
+      \textbf{Three steps, as before:}
+      \begin{enumerate}
+        \item $h_Y,h_S$ ratios as $t\downarrow0$ $\Rightarrow$ $\varphi_Y,\varphi_S$
+        \item $P_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_S(x))$ $\Rightarrow$ $G$
+        \item solve for $\Lambda_Y(t),\Lambda_S(t)$
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.56\textwidth}
+      \includegraphics[width=\linewidth]{fig4_competing_risks_geometry.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Treatment effects}
+\begin{frame}{Adding the treatment effect \hfill {\small Abbring \& Van den Berg (2003)}}
+  \begin{itemize}
+    \item Potential outcomes indexed by treatment date: $Y^*(s)$, $s\in[0,\infty]$. Observed $Y=Y^*(S)$.
+    \item \textbf{No anticipation:} $\theta_{Y^*(s)}(t)=\theta_{Y^*(\infty)}(t)$ for $t<s$. The future date does not affect today's hazard.
+    \item \textbf{Selection on $(x,V)$:} $Y^*(\cdot)\perp S\mid(x,V)$.
+  \end{itemize}
+  \textbf{Model 1a}
+  \[ \theta_Y(t\mid s,x,V)=\lambda_Y(t)\varphi_Y(x)V_Y\cdot\delta(t\mid s,x)^{\mathbf 1\{t>s\}},\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S. \]
+  \begin{itemize}
+    \item $\delta$: the causal effect, a multiplier on the exit rate after treatment. May vary with $t$, $s$, $x$.
+    \item Before $S$: exactly the race. So $\varphi$'s, $\Lambda$'s and $G$ are identified.
+    \item After $S$: the treated cohort's survival $P_1(y\mid s)=\Pr(Y>y\mid S=s,Y>s)$ carries $\delta$.
+    \item Given $(x,V)$, the timing of $S$ is still pure luck: the instrument-like variation.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Who is treated at $s$? The selection factor}
+  \begin{align*}
+    dG_{R_s}(v) &\propto e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{Bayes: survivors at $s$} \\
+    dG_s(v) &\propto v_S\;dG_{R_s}(v) && \why{treated in $[s,s+ds)$ w.p.\ $\propto v_S$}
+  \end{align*}
+  Exit rate right after $s$, treated vs.\ not-yet-treated:
+  \begin{align*}
+    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\cdot\frac{\E_{G_s}[V_Y]}{\E_{R_s}[V_Y]} && \why{$\lambda_Y\varphi_Y$ cancel} \\
+    &= \delta(s\mid s,x)\cdot\Big(1+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}V_Y\;\E_{R_s}V_S}\Big) && \why{reweight by $v_S$}
+  \end{align*}
+  \begin{itemize}
+    \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
+    \item No dependence $\Rightarrow$ factor 1: timing as good as random.
+    \item The factor is a function of $\Lap$, known from the race $\Rightarrow$ $\delta$ identified.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{After the moment of treatment}
+  With $D(y\mid s,x):=\int_s^y\lambda_Y(\tau)\delta(\tau\mid s,x)\,d\tau$:
+  \begin{align*}
+    P_1(y\mid s,x) &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{LIE over the treated cohort} \\
+    &= \frac{\Lap_b\big(a_s+\varphi_Y(x)D,\ b_s\big)}{\Lap_b(a_s,b_s)} && \why{the paper's eq.\ (10)}
+  \end{align*}
+  \begin{itemize}
+    \item Left: data. Right: known except $D$. Decreasing in $D$ $\Rightarrow$ invert $\Rightarrow$ $\delta=\partial_yD/\lambda_Y$.
+    \item Two selection problems, both handled by knowing $G$:
+      \begin{enumerate}
+        \item \textbf{into} treatment at $s$: the $v_S$ tilt;
+        \item \textbf{out of} the treated cohort after $s$: its survivors drift to low $V_Y$, even with random timing.
+      \end{enumerate}
+  \end{itemize}
+  \bigskip
+  \centering
+  pre-treatment race $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $s$ $\Rightarrow$ $+\,P_1$ $\Rightarrow$ $\delta$
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{What is traded}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Not needed}
+      \begin{itemize}
+        \item an excluded instrument
+        \item selection on observables only
+        \item parametric forms
+      \end{itemize}
+      \medskip
+      \textbf{Needed}
+      \begin{itemize}
+        \item no anticipation (untestable)
+        \item time-invariant unobservables, $V\perp X$
+        \item proportional hazards (MPH)
+        \item non-proportional covariate variation
+        \item finite means; continuous time
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{The idea in one line}
+      \begin{itemize}
+        \item The treatment acts only \emph{after} $S$; unobserved types act throughout.
+        \item The excluded \emph{variable} becomes an excluded timing \emph{shock}.
+      \end{itemize}
+      \medskip
+      \textbf{Caveats}
+      \begin{itemize}
+        \item Identification leans on short durations.
+        \item Discrete data blur the timing.
+        \item $\delta$ is a hazard ratio given $V$, not a population effect.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Connections}
+  \textbf{Staggered-adoption DiD}
+  \begin{itemize}
+    \item $Y^*(s)\leftrightarrow Y_t(g)$; the same no-anticipation assumption; risk set $\leftrightarrow$ not-yet-treated.
+    \item Difference: an absorbing exit changes who remains, so parallel trends in hazards fails even with random timing.
+  \end{itemize}
+  \textbf{Sequential exogeneity and feedback}
+  \begin{itemize}
+    \item A hazard is an intensity given the past: a continuous-time sequential moment condition.
+    \item Single spell: treatment may depend on permanent $V$, not on transitory shocks.
+  \end{itemize}
+  \textbf{State dependence vs.\ permanent heterogeneity}
+  \begin{itemize}
+    \item $\lambda$ (duration dependence), $G$ (heterogeneity), $\delta$ (intervention): the framework separates all three.
+    \item Multiple spells identify more, but assume no causal links across spells.
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\appendix
+\begin{frame}{Backup: any $G$ fits one survival curve}
+  Data $\bar S$. Pick any $\tilde G$ with $\Pr(\tilde V=0)=0$; we need $\Lap_{\tilde G}(\tilde\Lambda(y))=\bar S(y)$ for all $y$.
+  \begin{align*}
+    \tilde\Lambda(y) &= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{$\Lap_{\tilde G}:[0,\infty)\to(0,1]$ strictly decreasing, onto} \\
+    \tilde\Lambda(0) &= 0,\quad \tilde\Lambda\ \text{increasing} && \why{$\bar S(0)=1$; composition of decreasing maps} \\
+    \bar\theta(y) &= \tilde\lambda(y)\,\tilde\E[V\mid Y>y] && \why{differentiate $-\log$ of the fit}
+  \end{align*}
+  \begin{itemize}
+    \item One equation in one unknown number $\tilde\Lambda(y)$ at each $y$: always solvable.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Backup: local vs.\ global dependence}
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig3_local_vs_global.png}
+
+  \raggedright\small
+  Left: causal effect, no selection; exits bunch right after treatment at every $S$. Right: no effect, pure selection; $S$ and $Y$ correlated overall.
+\end{frame}
+
 \end{document}
+
