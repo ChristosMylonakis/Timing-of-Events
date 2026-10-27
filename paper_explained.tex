@@ -130,21 +130,6 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
   \item $\theta$ decreasing in $y$: \textbf{negative duration dependence}. Increasing: \textbf{positive}.
 \end{itemize}
 
-\subsection{Writing $Y$ as a function of a standard random variable}
-\whynow{the paper defines potential outcomes this way (Section 5), and it shows that treatment timing contains pure chance (Section 7).}
-Assume $\theta>0$, so $\Theta$ is strictly increasing and invertible. Define $E := \Theta(Y)$. For $e\ge0$:
-\begin{align}
-  \Pr(E > e) &= \Pr\big(\Theta(Y) > e\big) && \why{definition of $E$} \nonumber\\
-  &= \Pr\big(Y > \Theta^{-1}(e)\big) && \why{apply $\Theta^{-1}$, strictly increasing} \nonumber\\
-  &= S\big(\Theta^{-1}(e)\big) && \why{definition of $S$} \nonumber\\
-  &= e^{-\Theta(\Theta^{-1}(e))} = e^{-e} && \why{by \eqref{eq:survival}} \nonumber\\[2pt]
-  \Longrightarrow\quad Y &= \Theta^{-1}(E), \qquad E\sim\text{Exp}(1) && \why{invert the definition of $E$} \label{eq:representation}
-\end{align}
-\begin{itemize}
-  \item $E\sim\text{Exp}(1)$ \emph{whatever} $\theta$ is.
-  \item Same idea as $F(Y)\sim U(0,1)$: indeed $E=-\log S(Y)$.
-  \item $Y$ = model part $\Theta$ applied to a standard random part $E$. Used in Sections 5 and 7.
-\end{itemize}
 \takeaway{with one homogeneous population, the hazard is directly read from data via $\theta=f/S$. Next: what if people differ in ways we do not observe?}
 
 % =====================================================================
@@ -527,7 +512,7 @@ Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
 \begin{itemize}
   \item Treatment = benefits reduction at date $s\in[0,\infty]$; $s=\infty$: never.
   \item One potential outcome per date: $Y^*(s)$, with hazard $\theta_{Y^*(s)}$, integrated hazard $\Theta_{Y^*(s)}$.
-  \item By \eqref{eq:representation}: $Y^*(s)=\Theta_{Y^*(s)}^{-1}(E)$, $E\sim\text{Exp}(1)$.
+  \item Each $Y^*(s)$ is fully described by its hazard, so ``the effect of $s$'' = how the hazard changes with $s$.
   \item Actual treatment date $S$; observed outcome $Y=Y^*(S)$.
 \end{itemize}
 
@@ -613,14 +598,33 @@ Take $s'=\infty$ and differentiate in $y$:
   &= \varphi_Y(x)V_Y\big[\Lambda_Y(s)+D(y\mid s,x)\big] \quad (y>s) && \why{linearity of the integral} \label{eq:ThetaY}
 \end{align}
 
-\textbf{Treatment timing is random given $(x,V)$}
+\subsection*{Which part of the treatment time is pure chance?}
+\whynow{for causal inference we need variation in treatment that is unrelated to the outcome. In IV it comes from an excluded variable; here there is none. So: given $(x,V)$, is anything left in $S$ that is pure luck?}
+
+\textbf{Trick:} transform $S$ by its own integrated hazard, $E_S := \Theta_S(S\mid x,V) = \varphi_S(x)V_S\Lambda_S(S)$. Fix $(x,V)$; for $e\ge0$:
 \begin{align}
-  E_S := \Theta_S(S\mid x,V) = \varphi_S(x)V_S\Lambda_S(S)\ \sim\ \text{Exp}(1),\ \ E_S\perp(x,V) && \why{by \eqref{eq:representation}, conditional on $(x,V)$} \nonumber\\
-  \Longrightarrow\quad S = \Lambda_S^{-1}\!\Big(\frac{E_S}{\varphi_S(x)V_S}\Big) && \why{invert} \nonumber
+  \Pr(E_S>e\mid x,V) &= \Pr\big(\Theta_S(S\mid x,V)>e\mid x,V\big) && \why{definition of $E_S$} \nonumber\\
+  &= \Pr\big(S>\Theta_S^{-1}(e\mid x,V)\mid x,V\big) && \why{$\Theta_S$ strictly increasing in $S$} \nonumber\\
+  &= \exp\!\big(-\Theta_S(\Theta_S^{-1}(e\mid x,V)\mid x,V)\big) && \why{\eqref{eq:survival}, conditional on $(x,V)$} \nonumber\\
+  &= e^{-e} && \why{$\Theta_S(\Theta_S^{-1}(e))=e$} \nonumber
 \end{align}
 \begin{itemize}
-  \item $E_S$ moves $S$ around without entering $Y$'s hazard (Assumption 2).
-  \item Like an instrument, except that what is excluded is an unobserved \textbf{shock}, not an observed variable.
+  \item The right side does not depend on $(x,V)$. So $E_S\sim\text{Exp}(1)$ and $E_S\perp(x,V)$.
+  \item (Same as $F(S)\sim U(0,1)$ for any continuous $S$: indeed $E_S=-\log\Pr(S>s\mid x,V)\big|_{s=S}$.)
+\end{itemize}
+Invert the definition of $E_S$:
+\begin{align}
+  S = \Lambda_S^{-1}\!\Big(\frac{E_S}{\varphi_S(x)\,V_S}\Big) && \why{solve $\varphi_SV_S\Lambda_S(S)=E_S$ for $S$} \nonumber
+\end{align}
+\begin{itemize}
+  \item The treatment time splits into a \textbf{systematic part} $(x,V_S)$ and \textbf{pure luck} $E_S$.
+  \item $V_S$ is the source of selection (it may be correlated with $V_Y$).
+  \item $E_S$ moves $S$ around, and by Assumption 2 it does not enter $Y$'s hazard.
+    \begin{itemize}
+      \item It plays the role of an instrument. But what is excluded is an unobserved \textbf{shock}, not an observed variable.
+      \item This is the paper's footnote 15: in each instant, treatment is a coin flip with probability $\theta_S\,dt$ (Section 1.3).
+    \end{itemize}
+  \item Contrast with a static threshold model $D=\1\{\mu(x)>U\}$: given $(x,U)$, $D$ is deterministic, so no luck is left.
 \end{itemize}
 \takeaway{the model has a random component in timing (like an instrument) and selection through $V$ (to be learned from the race). Next: show $\delta$ is identified.}
 
