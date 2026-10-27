@@ -63,6 +63,10 @@ def fig_dynamic_selection():
     ax[1].legend(frameon=False, fontsize=8, loc="lower left")
     fig.tight_layout()
     fig.savefig(OUT / "fig1_dynamic_selection.png", dpi=200)
+    # single panels for slides
+    for i, name in enumerate(["fig1a_population_hazard.png", "fig1b_same_data.png"]):
+        extent = ax[i].get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
+        fig.savefig(OUT / name, dpi=200, bbox_inches=extent.expanded(1.03, 1.03))
     plt.close(fig)
 
 
