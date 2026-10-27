@@ -363,10 +363,14 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 \end{align}
 \begin{itemize}
   \item \textbf{No heterogeneity:} $m$ is constant, so the ratio is $\varphi_1/\varphi_2$ at every $y$.
-  \item \textbf{Heterogeneity} ($\var V>0$): $m$ is strictly decreasing. For $y>0$, $\varphi_1\Lambda(y)>\varphi_2\Lambda(y)$, so
+  \item \textbf{Heterogeneity} ($\var V>0$): $m$ is strictly decreasing. For $y>0$:
     \begin{align}
-      \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} < \frac{\varphi_1}{\varphi_2}\ \ (y>0), \qquad =\frac{\varphi_1}{\varphi_2}\ \ (y=0). \nonumber
+      \varphi_1\Lambda(y) &> \varphi_2\Lambda(y) && \why{$\varphi_1>\varphi_2$, $\Lambda(y)>0$} \nonumber\\
+      m\big(\varphi_1\Lambda(y)\big) &< m\big(\varphi_2\Lambda(y)\big) && \why{$m$ strictly decreasing} \nonumber\\
+      \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} = \frac{\varphi_1}{\varphi_2}\cdot\underbrace{\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))}}_{<1} &< \frac{\varphi_1}{\varphi_2} && \why{\eqref{eq:ratio}} \nonumber
     \end{align}
+    At $y=0$: $\Lambda(0)=0$, so the second factor is $m(0)/m(0)=1$ and the ratio is $\varphi_1/\varphi_2$.
+  \item The sign of $\theta(y\mid x_1)/\theta(y\mid x_2)-1$ is \emph{not} pinned down: with strong heterogeneity the ratio can fall below 1 (hazards cross). What we know, and what identification uses, is the drift \emph{below} $\varphi_1/\varphi_2$.
   \item Why: at the same duration, the high-$\varphi$ group is \emph{further along the index}. Its high-$V$ members have left faster, so its selection is more advanced.
   \item Duration dependence $\lambda(y)$ hits both groups equally and cancels in \eqref{eq:ratio}. Sorting does not cancel.
     \begin{itemize}
