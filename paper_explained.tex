@@ -569,6 +569,28 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
     \end{itemize}
   \item With covariates moving $\varphi_Y$ and $\varphi_S$ separately: points $(a_t(x),b_t(x))$ fill \textbf{open sets}.
 \end{itemize}
+\textbf{How to read the figure}
+\begin{itemize}
+  \item A point is a \emph{location} $(a,b)$: exit index $a$ and treatment index $b$.
+  \item Over each location sits the number $\Lap(a,b)$: the probability that \emph{nothing has happened yet} (no job, no reduction) at those index values. Think of it as a height, a third dimension not drawn.
+  \item The shape of this surface is the unknown; the dependence of $V_Y,V_S$ (selection) lives in it.
+  \item Each plotted point is one group $x$ at one duration $t$:
+    \begin{itemize}
+      \item location: $\big(\varphi_Y(x)\Lambda_Y(t),\ \varphi_S(x)\Lambda_S(t)\big)$, from model pieces identified in Section 4.6 (steps 1 and 3);
+      \item height: $P_0(t\mid x)$, the share of group $x$ with neither event by $t$. This is \textbf{estimated from data}.
+    \end{itemize}
+  \item So at plotted locations the height is known; elsewhere it is not. Laplace properties (analyticity, uniqueness) are what extend the known heights to the whole surface and then to $G$.
+  \item Left (one group): as $t$ grows, the location moves along one path $t\mapsto(\Lambda_Y(t),\Lambda_S(t))$.
+    \begin{itemize}
+      \item A straight line if $\Lambda_S\propto\Lambda_Y$; a curve otherwise. Here $\Lambda_Y(t)=t$, $\Lambda_S(t)=t^{1.6}$, for illustration.
+      \item Either way it is \textbf{one-dimensional}: heights along one path cannot pin down a surface.
+    \end{itemize}
+  \item Right (many groups): at a fixed $t$ (one colour), groups spread over a \textbf{two-dimensional patch} because $x$ moves the two indices differently (Assumption 3).
+    \begin{itemize}
+      \item Heights on a patch pin down the whole surface (analyticity).
+      \item Dotted line: the left panel's path.
+    \end{itemize}
+\end{itemize}
 \begin{center}
   \includegraphics[width=0.85\textwidth]{fig4_competing_risks_geometry.png}
 \end{center}
