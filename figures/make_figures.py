@@ -18,21 +18,49 @@ plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.rig
 # because the high-hazard type leaves first.
 # ---------------------------------------------------------------------------
 def fig_dynamic_selection():
-    t = np.linspace(0, 6, 400)
+    y = np.linspace(0, 6, 400)
     v_lo, v_hi, p_hi = 0.3, 1.5, 0.5
-    surv_lo, surv_hi = np.exp(-v_lo * t), np.exp(-v_hi * t)
+    surv_lo, surv_hi = np.exp(-v_lo * y), np.exp(-v_hi * y)
     share_hi = p_hi * surv_hi / (p_hi * surv_hi + (1 - p_hi) * surv_lo)
     pop_hazard = share_hi * v_hi + (1 - share_hi) * v_lo
+    pop_surv = p_hi * surv_hi + (1 - p_hi) * surv_lo
+
+    # Right panel: the same observed survival is fitted exactly by ANY type
+    # distribution G, with baseline Lambda_G = L_G^{-1}(S_bar). Each G (all with
+    # E[V] = 1) implies a different baseline hazard lambda_G(y).
+    def two_type_laplace(a, v1, v2):
+        return 0.5 * np.exp(-a * v1) + 0.5 * np.exp(-a * v2)
+
+    def invert(L, target, hi=200.0):
+        lo, up = np.zeros_like(target), np.full_like(target, hi)
+        for _ in range(200):
+            mid = 0.5 * (lo + up)
+            too_high = L(mid) > target  # L decreasing: need larger a
+            lo = np.where(too_high, mid, lo)
+            up = np.where(too_high, up, mid)
+        return 0.5 * (lo + up)
+
+    m = 0.5 * (v_lo + v_hi)
+    specs = [
+        ("no heterogeneity: all duration dependence", lambda a: np.exp(-a), "tab:gray"),
+        ("some heterogeneity", lambda a: two_type_laplace(a, 0.6, 1.4), "tab:purple"),
+        ("strong heterogeneity: no duration dependence",
+         lambda a: two_type_laplace(a, v_lo / m, v_hi / m), "tab:green"),
+    ]
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
-    ax[0].plot(t, np.full_like(t, v_hi), "--", color="tab:red", label="high type: hazard 1.5")
-    ax[0].plot(t, np.full_like(t, v_lo), "--", color="tab:blue", label="low type: hazard 0.3")
-    ax[0].plot(t, pop_hazard, color="black", lw=2.5, label="hazard we observe in the population")
-    ax[0].set(xlabel="elapsed duration t", ylabel="hazard rate", title="Individual vs. population hazard")
+    ax[0].plot(y, np.full_like(y, v_hi), "--", color="tab:red", label="high type: hazard 1.5")
+    ax[0].plot(y, np.full_like(y, v_lo), "--", color="tab:blue", label="low type: hazard 0.3")
+    ax[0].plot(y, pop_hazard, color="black", lw=2.5, label="hazard we observe in the population")
+    ax[0].set(xlabel="elapsed duration y", ylabel="hazard rate", title="Individual vs. population hazard")
     ax[0].legend(frameon=False, fontsize=9)
-    ax[1].plot(t, share_hi, color="tab:red", lw=2.5)
-    ax[1].set(xlabel="elapsed duration t", ylabel="share", ylim=(0, 1),
-              title="Share of high types among survivors")
+    for label, L, c in specs:
+        Lam = invert(L, pop_surv)
+        lam = np.gradient(Lam, y)
+        ax[1].plot(y[1:], lam[1:], color=c, lw=2, label=label)
+    ax[1].set(xlabel="elapsed duration y", ylabel=r"implied baseline $\lambda(y)$", ylim=(0, 1.1),
+              title="Same data, different stories")
+    ax[1].legend(frameon=False, fontsize=8, loc="lower left")
     fig.tight_layout()
     fig.savefig(OUT / "fig1_dynamic_selection.png", dpi=200)
     plt.close(fig)

@@ -189,6 +189,7 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
       \item $dG(v\mid Y>y)=\Pr(\text{type }v\mid\text{still there})$: given survival, the chance of the type.
     \end{itemize}
   \item New share = old share $dG(v)$ $\times$ survival $S(y\mid v)$, renormalized.
+  \item Bayes reading: prior $dG(v)$ (type mix at entry), likelihood $S(y\mid v)$ of the event ``still unemployed'', posterior $dG(v\mid Y>y)$. Staying unemployed is evidence of a low $v$.
   \item $V$ is unobserved, so this cannot be counted in data; it follows from $G$ and $\Lambda$ once identified (Section 3).
   \item Example ($\lambda=1$, types $0.3$ and $1.5$, half each, $y=2$): $S(2\mid v)\approx(0.55,\,0.05)$, so the shares become $\approx(0.92,\,0.08)$.
 \end{itemize}
@@ -228,19 +229,6 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
       \item Always exists, since $V\ge0$ gives $0<e^{-aV}\le1$.
     \end{itemize}
 \end{itemize}
-
-\textbf{Examples}
-
-Two types: $v_1$ with probability $p$, $v_2$ with probability $1-p$:
-\begin{align}
-  \Lap(a) &= p\,e^{-av_1}+(1-p)\,e^{-av_2} && \why{expectation of a discrete r.v.} \nonumber
-\end{align}
-Gamma with mean 1 and variance $1/k$:
-\begin{align}
-  \Lap(a) &= \int_0^\infty e^{-av}\,\frac{k^kv^{k-1}e^{-kv}}{\Gamma(k)}\,dv && \why{definition \eqref{eq:laplace}} \nonumber\\
-  &= \frac{k^k}{(k+a)^k}\int_0^\infty \frac{(k+a)^kv^{k-1}e^{-(k+a)v}}{\Gamma(k)}\,dv && \why{multiply and divide by $(k+a)^k$} \nonumber\\
-  &= \Big(1+\frac{a}{k}\Big)^{-k} && \why{integrand is a Gamma$(k,k+a)$ density} \nonumber
-\end{align}
 
 \textbf{Properties}
 \begin{align}
@@ -284,52 +272,33 @@ Two facts we state without proof:
   \item People still unemployed at month 6 are a selected group. Every comparison made at month 6 inherits this.
 \end{itemize}
 
-\subsection{Deeper look: staying unemployed is evidence about your type}
-\whynow{\eqref{eq:survivortypes} is Bayes' rule. Reading it as learning about one person's type makes dynamic selection intuitive.}
-\begin{itemize}
-  \item Prior: $\Pr(V=v)$, the type mix at entry into unemployment (before we know anything about the person).
-  \item Information: the person is still unemployed at $y$.
-  \item Likelihood of that information given type $v$: $S(y\mid v)$. (A probability of an event, not a density.)
-  \item Posterior $\propto$ prior $\times$ likelihood: exactly \eqref{eq:survivortypes}.
-  \item The longer someone stays, the more the evidence points to a low $v$.
-\end{itemize}
-Gamma example (prior Gamma$(k,k)$, mean 1, variance $1/k$):
-\begin{align}
-  dG(v\mid Y>y) &\propto v^{k-1}e^{-kv}\cdot e^{-\Lambda(y)v} && \why{prior $\times$ likelihood} \nonumber\\
-  &= v^{k-1}e^{-(k+\Lambda(y))v} && \why{collect exponents} \nonumber\\
-  \Longrightarrow\ V\mid Y>y &\sim \text{Gamma}\big(k,\ k+\Lambda(y)\big) && \why{recognize the kernel} \nonumber\\
-  \E[V\mid Y>y] &= \frac{k}{k+\Lambda(y)} = \frac{1}{1+\Lambda(y)/k} && \why{mean of Gamma$(k,r)$ is $k/r$} \label{eq:gammapost}
-\end{align}
-\begin{itemize}
-  \item Falls from 1 toward 0 as $\Lambda(y)$ grows.
-  \item Falls faster when $1/k$ (the variance of $V$) is larger: \textbf{more heterogeneity, more selection}.
-  \item No heterogeneity ($k\to\infty$): $\E[V\mid Y>y]=1$ for all $y$, so no selection.
-\end{itemize}
+\subsection{Sorting and duration dependence cannot be separated}
+\whynow{by \eqref{eq:dynsel} the observed hazard is $\lambda(y)\cdot\E[V\mid Y>y]$: duration dependence times sorting. Can data on $Y$ split the two? No: \emph{every} type distribution fits the data exactly.}
 
-\subsection{Deeper look: two worlds that produce identical data}
-\whynow{show that the confusion between ``trap'' and ``sorting'' is not just possible but \emph{exact}. This is why Section 3 needs extra structure.}
-
-\textbf{World H (heterogeneity, no duration dependence):} $\lambda(y)=1$, $V\sim\text{Gamma}(k,k)$.
+\textbf{Claim.} Take the observed survival $\bar S(y)$ (continuous, strictly decreasing from 1 to 0) and \emph{any} $G$ with $\Pr(V=0)=0$. Define
 \begin{align}
-  \bar S_H(y) &= \Lap(\Lambda(y)) = \Lap(y) && \why{$\bar S=\Lap(\Lambda)$; $\Lambda(y)=y$} \nonumber\\
-  &= (1+y/k)^{-k} && \why{Gamma Laplace transform, Section 2.3} \nonumber\\
-  \bar\theta_H(y) &= -\frac{d}{dy}\log\bar S_H(y) = \frac{1}{1+y/k} && \why{\eqref{eq:hazard}; derivative of $k\log(1+y/k)$} \nonumber
+  \Lambda_G(y) := \Lap_G^{-1}\big(\bar S(y)\big). \nonumber
 \end{align}
-\textbf{World D (duration dependence, no heterogeneity):} $V\equiv1$, $\lambda_D(y)=\frac{1}{1+y/k}$.
+Then the model $(\lambda_G=\Lambda_G',\,G)$ reproduces the data exactly.
 \begin{align}
-  \Theta_D(y) &= \int_0^y\frac{du}{1+u/k} = k\log(1+y/k) && \why{antiderivative} \nonumber\\
-  S_D(y) &= e^{-k\log(1+y/k)} = (1+y/k)^{-k} = \bar S_H(y) && \why{\eqref{eq:survival}} \nonumber
+  \Lap_G &: [0,\infty)\to(0,1] \text{ strictly decreasing, onto} && \why{$\Lap(0)=1$, $\Lap'<0$, $\Lap(\infty)=\Pr(V=0)=0$} \nonumber\\
+  \Lambda_G(0) &= \Lap_G^{-1}(1)=0, \quad \Lambda_G \text{ increasing} && \why{$\bar S(0)=1$; composition of two decreasing functions} \nonumber\\
+  \Lap_G\big(\Lambda_G(y)\big) &= \Lap_G\big(\Lap_G^{-1}(\bar S(y))\big)=\bar S(y) && \why{definition of the inverse} \nonumber
+\end{align}
+In hazard terms, each $G$ implies its own baseline:
+\begin{align}
+  \lambda_G(y) = \frac{\bar\theta(y)}{\E_G[V\mid Y>y]} && \why{rearrange \eqref{eq:dynsel}} \nonumber
 \end{align}
 \begin{itemize}
-  \item World H: every individual has a \emph{constant} hazard; the fall is pure sorting.
-  \item World D: everyone is identical, and the fall is a true \emph{trap}.
-  \item Same distribution of $Y$. Data on one duration cannot tell them apart.
+  \item Every $G$ fits: from no heterogeneity ($V\equiv1$, so $\lambda=\bar\theta$: the whole decline is duration dependence) to strong heterogeneity.
+  \item The faster the assumed sorting $\E_G[V\mid Y>y]$ falls, the less of the decline is left for $\lambda$.
+  \item So with one duration, \textbf{trap vs.\ sorting is not identified}. The split is a pure assumption.
 \end{itemize}
 
 \begin{center}
-  \includegraphics[width=0.85\textwidth]{fig1_dynamic_selection.png}
+  \includegraphics[width=0.9\textwidth]{fig1_dynamic_selection.png}
 \end{center}
-{\small Two types with constant hazards 0.3 and 1.5 (equal shares). The population hazard falls from 0.9 to 0.3.}
+{\small Left: two types with constant hazards 0.3 and 1.5 (equal shares); the observed hazard falls from 0.9 to 0.3. Right: the same observed survival, fitted exactly by three type distributions (all with $\E V=1$); each implies a different baseline $\lambda_G$.}
 
 \takeaway{the observed hazard mixes $\lambda$ (true duration dependence) and $G$ (who is left). Next: can data separate them? Only with structure, which is the MPH model.}
 
@@ -359,33 +328,28 @@ Gamma example (prior Gamma$(k,k)$, mean 1, variance $1/k$):
   \item $x$ and $y$ both move the index: this is what the three steps below exploit.
 \end{itemize}
 
-\subsection{Deeper look: why covariates reveal heterogeneity}
-\whynow{Section 2.6 showed one duration is not enough. Covariates break the tie, but \emph{how}? Answer: heterogeneity leaves a fingerprint on how covariate effects evolve with duration.}
+\subsection{Why covariates separate sorting from duration dependence}
+\whynow{in Section 2.5 any $G$ fit because $\Lambda$ could be tailored to the one survival curve. With covariates, \emph{one} $\Lambda$ and \emph{one} $\Lap$ must fit all groups at once: $S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$ for every $x$. Show what this buys.}
 
-Take the two worlds of Section 2.6 and add a covariate with $\varphi(x)$. Compare groups $x_1,x_2$ with $\varphi_1>\varphi_2$.
-
-\textbf{World D} (no heterogeneity): $\theta(y\mid x)=\lambda_D(y)\varphi(x)$, so
+Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1,x_2$ with $\varphi_1>\varphi_2$:
 \begin{align}
-  \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\quad\text{for all }y. && \why{$\lambda_D(y)$ cancels} \nonumber
-\end{align}
-\textbf{World H} (Gamma heterogeneity): $-\Lap'(a)/\Lap(a) = \frac{d}{da}\,k\log(1+a/k) = \frac{1}{1+a/k}$, so
-\begin{align}
-  \theta(y\mid x) &= \lambda(y)\,\varphi(x)\,\frac{1}{1+\varphi(x)\Lambda(y)/k} && \why{\eqref{eq:mphhazard}} \nonumber\\
-  \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{1+\varphi_2\Lambda(y)/k}{1+\varphi_1\Lambda(y)/k} && \why{divide; $\lambda(y)$ cancels} \nonumber\\
-  &\xrightarrow{\;y\downarrow0\;}\frac{\varphi_1}{\varphi_2}, \qquad \xrightarrow{\;y\to\infty\;} 1 && \why{$\Lambda(0)=0$; $\Lambda\to\infty$} \nonumber
+  \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m\big(\varphi_1\Lambda(y)\big)}{m\big(\varphi_2\Lambda(y)\big)} && \why{\eqref{eq:mphhazard}; $\lambda(y)$ cancels} \label{eq:ratio}\\
+  m'(a) &= -\var(V\mid\text{survived to }a) && \why{$m=-(\log\Lap)'$; $(\log\Lap)''=\var$, Section 2.4} \nonumber
 \end{align}
 \begin{itemize}
-  \item With heterogeneity, the covariate effect \textbf{fades} with duration.
+  \item \textbf{No heterogeneity:} $m$ is constant, so the ratio is $\varphi_1/\varphi_2$ at every $y$.
+  \item \textbf{Heterogeneity} ($\var V>0$): $m$ is strictly decreasing. For $y>0$, $\varphi_1\Lambda(y)>\varphi_2\Lambda(y)$, so
+    \begin{align}
+      \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} < \frac{\varphi_1}{\varphi_2}\ \ (y>0), \qquad =\frac{\varphi_1}{\varphi_2}\ \ (y=0). \nonumber
+    \end{align}
+  \item Why: at the same duration, the high-$\varphi$ group is \emph{further along the index}. Its high-$V$ members have left faster, so its selection is more advanced.
+  \item Duration dependence $\lambda(y)$ hits both groups equally and cancels in \eqref{eq:ratio}. Sorting does not cancel.
     \begin{itemize}
-      \item The high-$\varphi$ group loses its high-$V$ members faster, so its survivors become more negatively selected.
+      \item So the drift of the ratio away from $\varphi_1/\varphi_2$ measures sorting, separately from $\lambda$.
+      \item This is the separation that was impossible with one curve.
     \end{itemize}
-  \item Without heterogeneity it stays constant.
-  \item So the MPH assumption reads: \emph{absent selection, covariate effects would be constant over duration}.
-    \begin{itemize}
-      \item Any change in the ratio over duration is then attributed to selection, which identifies $G$.
-    \end{itemize}
-  \item Step 1 below reads the ``true'' ratio at $y\approx0$, before selection has acted.
-  \item Caveat: if true covariate effects vary with duration (non-proportional), this logic breaks.
+  \item The MPH assumption reads: \emph{absent selection, covariate effects would be constant over duration}.
+  \item Caveat: if true covariate effects vary with duration (non-proportional), drift is no longer evidence of sorting.
 \end{itemize}
 
 \subsection{Identification (Elbers \& Ridder 1982) in three steps}
