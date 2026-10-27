@@ -63,7 +63,7 @@
 
 % =====================================================================
 \section{One duration}
-\begin{frame}{One duration: hazard and survival}
+\begin{frame}[label=m-hazard]{One duration: hazard and survival}
   $Y\ge0$ continuous, $S(y):=\Pr(Y>y)$ survival, $f$ density.
   \begin{align*}
     \theta(y) &:= \lim_{dy\downarrow0}\frac{\Pr(y\le Y<y+dy\mid Y\ge y)}{dy} = \frac{f(y)}{S(y)} && \why{conditional probability} \\
@@ -79,11 +79,12 @@
         \item $\theta$ constant: none. $S(y)=e^{-cy}$, memoryless.
       \end{itemize}
   \end{itemize}
+  \vfill\hfill\hyperlink{p-hazard}{\beamergotobutton{Proof}}
 \end{frame}
 
 % =====================================================================
 \section{People differ}
-\begin{frame}{People differ: individual vs.\ population hazard}
+\begin{frame}[label=m-pop]{People differ: individual vs.\ population hazard}
   Unobserved type $V\ge0$, $V\sim G$. Assume
   \[ \theta(y\mid V)=\lambda(y)\,V, \qquad \lambda(y)=\theta(y\mid V=1),\qquad S(y\mid V)=e^{-\Lambda(y)V}. \]
   What we observe is the \textbf{population}:
@@ -95,10 +96,11 @@
     \item The ratio is an average of $V$, weighting each type by its survival $e^{-\Lambda(y)V}$.
     \item Next: it is the average type \textbf{among those still unemployed}.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-pop}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{Who is still unemployed?}
+\begin{frame}[label=m-bayes]{Who is still unemployed?}
   \begin{columns}[T]
     \begin{column}{0.56\textwidth}
       \small
@@ -120,10 +122,11 @@
       {\scriptsize Two types, constant hazards. Nobody's hazard falls; the observed one does.}
     \end{column}
   \end{columns}
+  \vfill\hfill\hyperlink{p-bayes}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{The Laplace transform: isolating the type distribution}
+\begin{frame}[label=m-lap]{The Laplace transform: isolating the type distribution}
   \[ \Lap(a):=\E\big[e^{-aV}\big], \qquad \bar S(y)=\Lap\big(\Lambda(y)\big). \]
   \begin{itemize}
     \item $\Lap$ depends only on $G$; $\Lambda$ only on duration dependence.
@@ -140,10 +143,11 @@
     \item \textbf{Analyticity:} $\Lap$ on any small interval $\Rightarrow$ $\Lap$ everywhere.
     \item Strategy: learn the index, learn $\Lap$ on an interval $\Rightarrow$ $G$.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-lap}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{Duration dependence or sorting? Not identified from one duration}
+\begin{frame}[label=m-nonid]{Duration dependence or sorting? Not identified from one duration}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
       \[ \bar\theta(y)=\underbrace{\lambda(y)}_{\text{duration dep.}}\cdot\underbrace{\E[V\mid Y>y]}_{\text{sorting}} \]
@@ -167,11 +171,12 @@
       {\scriptsize Same observed survival, three type distributions, three implied baselines.}
     \end{column}
   \end{columns}
+  \vfill\hfill\hyperlink{p-nonid}{\beamergotobutton{Proof}}
 \end{frame}
 
 % =====================================================================
 \section{Mixed proportional hazard}
-\begin{frame}{Covariates separate sorting from duration dependence}
+\begin{frame}[label=m-ratio]{Covariates separate sorting from duration dependence}
   \textbf{MPH model:} $\theta(y\mid x,V)=\lambda(y)\,\varphi(x)\,V$, \ $V\perp X$. Data: $S(y\mid x)$ for all $(y,x)$.
   \[ S(y\mid x)=\Lap\big(\varphi(x)\Lambda(y)\big): \quad \text{one } \Lap \text{ and one } \Lambda \text{ must fit \emph{all} groups.} \]
   Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$, decreasing. Compare $\varphi_1>\varphi_2$:
@@ -185,10 +190,11 @@
     \item So the \textbf{drift of the ratio below $\varphi_1/\varphi_2$ measures sorting}.
     \item MPH reads: \emph{absent sorting, covariate effects would be constant over duration}.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-ratio}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{MPH identification in three steps \hfill {\small Elbers \& Ridder (1982)}}
+\begin{frame}[label=m-er]{MPH identification in three steps \hfill {\small Elbers \& Ridder (1982)}}
   Normalize $\varphi(x^*)=1$, $\Lambda(y^*)=1$. Assume $\E V<\infty$ and variation in $\varphi(x)$.
   \begin{align*}
     \textbf{1. }\ \frac{\theta(y\mid x)}{\theta(y\mid x^*)} &\xrightarrow{\;y\downarrow0\;}\varphi(x) && \why{nobody sorted yet: $m(0)/m(0)=1$} \\[4pt]
@@ -200,6 +206,7 @@
     \item One duration with covariates reveals $\lambda$, $\varphi$ and $G$.
     \item Price: proportionality, $V\perp X$, $\E V<\infty$; identification leans on short durations.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-er}{\beamergotobutton{Proof}}
 \end{frame}
 
 % =====================================================================
@@ -228,7 +235,7 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{The race: model and data}
+\begin{frame}[label=m-race]{The race: model and data}
   \[ \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y,\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S,\qquad (V_Y,V_S)\sim G. \]
   \textbf{Assumption:} $Y\perp S\mid(x,V)$. All dependence runs through $(x,V)$.
   \begin{align*}
@@ -243,10 +250,11 @@
   \begin{itemize}
     \item $R_t$: the risk set, still unemployed and untreated at $t$.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-race}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{Where the selection lives}
+\begin{frame}[label=m-sel]{Where the selection lives}
   Selection = dependence of $V_Y$ and $V_S$ among those at risk:
   \begin{align*}
     \frac{\partial^2\log P_0}{\partial a\,\partial b} &= \cov(V_Y,V_S\mid R_t,x) && \why{quotient rule} \\
@@ -261,12 +269,14 @@
     \item E.g.\ $\varphi_j=e^{x'\beta_j}$, two covariates: direction $d=(\beta_{Y2},-\beta_{Y1})$ gives $d'\beta_Y=0$, $d'\beta_S\neq0$ iff $(\beta_Y\ \beta_S)$ full rank.
     \item \textbf{vs.\ exclusion restriction:} no variable is excluded; a \emph{direction} is, and it is learned from data.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-sel}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{Tsiatis' problem and how covariates solve it}
+\begin{frame}[label=m-ts]{Tsiatis' problem and how covariates solve it}
   \begin{columns}[T]
     \begin{column}{0.42\textwidth}
+      \small
       \begin{itemize}
         \item The surface $\Lap(a,b)$ = Pr(nothing yet) at indices $(a,b)$. Selection lives in its shape.
         \item Each (group $x$, duration $t$) gives its height $P_0(t\mid x)$ at one location.
@@ -285,11 +295,12 @@
       \includegraphics[width=\linewidth]{fig4_competing_risks_geometry.png}
     \end{column}
   \end{columns}
+  \vfill\hfill\hyperlink{p-ts}{\beamergotobutton{Proof}}
 \end{frame}
 
 % =====================================================================
 \section{Treatment effects}
-\begin{frame}{Adding the treatment effect \hfill {\small Abbring \& Van den Berg (2003)}}
+\begin{frame}[label=m-treat]{Adding the treatment effect \hfill {\small Abbring \& Van den Berg (2003)}}
   \begin{itemize}
     \item Potential outcomes indexed by treatment date: $Y^*(s)$, $s\in[0,\infty]$. Observed $Y=Y^*(S)$.
     \item \textbf{No anticipation:} $\theta_{Y^*(s)}(t)=\theta_{Y^*(\infty)}(t)$ for $t<s$. The future date does not affect today's hazard.
@@ -303,10 +314,11 @@
     \item After $S$: the treated cohort's survival $P_1(y\mid s)=\Pr(Y>y\mid S=s,Y>s)$ carries $\delta$.
     \item Given $(x,V)$, the timing of $S$ is still pure luck: the instrument-like variation.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-treat}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{Who is treated at $s$? The selection factor}
+\begin{frame}[label=m-sf]{Who is treated at $s$? The selection factor}
   \begin{align*}
     dG_{R_s}(v) &\propto e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{Bayes: survivors at $s$} \\
     dG_s(v) &\propto v_S\;dG_{R_s}(v) && \why{treated in $[s,s+ds)$ w.p.\ $\propto v_S$}
@@ -321,10 +333,11 @@
     \item No dependence $\Rightarrow$ factor 1: timing as good as random.
     \item The factor is a function of $\Lap$, known from the race $\Rightarrow$ $\delta$ identified.
   \end{itemize}
+  \vfill\hfill\hyperlink{p-sf}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{After the moment of treatment}
+\begin{frame}[label=m-p1]{After the moment of treatment}
   With $D(y\mid s,x):=\int_s^y\lambda_Y(\tau)\delta(\tau\mid s,x)\,d\tau$:
   \begin{align*}
     P_1(y\mid s,x) &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{LIE over the treated cohort} \\
@@ -341,6 +354,7 @@
   \bigskip
   \centering
   pre-treatment race $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $s$ $\Rightarrow$ $+\,P_1$ $\Rightarrow$ $\delta$
+  \vfill\hfill\hyperlink{p-p1}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
@@ -401,25 +415,238 @@
 
 % =====================================================================
 \appendix
-\begin{frame}{Backup: any $G$ fits one survival curve}
-  Data $\bar S$. Pick any $\tilde G$ with $\Pr(\tilde V=0)=0$; we need $\Lap_{\tilde G}(\tilde\Lambda(y))=\bar S(y)$ for all $y$.
+\newcommand{\back}[1]{\vfill\hfill\hyperlink{#1}{\beamerreturnbutton{Back}}}
+
+\begin{frame}[label=p-hazard]{Proof: hazard and survival}
   \begin{align*}
-    \tilde\Lambda(y) &= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{$\Lap_{\tilde G}:[0,\infty)\to(0,1]$ strictly decreasing, onto} \\
-    \tilde\Lambda(0) &= 0,\quad \tilde\Lambda\ \text{increasing} && \why{$\bar S(0)=1$; composition of decreasing maps} \\
-    \bar\theta(y) &= \tilde\lambda(y)\,\tilde\E[V\mid Y>y] && \why{differentiate $-\log$ of the fit}
+    \theta(y) &= \lim_{dy\downarrow0}\frac{\Pr(y\le Y<y+dy\mid Y\ge y)}{dy} && \why{definition} \\
+    &= \lim_{dy\downarrow0}\frac{\Pr(y\le Y<y+dy)}{dy\,\Pr(Y\ge y)} && \why{$\Pr(A\mid B)=\Pr(A\cap B)/\Pr(B)$} \\
+    &= \lim_{dy\downarrow0}\frac{F(y+dy)-F(y)}{dy}\cdot\frac{1}{S(y)} = \frac{f(y)}{S(y)} && \why{$Y$ continuous; $F'=f$} \\[4pt]
+    \Theta(y) &= \int_0^y\frac{f(u)}{S(u)}du = \int_0^y -\frac{S'(u)}{S(u)}du && \why{$S=1-F\Rightarrow S'=-f$} \\
+    &= -\big[\log S(u)\big]_0^y = -\log S(y) && \why{$(\log S)'=S'/S$; $S(0)=1$} \\
+    \Longrightarrow\ S(y) &= e^{-\Theta(y)}, \qquad f(y)=\theta(y)e^{-\Theta(y)} && \why{exponentiate; $f=\theta S$}
   \end{align*}
-  \begin{itemize}
-    \item One equation in one unknown number $\tilde\Lambda(y)$ at each $y$: always solvable.
-  \end{itemize}
+  Constant hazard $c$: $\Theta=cy$, and $\Pr(Y>y+u\mid Y>y)=S(y+u)/S(y)=e^{-cu}$, free of $y$.
+  \back{m-hazard}
 \end{frame}
 
-\begin{frame}{Backup: local vs.\ global dependence}
+\begin{frame}[label=p-pop]{Proof: population survival and hazard}
+  Model: $\theta(y\mid V)=\lambda(y)V$, so $\Theta(y\mid V)=\Lambda(y)V$ and $S(y\mid V)=e^{-\Lambda(y)V}$.
+  \begin{align*}
+    \bar S(y) &= \Pr(Y>y) = \E\big[\Pr(Y>y\mid V)\big] && \why{LIE} \\
+    &= \E\big[e^{-\Lambda(y)V}\big] && \why{$S=e^{-\Theta}$ for each type} \\
+    \bar f(y) &= -\bar S'(y) = \E\big[\lambda(y)Ve^{-\Lambda(y)V}\big] && \why{differentiate under $\E$; $\Lambda'=\lambda$} \\
+    \bar\theta(y) &= \frac{\bar f(y)}{\bar S(y)} = \lambda(y)\,\frac{\E\big[Ve^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{$\lambda(y)$ not random}
+  \end{align*}
+  \begin{itemize}
+    \item $\lambda(y)=\theta(y\mid V=1)$ needs a normalization: $(\lambda,V)$ and $(c\lambda,V/c)$ give the same hazard.
+  \end{itemize}
+  \back{m-pop}
+\end{frame}
+
+\begin{frame}[label=p-bayes]{Proof: types among survivors}
+  \begin{align*}
+    dG(v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,dG(v)}{\Pr(Y>y)} && \why{Bayes} \\
+    &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E\big[e^{-\Lambda(y)V}\big]} && \why{$S(y\mid v)$, $\bar S(y)$} \\[4pt]
+    \E[V\mid Y>y] &= \int v\,dG(v\mid Y>y) && \why{conditional mean} \\
+    &= \frac{\int v\,e^{-\Lambda(y)v}\,dG(v)}{\E\big[e^{-\Lambda(y)V}\big]} && \why{plug in; denominator constant in $v$} \\
+    &= \frac{\E\big[Ve^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{$\int h\,dG=\E[h(V)]$} \\
+    \Longrightarrow\ \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{same ratio as in $\bar\theta$}
+  \end{align*}
+  \back{m-bayes}
+\end{frame}
+
+\begin{frame}[label=p-lap]{Proof: Laplace transform properties}
+  \small
+  $\Lap(a)=\E[e^{-aV}]$; let $\E_w$ denote expectation under weights $\propto e^{-aV}$ (survivors at index $a$).
+  \begin{align*}
+    \Lap'(a) &= -\E\big[Ve^{-aV}\big],\qquad \Lap''(a)=\E\big[V^2e^{-aV}\big] && \why{differentiate under $\E$} \\
+    -\frac{\Lap'}{\Lap} &= \E_w[V] = \E[V\mid\text{survived to }a] && \why{as in the Bayes proof, $\Lambda=a$} \\
+    (\log\Lap)'' &= \frac{\Lap''}{\Lap}-\Big(\frac{\Lap'}{\Lap}\Big)^2 = \E_w[V^2]-\E_w[V]^2=\var_w(V) && \why{quotient rule} \\
+    \frac{d}{dy}\E[V\mid Y>y] &= \frac{d}{dy}\Big[-(\log\Lap)'\big(\Lambda(y)\big)\Big] && \why{$\E[V\mid Y>y]=-(\log\Lap)'(\Lambda(y))$} \\
+    &= -(\log\Lap)''\big(\Lambda(y)\big)\,\lambda(y) = -\lambda(y)\var(V\mid Y>y) && \why{chain rule}
+  \end{align*}
+  \hyperlink{p-lap2}{\beamergotobutton{Uniqueness and analyticity}}
+  \back{m-lap}
+\end{frame}
+
+\begin{frame}[label=p-lap2]{Proof: uniqueness and analyticity}
+  \textbf{Uniqueness.} A distribution on $[0,\infty)$ is determined by its Laplace transform (standard; e.g.\ Feller, Vol.\ II, XIII.1).
+  \begin{itemize}
+    \item Intuition: $(-1)^k\Lap^{(k)}(0)=\E[V^k]$; large $a$ isolates the lowest types.
+  \end{itemize}
+  \textbf{Analyticity.} Fix $a_0>0$ and $|h|<a_0$:
+  \begin{align*}
+    \Lap(a_0+h) &= \E\Big[e^{-a_0V}\sum_{k\ge0}\frac{(-hV)^k}{k!}\Big] && \why{Taylor series of $e^{-hV}$} \\
+    &= \sum_{k\ge0}\frac{(-h)^k}{k!}\E\big[V^ke^{-a_0V}\big] && \why{Fubini: $\E[e^{-(a_0-|h|)V}]<\infty$} \\
+    &= \sum_{k\ge0}\frac{\Lap^{(k)}(a_0)}{k!}\,h^k && \why{$\Lap^{(k)}(a_0)=(-1)^k\E[V^ke^{-a_0V}]$}
+  \end{align*}
+  \begin{itemize}
+    \item If $\Lap$ is known on an interval, all derivatives at an interior point are known, so $\Lap$ is known on a neighbourhood. Chain neighbourhoods across $(0,\infty)$.
+    \item Same in two dimensions, but an \emph{open set} of $\mathbb R^2$ is needed: a curve is not enough.
+  \end{itemize}
+  \back{p-lap}
+\end{frame}
+
+\begin{frame}[label=p-nonid]{Proof: any $G$ fits one survival curve}
+  Data $\bar S$, continuous and strictly decreasing from 1 to 0. Pick any $\tilde G$ with $\Pr(\tilde V=0)=0$. We need $\Lap_{\tilde G}(\tilde\Lambda(y))=\bar S(y)$ for all $y$.
+  \begin{align*}
+    \Lap_{\tilde G}&:[0,\infty)\to(0,1]\ \text{strictly decreasing, onto} && \why{$\Lap(0)=1$, $\Lap'<0$, $\Lap(\infty)=\Pr(\tilde V=0)=0$} \\
+    \tilde\Lambda(y) &:= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{one equation, one unknown, each $y$} \\
+    \tilde\Lambda(0) &= \Lap_{\tilde G}^{-1}(1)=0,\quad \tilde\Lambda\ \text{increasing} && \why{$\bar S(0)=1$; composition of decreasing maps} \\
+    \bar\theta(y) &= -\frac{d}{dy}\log\Lap_{\tilde G}\big(\tilde\Lambda(y)\big) = \tilde\lambda(y)\,\tilde\E[V\mid Y>y] && \why{chain rule; survivor mean}
+  \end{align*}
+  \begin{itemize}
+    \item So $\tilde\lambda=\bar\theta/\tilde\E[V\mid Y>y]$: whatever sorting $\tilde G$ implies, $\tilde\lambda$ absorbs the rest.
+  \end{itemize}
+  \back{m-nonid}
+\end{frame}
+
+\begin{frame}[label=p-ratio]{Proof: covariate effects drift under heterogeneity}
+  Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$.
+  \begin{align*}
+    \theta(y\mid x) &= -\partial_y\log\Lap\big(\varphi(x)\Lambda(y)\big) = \lambda(y)\varphi(x)\,m\big(\varphi(x)\Lambda(y)\big) && \why{chain rule} \\
+    \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))} && \why{$\lambda(y)$ cancels} \\
+    m'(a) &= -(\log\Lap)''(a) = -\var(V\mid\text{survived to }a) && \why{Laplace properties}
+  \end{align*}
+  \begin{itemize}
+    \item $V$ degenerate: $m$ constant, ratio $=\varphi_1/\varphi_2$ for all $y$.
+    \item $\var V>0$: $m$ strictly decreasing. For $y>0$, $\varphi_1\Lambda(y)>\varphi_2\Lambda(y)$ $\Rightarrow$ $m(\varphi_1\Lambda)<m(\varphi_2\Lambda)$ $\Rightarrow$ ratio $<\varphi_1/\varphi_2$.
+    \item $y=0$: $\Lambda(0)=0$, second factor $=m(0)/m(0)=1$.
+    \item The ratio can even fall below 1 (hazards cross); only the drift below $\varphi_1/\varphi_2$ is used.
+  \end{itemize}
+  \back{m-ratio}
+\end{frame}
+
+\begin{frame}[label=p-er]{Proof: MPH identification in three steps}
+  \textbf{Step 1.} With $\varphi(x^*)=1$:
+  \begin{align*}
+    \frac{\theta(y\mid x)}{\theta(y\mid x^*)} = \varphi(x)\,\frac{m(\varphi(x)\Lambda(y))}{m(\Lambda(y))} \xrightarrow{\;y\downarrow0\;} \varphi(x)\,\frac{m(0)}{m(0)}=\varphi(x) && \why{$\Lambda(y)\to0$; $m(0)=\E V<\infty$, continuity}
+  \end{align*}
+  \textbf{Step 2.} With $\Lambda(y^*)=1$:
+  \begin{align*}
+    S(y^*\mid x) = \Lap\big(\varphi(x)\big) && \why{$S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$}
+  \end{align*}
+  $\{\varphi(x)\}$ contains an interval $\Rightarrow$ $\Lap$ known there $\Rightarrow$ (analyticity) on $(0,\infty)$ $\Rightarrow$ (uniqueness) $G$.
+
+  \textbf{Step 3.}
+  \begin{align*}
+    \Lambda(y) = \Lap^{-1}\big(S(y\mid x)\big)\big/\varphi(x), \qquad \lambda=\Lambda' && \why{$\Lap$ continuous, strictly decreasing}
+  \end{align*}
+  \back{m-er}
+\end{frame}
+
+\begin{frame}[label=p-race]{Proof: the race}
+  \small
+  \begin{align*}
+    \Pr(Y>y,S>s\mid x) &= \E\big[\Pr(Y>y,S>s\mid x,V)\big] && \why{LIE; $V\perp X$} \\
+    &= \E\big[\Pr(Y>y\mid x,V)\Pr(S>s\mid x,V)\big] && \why{$Y\perp S\mid(x,V)$} \\
+    &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_S\Lambda_S(s)V_S}\big] && \why{$S=e^{-\Theta}$ each} \\
+    &= \Lap\big(\varphi_Y\Lambda_Y(y),\varphi_S\Lambda_S(s)\big) && \why{definition of $\Lap$}
+  \end{align*}
+  $P_0(t\mid x)$: set $y=s=t$. Cause-specific hazard:
+  \begin{align*}
+    h_Y(t\mid x) &= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\,S>t\mid x)}{dt\,P_0(t\mid x)} && \why{definition} \\
+    &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{P_0(t\mid x)} && \why{derivative of a survival} \\
+    &= \lambda_Y(t)\varphi_Y(x)\,\frac{-\Lap_a(a_t,b_t)}{\Lap(a_t,b_t)} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{chain rule; survivor mean}
+  \end{align*}
+  \back{m-race}
+\end{frame}
+
+\begin{frame}[label=p-sel]{Proof: where the selection lives}
+  Weights $w\propto e^{-aV_Y-bV_S}$ (those at risk), $\E_w$ the corresponding expectation.
+  \begin{align*}
+    \partial_a\log\Lap &= \Lap_a/\Lap = -\E_w[V_Y] && \why{differentiate under $\E$} \\
+    \partial_b\partial_a\log\Lap &= \frac{\Lap_{ab}}{\Lap}-\frac{\Lap_a\Lap_b}{\Lap^2} = \E_w[V_YV_S]-\E_w[V_Y]\E_w[V_S] && \why{quotient rule} \\
+    &= \cov_w(V_Y,V_S) && \why{definition} \\
+    \partial_b\log h_Y &= \partial_b\log\E_w[V_Y] = \frac{-\cov_w(V_Y,V_S)}{\E_w[V_Y]} && \why{$h_Y=\lambda_Y\varphi_Y\E_w[V_Y]$; same quotient rule}
+  \end{align*}
+  Direction example, $\varphi_j=e^{x'\beta_j}$, $d=(\beta_{Y2},-\beta_{Y1})$:
+  \begin{align*}
+    d'\beta_Y = \beta_{Y2}\beta_{Y1}-\beta_{Y1}\beta_{Y2}=0, \qquad d'\beta_S=\beta_{Y2}\beta_{S1}-\beta_{Y1}\beta_{S2}\neq0 && \why{iff $(\beta_Y\ \beta_S)$ full rank}
+  \end{align*}
+  \back{m-sel}
+\end{frame}
+
+\begin{frame}[label=p-ts]{Proof: identification of the race (Prop.~2)}
+  \small
+  \textbf{Step 1.} $\dfrac{h_Y(t\mid x)}{h_Y(t\mid x^*)}=\varphi_Y(x)\dfrac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]}\xrightarrow{t\downarrow0}\varphi_Y(x)$ \why{$R_t\to$ population; $V\perp X$; $\E V_Y<\infty$}. Same for $\varphi_S$.
+
+  \medskip
+  \textbf{Step 2.} $P_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_S(x))$. Assn.~3: an open set $\Rightarrow$ $\Lap$ on $(0,\infty)^2$ $\Rightarrow$ $G$.
+
+  \medskip
+  \textbf{Step 3.} Suppose $(a,b)\neq(a',b')$ both satisfy $P_0(t\mid x)=\Lap(\varphi_Y(x)a,\varphi_S(x)b)$ for all $x$.
+  \begin{align*}
+    \Lap(pa,qb) &= \Lap(pa',qb') \text{ on an open set of }(p,q) && \why{Assn.~3} \\
+    \Lap(u,v) &= \Lap(ku,mv)\ \ \forall(u,v),\quad k=a'/a,\ m=b'/b && \why{analyticity}
+  \end{align*}
+  \begin{itemize}
+    \item $k,m\ge1$ (or both $\le1$), not both 1: contradicts strict monotonicity of $\Lap$.
+    \item $k>1>m$: $\Lap(u,v)=\Lap(k^nu,m^nv)\to\Pr(V_Y=0)$ (dominated convergence), so $\Lap$ is constant: contradiction. $k<1<m$: symmetric.
+  \end{itemize}
+  Steps are a reconstruction; the paper cites Abbring \& Van den Berg (2003, JRSSB).
+  \back{m-ts}
+\end{frame}
+
+\begin{frame}[label=p-treat]{Proof: no anticipation, data, timing luck}
+  \small
+  \textbf{No anticipation} $\Theta_{Y^*(s)}(y)=\Theta_{Y^*(s')}(y)$, $y\le\min\{s,s'\}$. Take $s'=\infty$, differentiate in $y$: $\theta_{Y^*(s)}(y)=\theta_{Y^*(\infty)}(y)$ for $y<s$.
+
+  \medskip
+  \textbf{Data} $Q_S(y,s)=\Pr(Y>y,S>s,Y>S)$, $Q_Y(y)=\Pr(Y>y,Y<S)$:
+  \begin{align*}
+    P_0(t) &= Q_S(t,t)+Q_Y(t) && \why{partition by $Y\gtrless S$; $\Pr(Y=S)=0$} \\
+    h_Y(t) &= -Q_Y'(t)/P_0(t) && \why{density of untreated exits} \\
+    P_1(y\mid s) &= \partial_sQ_S(y,s)\big/\lim_{y'\downarrow s}\partial_sQ_S(y',s) && \why{$-\partial_sQ_S$: density of $S=s$ with $Y>y$}
+  \end{align*}
+  \textbf{Timing luck} $E_S:=\Theta_S(S\mid x,V)=\varphi_S(x)V_S\Lambda_S(S)$:
+  \begin{align*}
+    \Pr(E_S>e\mid x,V) &= \Pr\big(S>\Theta_S^{-1}(e)\mid x,V\big) = e^{-e} && \why{$\Theta_S$ increasing; $S=e^{-\Theta}$} \\
+    \Longrightarrow\ S &= \Lambda_S^{-1}\big(E_S/(\varphi_S(x)V_S)\big),\quad E_S\sim\text{Exp}(1)\perp(x,V) && \why{invert}
+  \end{align*}
+  \back{m-treat}
+\end{frame}
+
+\begin{frame}[label=p-sf]{Proof: the selection factor}
+  \small
+  \begin{align*}
+    dG_{R_s}(v) &= \frac{\Pr(R_s\mid x,v)\,dG(v)}{\Pr(R_s\mid x)} \propto e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{Bayes; no anticipation; Assn.~2} \\
+    dG_s(v) &\propto \Pr(s\le S<s+ds\mid R_s,x,v)\,dG_{R_s}(v) \propto v_S\,dG_{R_s}(v) && \why{Bayes; $\theta_S\propto v_S$}
+  \end{align*}
+  Exit hazards at $s$: just treated $\lambda_Y\varphi_Y\delta(s\mid s,x)\E_{G_s}[V_Y]$; not yet treated $\lambda_Y\varphi_Y\E_{R_s}[V_Y]$.
+  \begin{align*}
+    \E_{G_s}[V_Y] &= \frac{\E_{R_s}[V_YV_S]}{\E_{R_s}[V_S]} = \E_{R_s}[V_Y]+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_S]} && \why{reweight by $v_S$; $\E XY=\E X\E Y+\cov$} \\
+    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\Big(1+\frac{\cov_{R_s}}{\E_{R_s}V_Y\,\E_{R_s}V_S}\Big) && \why{divide} \\
+    &= \delta(s\mid s,x)\,\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(a_s,b_s)} && \why{$\E V_Y=-\tfrac{\Lap_a}{\Lap}$, $\E V_S=-\tfrac{\Lap_b}{\Lap}$, $\E V_YV_S=\tfrac{\Lap_{ab}}{\Lap}$}
+  \end{align*}
+  \back{m-sf}
+\end{frame}
+
+\begin{frame}[label=p-p1]{Proof: after the moment of treatment (eq.~10)}
+  \small
+  $\Theta_Y(y\mid s,x,V)=\varphi_YV_Y[\Lambda_Y(s)+D(y\mid s,x)]$ for $y>s$ \why{split the integral at $s$}. Density $g$ of ``treated at $s$, still unemployed at $y$'':
+  \begin{align*}
+    g(y,s\mid x) &= \E\big[f_S(s\mid x,V)\,\Pr(Y>y\mid S=s,x,V)\big] && \why{LIE; Assn.~2} \\
+    &= \E\big[\lambda_S\varphi_SV_Se^{-b_sV_S}\cdot e^{-\varphi_YV_Y[\Lambda_Y(s)+D]}\big] && \why{$f=\theta e^{-\Theta}$; $S=e^{-\Theta}$} \\
+    &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(a_s+\varphi_Y(x)D,\ b_s\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \\
+    P_1(y\mid s,x) &= \frac{g(y,s\mid x)}{g(s,s\mid x)} = \frac{\Lap_b(a_s+\varphi_YD,\,b_s)}{\Lap_b(a_s,b_s)} && \why{$D(s\mid s,x)=0$}
+  \end{align*}
+  \begin{itemize}
+    \item $\partial_D\Lap_b(a_s+\varphi_YD,b_s)=\varphi_Y\E[V_YV_Se^{\cdots}]>0$ and $\Lap_b<0$: $P_1$ strictly decreasing in $D$ $\Rightarrow$ invert.
+    \item $\delta(y\mid s,x)=\partial_yD(y\mid s,x)/\lambda_Y(y)$ \why{fundamental theorem of calculus}.
+  \end{itemize}
+  \hyperlink{p-local}{\beamergotobutton{Local vs.\ global picture}}
+  \back{m-p1}
+\end{frame}
+
+\begin{frame}[label=p-local]{Backup: local vs.\ global dependence}
   \centering
-  \includegraphics[width=0.85\linewidth]{fig3_local_vs_global.png}
+  \includegraphics[width=0.8\linewidth]{fig3_local_vs_global.png}
 
   \raggedright\small
   Left: causal effect, no selection; exits bunch right after treatment at every $S$. Right: no effect, pure selection; $S$ and $Y$ correlated overall.
+  \back{p-p1}
 \end{frame}
 
 \end{document}
-
