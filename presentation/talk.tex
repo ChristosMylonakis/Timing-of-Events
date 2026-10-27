@@ -12,8 +12,8 @@
 \newcommand{\var}{\operatorname{Var}}
 \newcommand{\why}[1]{\text{\scriptsize[#1]}}
 
-\title{The Nonparametric Identification of Treatment Effects in Duration Models}
-\subtitle{Abbring \& Van den Berg (2003, \textit{Econometrica})}
+\title{Duration Models: From Hazards to Treatment Effects}
+\subtitle{Motivated by Abbring \& Van den Berg (2003, \textit{Econometrica})}
 \author{Econometrics Reading Group}
 \date{}
 
@@ -25,23 +25,39 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}{The question}
+\begin{frame}{Why duration models?}
   \begin{itemize}
-    \item Unemployed workers receive benefits.
-    \item At a random time $S$ during the spell, benefits are \textbf{reduced}.
-    \item Outcome: unemployment duration $Y$.
-    \item Target: causal effect of the reduction on the \textbf{transition rate to work}.
+    \item Many economic outcomes are about \textbf{how long until something happens}:
+      \begin{itemize}
+        \item unemployment $\rightarrow$ job; poverty $\rightarrow$ exit; firm $\rightarrow$ closure; marriage $\rightarrow$ divorce.
+      \end{itemize}
+    \item The questions are about the \textbf{rate} of leaving:
+      \begin{itemize}
+        \item how it changes with time already spent;
+        \item how it responds to events along the way.
+      \end{itemize}
   \end{itemize}
   \bigskip
-  \textbf{Why it is hard}
+  \textbf{Destination of this talk:} Abbring \& Van den Berg (2003)
+  \begin{itemize}
+    \item The effect of a treatment that \emph{arrives during the spell} (e.g.\ a benefits reduction) on the exit rate.
+    \item To get there, we build the objects one at a time.
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Road map: the questions, in order}
   \begin{enumerate}
-    \item Treatment arrives \emph{during} the spell.
-    \item If a job comes first, $S$ is never seen.
-    \item The same unobserved traits may drive both $Y$ and $S$.
-    \item No credible exclusion restriction.
+    \item \textbf{How do we describe a duration?}\\ Hazard and survival. \hfill {\small Cox (1972), Lancaster (1979)}
+    \medskip
+    \item \textbf{People differ: is a falling exit rate a trap or sorting?}\\ Unobserved heterogeneity, dynamic selection. \hfill {\small Lancaster (1979), Heckman \& Singer (1984)}
+    \medskip
+    \item \textbf{When can the two be separated?}\\ The mixed proportional hazard model. \hfill {\small Elbers \& Ridder (1982)}
+    \medskip
+    \item \textbf{Two durations racing.}\\ Competing risks. \hfill {\small Cox (1959), Tsiatis (1975), Heckman \& Honor\'e (1989)}
+    \medskip
+    \item \textbf{A treatment arriving during the spell.}\\ \hfill {\small Abbring \& Van den Berg (2003)}
   \end{enumerate}
-  \bigskip
-  \textbf{Road map:} one duration $\rightarrow$ people differ $\rightarrow$ MPH $\rightarrow$ two durations $\rightarrow$ treatment
 \end{frame}
 
 % =====================================================================
