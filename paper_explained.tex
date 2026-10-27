@@ -283,39 +283,37 @@ Two facts we state without proof:
   \item Not identified $\iff$ a \emph{different} pair $(\tilde\Lambda,\tilde G)$ gives the \emph{same} $\bar S$.
 \end{itemize}
 
-\textbf{Construction: pick any $\tilde G$, then find the $\tilde\Lambda$ that fits.} Take any $\tilde G$ with $\Pr(\tilde V=0)=0$. We need, for every $y$,
-\begin{align}
-  \Lap_{\tilde G}\big(\tilde\Lambda(y)\big) &= \bar S(y). && \why{alternative model must reproduce the data} \label{eq:fit}
-\end{align}
+\textbf{Answer: no.} For \emph{any} $\tilde G$ there is a $\tilde\Lambda$ that reproduces $\bar S$ exactly (proof in Appendix A).
+
+\textbf{Why one can absorb the other}
 \begin{itemize}
-  \item At each $y$, \eqref{eq:fit} is \textbf{one equation in one unknown number} $\tilde\Lambda(y)$.
-  \item $\Lap_{\tilde G}$ is continuous, strictly decreasing, from $\Lap(0)=1$ to $\Lap(\infty)=\Pr(\tilde V=0)=0$ (Section 2.3).
+  \item Both act on the \textbf{same single dimension}, elapsed duration $y$:
+    \begin{align}
+      \bar\theta(y) = \underbrace{\lambda(y)}_{\text{duration dependence}}\cdot\underbrace{\E[V\mid Y>y]}_{\text{sorting}}. \nonumber
+    \end{align}
+  \item Data give one number per $y$ ($\bar\theta(y)$); the model has two unknown functions of $y$.
+  \item $\lambda$ is unrestricted, so whatever sorting path a $G$ implies, $\lambda$ can be bent to absorb the rest:
     \begin{itemize}
-      \item So it takes every value in $(0,1]$ exactly once, and \eqref{eq:fit} has a unique solution:
+      \item no heterogeneity: sorting is flat, so $\lambda=\bar\theta$ and the whole decline is duration dependence;
+      \item more heterogeneity: sorting falls faster (Section 2.4), so $\lambda$ falls less.
     \end{itemize}
-\end{itemize}
-\begin{align}
-  \tilde\Lambda(y) &= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{invert \eqref{eq:fit}} \nonumber\\
-  \tilde\Lambda(0) &= \Lap_{\tilde G}^{-1}(1)=0 && \why{$\bar S(0)=1$, $\Lap(0)=1$} \nonumber\\
-  \tilde\Lambda &\text{ increasing, so } \tilde\lambda:=\tilde\Lambda'\ge0 && \why{$\bar S$ and $\Lap^{-1}_{\tilde G}$ both decreasing} \nonumber
-\end{align}
-\begin{itemize}
-  \item $\tilde\Lambda$ is a valid integrated baseline, and $(\tilde\Lambda,\tilde G)$ reproduces $\bar S$ exactly.
-  \item This works for \emph{every} $\tilde G$. So $G$, and hence the split, is not identified.
+  \item With one duration, \textbf{trap vs.\ sorting is a pure assumption}.
 \end{itemize}
 
-\textbf{Mechanics in hazard terms.} Differentiate \eqref{eq:fit}:
-\begin{align}
-  \bar\theta(y) &= -\frac{d}{dy}\log\Lap_{\tilde G}\big(\tilde\Lambda(y)\big) && \why{\eqref{eq:hazard}; take $-\log$ of \eqref{eq:fit}} \nonumber\\
-  &= \tilde\lambda(y)\cdot\Big(-\frac{\Lap_{\tilde G}'}{\Lap_{\tilde G}}\Big)\big(\tilde\Lambda(y)\big) && \why{chain rule; $\tilde\Lambda'=\tilde\lambda$} \nonumber\\
-  &= \tilde\lambda(y)\cdot\tilde\E[V\mid Y>y] && \why{\eqref{eq:survmean}, computed under $\tilde G$} \nonumber\\
-  \Longrightarrow\quad \tilde\lambda(y) &= \frac{\bar\theta(y)}{\tilde\E[V\mid Y>y]} && \why{rearrange} \nonumber
-\end{align}
+\textbf{What would separate them:} variation that moves \emph{one} factor but not the other.
 \begin{itemize}
-  \item The observed $\bar\theta(y)$ is fixed. Each assumed $\tilde G$ implies some sorting path $\tilde\E[V\mid Y>y]$; $\tilde\lambda$ absorbs the rest.
-  \item No heterogeneity ($\tilde V\equiv1$): $\tilde\E[V\mid Y>y]=1$, so $\tilde\lambda=\bar\theta$. The whole decline is duration dependence.
-  \item More heterogeneity: $\tilde\E[V\mid Y>y]$ falls faster (Section 2.4: speed $\propto\var$), so $\tilde\lambda$ has to fall less. More of the decline is attributed to sorting.
-  \item With one duration, \textbf{trap vs.\ sorting is not identified}. The split is a pure assumption.
+  \item \textbf{Groups at different stages of sorting at the same duration}, sharing the same $\lambda$.
+    \begin{itemize}
+      \item Covariates that shift the hazard proportionally: the MPH model, Section 3.
+    \end{itemize}
+  \item \textbf{The same person observed twice}, i.e.\ same $V$ with the duration restarting.
+    \begin{itemize}
+      \item Multiple spells, Section 9.
+    \end{itemize}
+  \item \textbf{Restrictions on one factor}, e.g.\ a parametric $\lambda$ (constant $\lambda$ $\Rightarrow$ all decline is sorting) or a parametric $G$.
+    \begin{itemize}
+      \item These identify by assumption, not by data.
+    \end{itemize}
 \end{itemize}
 
 \begin{center}
@@ -776,5 +774,47 @@ Divide by the same expression at $y\downarrow s$ (where $D=0$), as in \eqref{eq:
   \includegraphics[width=0.75\textwidth]{fig3_local_vs_global.png}\\
 \raggedright{\small Intuition. Left: causal effect, no selection; exits bunch right after treatment at every $S$ (local). Right: no effect, pure selection; $S$ and $Y$ correlated overall (global).}
 \end{minipage}
+
+
+% =====================================================================
+\appendix
+\section{Proof: any type distribution fits one survival curve}
+Setting of Section 2.5: data $\bar S$; true model $\bar S(y)=\Lap_G(\Lambda(y))$.
+
+\textbf{Construction: pick any $\tilde G$, then find the $\tilde\Lambda$ that fits.} Take any $\tilde G$ with $\Pr(\tilde V=0)=0$. We need, for every $y$,
+\begin{align}
+  \Lap_{\tilde G}\big(\tilde\Lambda(y)\big) &= \bar S(y). && \why{alternative model must reproduce the data} \label{eq:fit}
+\end{align}
+\begin{itemize}
+  \item At each $y$, \eqref{eq:fit} is \textbf{one equation in one unknown number} $\tilde\Lambda(y)$.
+  \item $\Lap_{\tilde G}$ is continuous, strictly decreasing, from $\Lap(0)=1$ to $\Lap(\infty)=\Pr(\tilde V=0)=0$ (Section 2.3).
+    \begin{itemize}
+      \item So it takes every value in $(0,1]$ exactly once, and \eqref{eq:fit} has a unique solution:
+    \end{itemize}
+\end{itemize}
+\begin{align}
+  \tilde\Lambda(y) &= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{invert \eqref{eq:fit}} \nonumber\\
+  \tilde\Lambda(0) &= \Lap_{\tilde G}^{-1}(1)=0 && \why{$\bar S(0)=1$, $\Lap(0)=1$} \nonumber\\
+  \tilde\Lambda &\text{ increasing, so } \tilde\lambda:=\tilde\Lambda'\ge0 && \why{$\bar S$ and $\Lap^{-1}_{\tilde G}$ both decreasing} \nonumber
+\end{align}
+\begin{itemize}
+  \item $\tilde\Lambda$ is a valid integrated baseline, and $(\tilde\Lambda,\tilde G)$ reproduces $\bar S$ exactly.
+  \item This works for \emph{every} $\tilde G$. So $G$, and hence the split, is not identified.
+\end{itemize}
+
+\textbf{Mechanics in hazard terms.} Differentiate \eqref{eq:fit}:
+\begin{align}
+  \bar\theta(y) &= -\frac{d}{dy}\log\Lap_{\tilde G}\big(\tilde\Lambda(y)\big) && \why{\eqref{eq:hazard}; take $-\log$ of \eqref{eq:fit}} \nonumber\\
+  &= \tilde\lambda(y)\cdot\Big(-\frac{\Lap_{\tilde G}'}{\Lap_{\tilde G}}\Big)\big(\tilde\Lambda(y)\big) && \why{chain rule; $\tilde\Lambda'=\tilde\lambda$} \nonumber\\
+  &= \tilde\lambda(y)\cdot\tilde\E[V\mid Y>y] && \why{\eqref{eq:survmean}, computed under $\tilde G$} \nonumber\\
+  \Longrightarrow\quad \tilde\lambda(y) &= \frac{\bar\theta(y)}{\tilde\E[V\mid Y>y]} && \why{rearrange} \nonumber
+\end{align}
+\begin{itemize}
+  \item The observed $\bar\theta(y)$ is fixed. Each assumed $\tilde G$ implies some sorting path $\tilde\E[V\mid Y>y]$; $\tilde\lambda$ absorbs the rest.
+  \item No heterogeneity ($\tilde V\equiv1$): $\tilde\E[V\mid Y>y]=1$, so $\tilde\lambda=\bar\theta$. The whole decline is duration dependence.
+  \item More heterogeneity: $\tilde\E[V\mid Y>y]$ falls faster (Section 2.4: speed $\propto\var$), so $\tilde\lambda$ has to fall less. More of the decline is attributed to sorting.
+  \item With one duration, \textbf{trap vs.\ sorting is not identified}. The split is a pure assumption.
+\end{itemize}
+
 
 \end{document}
