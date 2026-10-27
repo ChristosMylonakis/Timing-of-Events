@@ -277,7 +277,7 @@ Two facts we state without proof:
 
 \textbf{The identification question}
 \begin{itemize}
-  \item Data: the population survival $\bar S(y)$ for all $y$. That is all one duration gives us.
+  \item Data: the population survival $\bar S(y)$ for all $y$ (equivalently $\bar\theta(y)=-\frac{d}{dy}\log\bar S(y)$). That is all one duration gives us.
   \item Unknowns: the baseline $\Lambda$ (duration dependence) and the type distribution $G$ (sorting).
   \item The model links them: $\bar S(y)=\Lap_G\big(\Lambda(y)\big)$ (Section 2.3), where $\Lap_G$ is the Laplace transform of $G$.
   \item Not identified $\iff$ a \emph{different} pair $(\tilde\Lambda,\tilde G)$ gives the \emph{same} $\bar S$.
@@ -345,6 +345,10 @@ Two facts we state without proof:
   \theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{$-\frac{d}{dy}\log$ of \eqref{eq:mphsurv}; chain rule} \label{eq:mphhazard}
 \end{align}
 \begin{itemize}
+  \item Data: $S(y\mid x)$ for all $(y,x)$. The new information relative to Section 2.5 is the $x$ dimension.
+    \begin{itemize}
+      \item $\theta(y\mid x)$ is \emph{not} extra information: $\theta=-\partial_y\log S$ and $S=e^{-\Theta}$ (Section 1). We use whichever form makes an argument simpler.
+    \end{itemize}
   \item Data reveal one function $\Lap$ of a \textbf{single index} $\varphi(x)\Lambda(y)$.
   \item $x$ and $y$ both move the index: this is what the three steps below exploit.
 \end{itemize}
