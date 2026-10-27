@@ -273,32 +273,55 @@ Two facts we state without proof:
 \end{itemize}
 
 \subsection{Sorting and duration dependence cannot be separated}
-\whynow{by \eqref{eq:dynsel} the observed hazard is $\lambda(y)\cdot\E[V\mid Y>y]$: duration dependence times sorting. Can data on $Y$ split the two? No: \emph{every} type distribution fits the data exactly.}
+\whynow{by \eqref{eq:dynsel} the observed hazard is $\lambda(y)\cdot\E[V\mid Y>y]$: duration dependence times sorting. Can data on $Y$ split the two?}
 
-\textbf{Claim.} Take the observed survival $\bar S(y)$ (continuous, strictly decreasing from 1 to 0) and \emph{any} $G$ with $\Pr(V=0)=0$. Define
+\textbf{The identification question}
+\begin{itemize}
+  \item Data: the population survival $\bar S(y)$ for all $y$. That is all one duration gives us.
+  \item Unknowns: the baseline $\Lambda$ (duration dependence) and the type distribution $G$ (sorting).
+  \item The model links them: $\bar S(y)=\Lap_G\big(\Lambda(y)\big)$ (Section 2.3), where $\Lap_G$ is the Laplace transform of $G$.
+  \item Not identified $\iff$ a \emph{different} pair $(\tilde\Lambda,\tilde G)$ gives the \emph{same} $\bar S$.
+\end{itemize}
+
+\textbf{Construction: pick any $\tilde G$, then find the $\tilde\Lambda$ that fits.} Take any $\tilde G$ with $\Pr(\tilde V=0)=0$. We need, for every $y$,
 \begin{align}
-  \Lambda_G(y) := \Lap_G^{-1}\big(\bar S(y)\big). \nonumber
-\end{align}
-Then the model $(\lambda_G=\Lambda_G',\,G)$ reproduces the data exactly.
-\begin{align}
-  \Lap_G &: [0,\infty)\to(0,1] \text{ strictly decreasing, onto} && \why{$\Lap(0)=1$, $\Lap'<0$, $\Lap(\infty)=\Pr(V=0)=0$} \nonumber\\
-  \Lambda_G(0) &= \Lap_G^{-1}(1)=0, \quad \Lambda_G \text{ increasing} && \why{$\bar S(0)=1$; composition of two decreasing functions} \nonumber\\
-  \Lap_G\big(\Lambda_G(y)\big) &= \Lap_G\big(\Lap_G^{-1}(\bar S(y))\big)=\bar S(y) && \why{definition of the inverse} \nonumber
-\end{align}
-In hazard terms, each $G$ implies its own baseline:
-\begin{align}
-  \lambda_G(y) = \frac{\bar\theta(y)}{\E_G[V\mid Y>y]} && \why{rearrange \eqref{eq:dynsel}} \nonumber
+  \Lap_{\tilde G}\big(\tilde\Lambda(y)\big) &= \bar S(y). && \why{alternative model must reproduce the data} \label{eq:fit}
 \end{align}
 \begin{itemize}
-  \item Every $G$ fits: from no heterogeneity ($V\equiv1$, so $\lambda=\bar\theta$: the whole decline is duration dependence) to strong heterogeneity.
-  \item The faster the assumed sorting $\E_G[V\mid Y>y]$ falls, the less of the decline is left for $\lambda$.
-  \item So with one duration, \textbf{trap vs.\ sorting is not identified}. The split is a pure assumption.
+  \item At each $y$, \eqref{eq:fit} is \textbf{one equation in one unknown number} $\tilde\Lambda(y)$.
+  \item $\Lap_{\tilde G}$ is continuous, strictly decreasing, from $\Lap(0)=1$ to $\Lap(\infty)=\Pr(\tilde V=0)=0$ (Section 2.3).
+    \begin{itemize}
+      \item So it takes every value in $(0,1]$ exactly once, and \eqref{eq:fit} has a unique solution:
+    \end{itemize}
+\end{itemize}
+\begin{align}
+  \tilde\Lambda(y) &= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{invert \eqref{eq:fit}} \nonumber\\
+  \tilde\Lambda(0) &= \Lap_{\tilde G}^{-1}(1)=0 && \why{$\bar S(0)=1$, $\Lap(0)=1$} \nonumber\\
+  \tilde\Lambda &\text{ increasing, so } \tilde\lambda:=\tilde\Lambda'\ge0 && \why{$\bar S$ and $\Lap^{-1}_{\tilde G}$ both decreasing} \nonumber
+\end{align}
+\begin{itemize}
+  \item $\tilde\Lambda$ is a valid integrated baseline, and $(\tilde\Lambda,\tilde G)$ reproduces $\bar S$ exactly.
+  \item This works for \emph{every} $\tilde G$. So $G$, and hence the split, is not identified.
+\end{itemize}
+
+\textbf{Mechanics in hazard terms.} Differentiate \eqref{eq:fit}:
+\begin{align}
+  \bar\theta(y) &= -\frac{d}{dy}\log\Lap_{\tilde G}\big(\tilde\Lambda(y)\big) && \why{\eqref{eq:hazard}; take $-\log$ of \eqref{eq:fit}} \nonumber\\
+  &= \tilde\lambda(y)\cdot\Big(-\frac{\Lap_{\tilde G}'}{\Lap_{\tilde G}}\Big)\big(\tilde\Lambda(y)\big) && \why{chain rule; $\tilde\Lambda'=\tilde\lambda$} \nonumber\\
+  &= \tilde\lambda(y)\cdot\tilde\E[V\mid Y>y] && \why{\eqref{eq:survmean}, computed under $\tilde G$} \nonumber\\
+  \Longrightarrow\quad \tilde\lambda(y) &= \frac{\bar\theta(y)}{\tilde\E[V\mid Y>y]} && \why{rearrange} \nonumber
+\end{align}
+\begin{itemize}
+  \item The observed $\bar\theta(y)$ is fixed. Each assumed $\tilde G$ implies some sorting path $\tilde\E[V\mid Y>y]$; $\tilde\lambda$ absorbs the rest.
+  \item No heterogeneity ($\tilde V\equiv1$): $\tilde\E[V\mid Y>y]=1$, so $\tilde\lambda=\bar\theta$. The whole decline is duration dependence.
+  \item More heterogeneity: $\tilde\E[V\mid Y>y]$ falls faster (Section 2.4: speed $\propto\var$), so $\tilde\lambda$ has to fall less. More of the decline is attributed to sorting.
+  \item With one duration, \textbf{trap vs.\ sorting is not identified}. The split is a pure assumption.
 \end{itemize}
 
 \begin{center}
   \includegraphics[width=0.9\textwidth]{fig1_dynamic_selection.png}
 \end{center}
-{\small Left: two types with constant hazards 0.3 and 1.5 (equal shares); the observed hazard falls from 0.9 to 0.3. Right: the same observed survival, fitted exactly by three type distributions (all with $\E V=1$); each implies a different baseline $\lambda_G$.}
+{\small Left: two types with constant hazards 0.3 and 1.5 (equal shares); the observed hazard falls from 0.9 to 0.3. Right: the same observed survival, fitted exactly by three type distributions (all with $\E V=1$); each implies a different baseline $\tilde\lambda$.}
 
 \takeaway{the observed hazard mixes $\lambda$ (true duration dependence) and $G$ (who is left). Next: can data separate them? Only with structure, which is the MPH model.}
 
