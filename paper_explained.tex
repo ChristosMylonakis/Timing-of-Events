@@ -539,6 +539,25 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
   \item Treatment acts like a competing exit: it removes people from the untreated group, just as job-finding removes people in Section 2.
 \end{itemize}
 
+\textbf{Assumption 3 (paper's): non-proportional covariate variation.}
+\begin{align}
+  \big\{\big(\varphi_Y(x),\varphi_S(x)\big):x\in\mathcal X\big\}\ \text{contains a non-empty open set of }\mathbb R^2. \nonumber
+\end{align}
+\begin{itemize}
+  \item Meaning: varying $x$ moves the two indices in genuinely different directions, so $b$ can move with $a$ fixed.
+  \item Example: $\varphi_j(x)=e^{x'\beta_j}$, $x=(x_1,x_2)$ continuous. Move $x$ in direction $d=(\beta_{Y2},-\beta_{Y1})$:
+    \begin{align}
+      d'\beta_Y &= \beta_{Y2}\beta_{Y1}-\beta_{Y1}\beta_{Y2}=0 && \why{$a$ fixed} \nonumber\\
+      d'\beta_S &= \beta_{Y2}\beta_{S1}-\beta_{Y1}\beta_{S2}\neq0 && \why{iff $(\beta_Y\ \beta_S)$ full rank: $b$ moves} \nonumber
+    \end{align}
+\end{itemize}
+\textbf{vs.\ an exclusion restriction}
+\begin{itemize}
+  \item Exclusion: a \emph{named} variable has zero effect on $Y$'s hazard. Assumed, and hard to defend: agents react to what changes their treatment risk.
+  \item Assumption 3: no variable is excluded. Some \emph{direction} $d$ is excluded from $Y$'s index, and it is \textbf{learned} from data ($\varphi_Y,\varphi_S$ are identified first, Section 4.6, step 1).
+  \item The price moves elsewhere: $x$ must affect each hazard only through one multiplicative index, constant over duration (MPH).
+\end{itemize}
+
 \subsection{The problem: Tsiatis (1975)}
 \whynow{the dependence sits in $\Lap$, but do the data reveal enough of $\Lap$? Without structure, no.}
 \begin{itemize}
@@ -556,7 +575,7 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
 
 \subsection{Identification (Prop.~2) in three steps}
 \whynow{show that MPH + covariates fix the Tsiatis problem: the steps of Section 3.3, in two dimensions.}
-\textbf{Assumptions.} (A3) $\{(\varphi_Y(x),\varphi_S(x))\}$ contains an open set of $\mathbb R^2$. (A4) $\E V_Y,\E V_S<\infty$. Normalize $\varphi_Y(x^*)=\varphi_S(x^*)=1$, $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$.
+\textbf{Assumptions.} (A3) Assumption 3, Section 4.4. (A4) $\E V_Y,\E V_S<\infty$. Normalize $\varphi_Y(x^*)=\varphi_S(x^*)=1$, $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$.
 
 \textbf{Step 1: $\varphi_Y,\varphi_S$.}
 \begin{align}
