@@ -125,19 +125,43 @@ def simulate(n, delta, correlated, rng):
 
 
 def fig_local_vs_global():
+    with plt.rc_context({"font.size": 15, "lines.linewidth": 3}):
+        _fig_local_vs_global()
+
+
+def _fig_local_vs_global():
     rng = np.random.default_rng(1)
-    worlds = [("World A: causal effect, no selection\n" + r"$\delta=4$, $V_Y \perp V_D$", 4.0, False),
-              ("World B: no effect, pure selection\n" + r"$\delta=1$, $V_Y = V_D$", 1.0, True)]
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4.4), sharex=True, sharey=True)
-    for a, (title, delta, corr) in zip(ax, worlds):
-        S, Y = simulate(3000, delta, corr, rng)
-        treated = S < Y
-        a.scatter(S[treated], Y[treated], s=4, alpha=0.35, color="tab:blue")
-        a.plot([0, 6], [0, 6], color="black", lw=1)
-        frac = np.mean(Y[treated] - S[treated] < 0.25)
-        a.set(xlim=(0, 6), ylim=(0, 6), xlabel="treatment time D", title=title)
-        a.text(3.2, 0.6, f"share exiting within 0.25\nof treatment: {frac:.0%}", fontsize=9)
-    ax[0].set_ylabel("outcome duration Y  (treated only, D < Y)")
+    h = 0.25  # "soon after treatment"
+    worlds = [("World A: causal effect, no selection\n" + r"$\delta=4$, $V_Y \perp V_D$", 4.0, False, "tab:blue"),
+              ("World B: no effect, pure selection\n" + r"$\delta=1$, $V_Y = V_D$", 1.0, True, "tab:orange")]
+    fig, ax = plt.subplots(1, 3, figsize=(15, 4.8))
+    bins = np.array([0, 0.5, 1, 1.5, 2, 3, 4, 5])
+    mids = 0.5 * (bins[:-1] + bins[1:])
+    for k, (title, delta, corr, col) in enumerate(worlds):
+        # scatter: treated only, quick exits highlighted
+        D, Y = simulate(2500, delta, corr, rng)
+        tr = D < Y
+        quick = tr & (Y - D < h)
+        ax[k].scatter(D[tr & ~quick], Y[tr & ~quick], s=10, color="lightgray", label="treated, later exit")
+        ax[k].scatter(D[quick], Y[quick], s=18, color="crimson", label=f"exit within {h} of treatment")
+        ax[k].plot([0, 6], [0, 6], color="black", lw=1)
+        ax[k].set(xlim=(0, 5), ylim=(0, 6), xlabel="treatment time D", title=title)
+        ax[k].legend(frameon=False, fontsize=12, loc="upper left", markerscale=2)
+        # ratio: exit soon after treatment, treated at D vs. not yet treated at D
+        D, Y = simulate(400000, delta, corr, rng)
+        ratio = []
+        for a, b, m in zip(bins[:-1], bins[1:], mids):
+            treated = (D >= a) & (D < b) & (D < Y)
+            at_risk = (Y > m) & (D > m)
+            ratio.append(((Y - D) < h)[treated].mean() / ((Y < m + h) & (Y < D))[at_risk].mean())
+        ax[2].plot(mids, ratio, "o-", color=col, lw=2.5, label=title.split(":")[0])
+    ax[0].set_ylabel("outcome duration Y  (treated only)")
+    ax[2].axhline(1, color="black", lw=1, ls=":")
+    ax[2].axhline(4, color="tab:blue", lw=1, ls="--")
+    ax[2].text(5.0, 4.1, r"$\delta=4$", color="tab:blue", ha="right")
+    ax[2].set(xlabel="treatment time D", ylim=(0, 4.8),
+              title="Exit soon after treatment:\ntreated vs. not yet treated (ratio)")
+    ax[2].legend(frameon=False, fontsize=13)
     fig.tight_layout()
     fig.savefig(OUT / "fig3_local_vs_global.png", dpi=200)
     plt.close(fig)

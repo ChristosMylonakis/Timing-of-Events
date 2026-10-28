@@ -418,11 +418,6 @@
   \end{itemize}
   \textbf{No anticipation}
   \[ \theta_{Y^*(d)}(t)=\theta_{Y^*(\infty)}(t)\qquad\text{for } t<d. \]
-  \begin{itemize}
-    \item Before treatment, everyone has the untreated hazard, whatever their future date.
-    \item Rules out: acting on knowledge of one's own reduction date (e.g.\ announced in advance).
-    \item Allows: reacting to the policy (how often reductions happen). So the effect is ``treated at $d$ vs.\ later, under this policy''.
-  \end{itemize}
   \textbf{Selection on observables and unobservables}
   \[ Y^*(\cdot)\perp D\mid(x,V). \]
   \begin{itemize}
@@ -456,7 +451,7 @@
 % ---------------------------------------------------------------------
 \begin{frame}[label=m-luck]{Where the exogenous variation comes from: timing luck}
   \small
-  Given $(x,V)$, the treatment clock is $\Theta_D(t\mid x,V)=\Lambda_D(t\mid x)V_D$. Define $E_D:=\Theta_D(D\mid x,V)$:
+  Given $(x,V)$, the integrated treatment hazard is $\Theta_D(t\mid x,V)=\Lambda_D(t\mid x)V_D$. Define $E_D:=\Theta_D(D\mid x,V)$:
   \begin{align*}
     \Pr(E_D>e\mid x,V) &= \Pr\big(D>\Theta_D^{-1}(e\mid x,V)\mid x,V\big) = e^{-e} && \why{$\Theta_D$ increasing; $S=e^{-\Theta}$} \\
     \Longrightarrow\ D &= \Lambda_D^{-1}\!\Big(\frac{E_D}{\varphi_D(x)\,V_D}\Big),\qquad E_D\sim\text{Exp}(1),\ E_D\perp(x,V) && \why{invert}
@@ -466,17 +461,6 @@
     \item Same $(x,V)$, treated at $d$ vs.\ later: they differ \emph{only} by luck.
     \item Static model, treated iff $\mu(x)>U$: given $(x,U)$ no luck is left, so an excluded instrument is needed.
   \end{itemize}
-  \begin{center}
-  \begin{tabular}{lll}
-    \toprule
-    & IV / static selection & Timing of events \\
-    \midrule
-    Exogenous variation & excluded variable $Z$ & timing luck $E_D$ \\
-    What is excluded from the outcome & a \emph{variable} & a \emph{shock} \\
-    Correcting for who is treated & control function & type mix of the treated, from $G$ \\
-    \bottomrule
-  \end{tabular}
-  \end{center}
   \vfill\hfill\hyperlink{p-treat}{\beamergotobutton{Proof}}
 \end{frame}
 
@@ -528,71 +512,19 @@
 % ---------------------------------------------------------------------
 \begin{frame}[label=m-local]{What the data look like}
   \centering
-  \includegraphics[width=0.82\linewidth]{fig3_local_vs_global.png}
+  \includegraphics[width=\linewidth]{fig3_local_vs_global.png}
 
   \raggedright\small
   \begin{itemize}
-    \item Left: causal effect, no selection. Exits bunch right after treatment, \emph{at every} $D$: \textbf{local} dependence.
-    \item Right: no effect, pure selection. $D$ and $Y$ correlated overall: \textbf{global} dependence.
-    \item The treatment acts only after $D$; the types act throughout. The model separates the two.
+    \item Red: exits soon after treatment. World A (causal effect): along the diagonal \emph{at every} $D$, \textbf{local}. World B (selection): only at small $D$, where the fast types still are, \textbf{global}.
+    \item Right: exit soon after treatment, treated vs.\ not yet treated $=\delta\times$ selection factor.
+      \begin{itemize}
+        \item Causal effect: stays near $\delta$ at every $D$. Selection: above 1 early, falls to 1 once the selected types are gone.
+      \end{itemize}
   \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------------------
-\begin{frame}{What is traded}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \textbf{Not needed}
-      \begin{itemize}
-        \item an excluded instrument
-        \item selection on observables only
-        \item parametric forms
-      \end{itemize}
-      \medskip
-      \textbf{Needed}
-      \begin{itemize}
-        \item no anticipation (untestable)
-        \item time-invariant unobservables, $V\perp X$
-        \item proportional hazards (MPH)
-        \item non-proportional covariate variation
-        \item finite means; continuous time
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{The idea in one line}
-      \begin{itemize}
-        \item The treatment acts only \emph{after} $D$; unobserved types act throughout.
-        \item The excluded \emph{variable} becomes an excluded timing \emph{shock}.
-      \end{itemize}
-      \medskip
-      \textbf{Caveats}
-      \begin{itemize}
-        \item Identification leans on short durations.
-        \item Discrete data blur the timing.
-        \item $\delta$ is a hazard ratio given $V$, not a population effect.
-      \end{itemize}
-    \end{column}
-  \end{columns}
-\end{frame}
 
-% ---------------------------------------------------------------------
-\begin{frame}{Connections}
-  \textbf{Staggered-adoption DiD}
-  \begin{itemize}
-    \item $Y^*(d)\leftrightarrow Y_t(g)$; the same no-anticipation assumption; risk set $\leftrightarrow$ not-yet-treated.
-    \item Difference: an absorbing exit changes who remains, so parallel trends in hazards fails even with random timing.
-  \end{itemize}
-  \textbf{Sequential exogeneity and feedback}
-  \begin{itemize}
-    \item A hazard is an intensity given the past: a continuous-time sequential moment condition.
-    \item Single spell: treatment may depend on permanent $V$, not on transitory shocks.
-  \end{itemize}
-  \textbf{State dependence vs.\ permanent heterogeneity}
-  \begin{itemize}
-    \item $\lambda$ (duration dependence), $G$ (heterogeneity), $\delta$ (intervention): the framework separates all three.
-    \item Multiple spells identify more, but assume no causal links across spells.
-  \end{itemize}
-\end{frame}
 
 % =====================================================================
 \appendix
@@ -822,5 +754,61 @@
 \end{frame}
 
 
+
+% ---------------------------------------------------------------------
+\begin{frame}{Backup: what is traded}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{Not needed}
+      \begin{itemize}
+        \item an excluded instrument
+        \item selection on observables only
+        \item parametric forms
+      \end{itemize}
+      \medskip
+      \textbf{Needed}
+      \begin{itemize}
+        \item no anticipation (untestable)
+        \item time-invariant unobservables, $V\perp X$
+        \item proportional hazards (MPH)
+        \item non-proportional covariate variation
+        \item finite means; continuous time
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{The idea in one line}
+      \begin{itemize}
+        \item The treatment acts only \emph{after} $D$; unobserved types act throughout.
+        \item The excluded \emph{variable} becomes an excluded timing \emph{shock}.
+      \end{itemize}
+      \medskip
+      \textbf{Caveats}
+      \begin{itemize}
+        \item Identification leans on short durations.
+        \item Discrete data blur the timing.
+        \item $\delta$ is a hazard ratio given $V$, not a population effect.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Backup: connections}
+  \textbf{Staggered-adoption DiD}
+  \begin{itemize}
+    \item $Y^*(d)\leftrightarrow Y_t(g)$; the same no-anticipation assumption; risk set $\leftrightarrow$ not-yet-treated.
+    \item Difference: an absorbing exit changes who remains, so parallel trends in hazards fails even with random timing.
+  \end{itemize}
+  \textbf{Sequential exogeneity and feedback}
+  \begin{itemize}
+    \item A hazard is an intensity given the past: a continuous-time sequential moment condition.
+    \item Single spell: treatment may depend on permanent $V$, not on transitory shocks.
+  \end{itemize}
+  \textbf{State dependence vs.\ permanent heterogeneity}
+  \begin{itemize}
+    \item $\lambda$ (duration dependence), $G$ (heterogeneity), $\delta$ (intervention): the framework separates all three.
+    \item Multiple spells identify more, but assume no causal links across spells.
+  \end{itemize}
+\end{frame}
 
 \end{document}
