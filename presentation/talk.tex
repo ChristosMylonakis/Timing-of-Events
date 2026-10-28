@@ -222,11 +222,11 @@
 % =====================================================================
 \section{Mixed proportional hazard}
 \begin{frame}[label=m-ratio]{Covariates separate sorting from duration dependence}
-  \textbf{MPH model:} $\theta(y\mid x,V)=\lambda(y)\,\varphi(x)\,V$, \ $V\perp X$. Data: $S(y\mid x)$ for all $(y,x)$.
-  \[ S(y\mid x)=\Lap\big(\varphi(x)\Lambda(y)\big): \quad \text{one } \Lap \text{ and one } \Lambda \text{ must fit \emph{all} groups.} \]
+  \textbf{MPH model:} $\theta(y\mid x,V)=\lambda(y)\,\varphi(x)\,V$, \ $V\perp X$. Data: $\bar S(y\mid x)$ for all $(y,x)$.
+  \[ \bar S(y\mid x)=\Lap\big(\varphi(x)\Lambda(y)\big): \quad \text{one } \Lap \text{ and one } \Lambda \text{ must fit \emph{all} groups.} \]
   Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$, decreasing. Compare $\varphi_1>\varphi_2$:
   \begin{align*}
-    \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))} && \why{$\lambda(y)$ cancels} \\
+    \frac{\bar\theta(y\mid x_1)}{\bar\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))} && \why{$\lambda(y)$ cancels} \\
     &< \frac{\varphi_1}{\varphi_2}\ \ (y>0), \qquad =\frac{\varphi_1}{\varphi_2}\ \ (y=0) && \why{$\varphi_1\Lambda>\varphi_2\Lambda$, $m$ decreasing}
   \end{align*}
   \begin{itemize}
@@ -242,9 +242,9 @@
 \begin{frame}[label=m-er]{MPH identification in three steps \hfill {\small Elbers \& Ridder (1982)}}
   Normalize $\varphi(x^*)=1$, $\Lambda(y^*)=1$. Assume $\E V<\infty$ and variation in $\varphi(x)$.
   \begin{align*}
-    \textbf{1. }\ \frac{\theta(y\mid x)}{\theta(y\mid x^*)} &\xrightarrow{\;y\downarrow0\;}\varphi(x) && \why{nobody sorted yet: $m(0)/m(0)=1$} \\[4pt]
-    \textbf{2. }\ S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{$\Lambda(y^*)=1$} \\[4pt]
-    \textbf{3. }\ \Lambda(y) &= \Lap^{-1}\big(S(y\mid x)\big)\big/\varphi(x) && \why{$\Lap$ strictly decreasing}
+    \textbf{1. }\ \frac{\bar\theta(y\mid x)}{\bar\theta(y\mid x^*)} &\xrightarrow{\;y\downarrow0\;}\varphi(x) && \why{nobody sorted yet: $m(0)/m(0)=1$} \\[4pt]
+    \textbf{2. }\ \bar S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{$\Lambda(y^*)=1$} \\[4pt]
+    \textbf{3. }\ \Lambda(y) &= \Lap^{-1}\big(\bar S(y\mid x)\big)\big/\varphi(x) && \why{$\Lap$ strictly decreasing}
   \end{align*}
   \begin{itemize}
     \item Step 2: varying $x$ traces $\Lap$ on an interval $\Rightarrow$ (analyticity) everywhere $\Rightarrow$ (uniqueness) $G$.
@@ -309,18 +309,41 @@
 \begin{frame}{The cause-specific hazard is filtered by the other exit}
   \small
   \textbf{Observed:} job-finding rate among those still unemployed \emph{and} untreated
-  \[ \bar\theta^Y_0(t\mid x)=\lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\ \mathbf{S\ge t},\ x)}{dt}=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ \mathbf{S\ge t},\ x] \]
-  \textbf{Not observed:} job-finding rate ignoring treatment
-  \[ \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\ x)}{dt}=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ x] \]
+  \[ \bar\theta^Y_0(t\mid x)=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ \mathbf{S\ge t},\ x] \]
+  \textbf{Not observed:} the one-duration observed hazard of $Y$, now cut short by treatment
+  \[ \bar\theta_Y(t\mid x)=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ x] \]
+  \textbf{What changes:} with $W:=e^{-\Lambda_S(t\mid x)V_S}$ = Pr(still untreated $\mid V_S$), all conditional on $Y\ge t,x$:
+  \begin{align*}
+    \E[V_Y\mid S\ge t] &= \frac{\E[V_Y\,W]}{\E[W]} && \why{Bayes: reweight by $W$} \\
+    &= \E[V_Y]+\frac{\cov(V_Y,W)}{\E[W]} && \why{$\E XY=\E X\,\E Y+\cov(X,Y)$}
+  \end{align*}
   \begin{itemize}
-    \item For the treated we never see when they would have found a job \emph{without} treatment.
-    \item The treatment exit removes people from the untreated group: high-$V_S$ types leave early.
+    \item $V_S\perp V_Y$: $\cov=0$, so $\bar\theta^Y_0=\bar\theta_Y$. Treatment removes people at random in $V_Y$.
+    \item Correlated: $\cov\neq0$. $W$ falls in $V_S$, so the sign is opposite to the correlation of $V_Y,V_S$.
       \begin{itemize}
-        \item $V_S\perp V_Y$: the $V_Y$ mix is unchanged, the two rates coincide.
-        \item $V_S$ correlated with $V_Y$: the mix changes. E.g.\ low-motivation workers (low $V_Y$) are treated early (high $V_S$), so the untreated group is left with higher $V_Y$.
+        \item Low motivation: low $V_Y$, high $V_S$ $\Rightarrow$ the untreated are left with \emph{higher} $V_Y$.
       \end{itemize}
-    \item \textbf{The gap between the two is the selection.} Next: how to see it in data.
   \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{Why selection matters for the treatment effect}
+  \begin{itemize}
+    \item The effect is measured by comparing, at the same $s$, the \textbf{just treated} with the \textbf{not yet treated}.
+    \item Who is treated at $s$: those at risk, reweighted by $V_S$.
+      \begin{itemize}
+        \item $V_S$ correlated with $V_Y$ $\Rightarrow$ the treated have a different $V_Y$ mix.
+      \end{itemize}
+    \item Then
+      \[ \frac{\text{exit rate, just treated}}{\text{exit rate, not yet treated}}=\delta\times\text{(selection factor)}. \]
+    \item A higher exit rate after treatment: does treatment work, or are the treated fast types anyway?
+      \begin{itemize}
+        \item Without the dependence of $V_Y,V_S$ we cannot tell. The duration analogue of an endogenous regressor.
+      \end{itemize}
+    \item \textbf{So:} identify the dependence \emph{before} treatment, where no effect is present.
+  \end{itemize}
+  \bigskip
+  $\rightarrow$ Where does it show up in the data?
 \end{frame}
 
 % ---------------------------------------------------------------------
@@ -576,8 +599,8 @@
 \begin{frame}[label=p-ratio]{Proof: covariate effects drift under heterogeneity}
   Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$.
   \begin{align*}
-    \theta(y\mid x) &= -\partial_y\log\Lap\big(\varphi(x)\Lambda(y)\big) = \lambda(y)\varphi(x)\,m\big(\varphi(x)\Lambda(y)\big) && \why{chain rule} \\
-    \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))} && \why{$\lambda(y)$ cancels} \\
+    \bar\theta(y\mid x) &= -\partial_y\log\Lap\big(\varphi(x)\Lambda(y)\big) = \lambda(y)\varphi(x)\,m\big(\varphi(x)\Lambda(y)\big) && \why{chain rule} \\
+    \frac{\bar\theta(y\mid x_1)}{\bar\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))} && \why{$\lambda(y)$ cancels} \\
     m'(a) &= -(\log\Lap)''(a) = -\var(V\mid\text{survived to }a) && \why{Laplace properties}
   \end{align*}
   \begin{itemize}
@@ -592,17 +615,17 @@
 \begin{frame}[label=p-er]{Proof: MPH identification in three steps}
   \textbf{Step 1.} With $\varphi(x^*)=1$:
   \begin{align*}
-    \frac{\theta(y\mid x)}{\theta(y\mid x^*)} = \varphi(x)\,\frac{m(\varphi(x)\Lambda(y))}{m(\Lambda(y))} \xrightarrow{\;y\downarrow0\;} \varphi(x)\,\frac{m(0)}{m(0)}=\varphi(x) && \why{$\Lambda(y)\to0$; $m(0)=\E V<\infty$, continuity}
+    \frac{\bar\theta(y\mid x)}{\bar\theta(y\mid x^*)} = \varphi(x)\,\frac{m(\varphi(x)\Lambda(y))}{m(\Lambda(y))} \xrightarrow{\;y\downarrow0\;} \varphi(x)\,\frac{m(0)}{m(0)}=\varphi(x) && \why{$\Lambda(y)\to0$; $m(0)=\E V<\infty$, continuity}
   \end{align*}
   \textbf{Step 2.} With $\Lambda(y^*)=1$:
   \begin{align*}
-    S(y^*\mid x) = \Lap\big(\varphi(x)\big) && \why{$S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$}
+    \bar S(y^*\mid x) = \Lap\big(\varphi(x)\big) && \why{$\bar S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$}
   \end{align*}
   $\{\varphi(x)\}$ contains an interval $\Rightarrow$ $\Lap$ known there $\Rightarrow$ (analyticity) on $(0,\infty)$ $\Rightarrow$ (uniqueness) $G$.
 
   \textbf{Step 3.}
   \begin{align*}
-    \Lambda(y) = \Lap^{-1}\big(S(y\mid x)\big)\big/\varphi(x), \qquad \lambda=\Lambda' && \why{$\Lap$ continuous, strictly decreasing}
+    \Lambda(y) = \Lap^{-1}\big(\bar S(y\mid x)\big)\big/\varphi(x), \qquad \lambda=\Lambda' && \why{$\Lap$ continuous, strictly decreasing}
   \end{align*}
   \back{m-er}
 \end{frame}

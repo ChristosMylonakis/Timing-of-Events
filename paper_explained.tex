@@ -338,27 +338,27 @@ Two facts we state without proof:
 \end{itemize}
 
 \subsection{Survival through the Laplace transform}
-\whynow{write what the data reveal, $S(y\mid x)$ (equivalently its hazard $\theta(y\mid x)$), in terms of the unknowns $(\lambda,\varphi,G)$.}
+\whynow{write what the data reveal, $\bar S(y\mid x)$ (equivalently its hazard $\bar\theta(y\mid x)$), in terms of the unknowns $(\lambda,\varphi,G)$.}
 \begin{align}
-  S(y\mid x) &= \E\big[e^{-\varphi(x)\Lambda(y)V}\big] && \why{LIE over $V$; \eqref{eq:survival}; $V\perp X$} \nonumber\\
+  \bar S(y\mid x) &= \E\big[e^{-\varphi(x)\Lambda(y)V}\big] && \why{LIE over $V$; \eqref{eq:survival}; $V\perp X$} \nonumber\\
   &= \Lap\big(\varphi(x)\Lambda(y)\big) && \why{definition \eqref{eq:laplace}} \label{eq:mphsurv}\\
-  \theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{$-\frac{d}{dy}\log$ of \eqref{eq:mphsurv}; chain rule} \label{eq:mphhazard}
+  \bar\theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{$-\frac{d}{dy}\log$ of \eqref{eq:mphsurv}; chain rule} \label{eq:mphhazard}
 \end{align}
 \begin{itemize}
-  \item Data: $S(y\mid x)$ for all $(y,x)$. The new information relative to Section 2.5 is the $x$ dimension.
+  \item Data: $\bar S(y\mid x)$ for all $(y,x)$. The new information relative to Section 2.5 is the $x$ dimension.
     \begin{itemize}
-      \item $\theta(y\mid x)$ is \emph{not} extra information. Section 1: $S(y)=e^{-\Theta(y)}$ with $\Theta(y)=\int_0^y\theta$, and conversely $\theta=-\partial_y\log S$. Knowing the whole function $\theta$ $\iff$ knowing the whole function $S$. We use whichever form makes an argument simpler.
+      \item $\bar\theta(y\mid x)$ is \emph{not} extra information. Section 1: $S(y)=e^{-\Theta(y)}$ with $\Theta(y)=\int_0^y\theta$, and conversely $\theta=-\partial_y\log S$. Knowing the whole function $\theta$ $\iff$ knowing the whole function $S$. We use whichever form makes an argument simpler.
     \end{itemize}
   \item Data reveal one function $\Lap$ of a \textbf{single index} $\varphi(x)\Lambda(y)$.
   \item $x$ and $y$ both move the index: this is what the three steps below exploit.
 \end{itemize}
 
 \subsection{Why covariates separate sorting from duration dependence}
-\whynow{in Section 2.5 any $G$ fit because $\Lambda$ could be tailored to the one survival curve. With covariates, \emph{one} $\Lambda$ and \emph{one} $\Lap$ must fit all groups at once: $S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$ for every $x$. Show what this buys.}
+\whynow{in Section 2.5 any $G$ fit because $\Lambda$ could be tailored to the one survival curve. With covariates, \emph{one} $\Lambda$ and \emph{one} $\Lap$ must fit all groups at once: $\bar S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$ for every $x$. Show what this buys.}
 
 Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1,x_2$ with $\varphi_1>\varphi_2$:
 \begin{align}
-  \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m\big(\varphi_1\Lambda(y)\big)}{m\big(\varphi_2\Lambda(y)\big)} && \why{\eqref{eq:mphhazard}; $\lambda(y)$ cancels} \label{eq:ratio}\\
+  \frac{\bar\theta(y\mid x_1)}{\bar\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m\big(\varphi_1\Lambda(y)\big)}{m\big(\varphi_2\Lambda(y)\big)} && \why{\eqref{eq:mphhazard}; $\lambda(y)$ cancels} \label{eq:ratio}\\
   m'(a) &= -\var(V\mid\text{survived to }a) && \why{$m=-(\log\Lap)'$; $(\log\Lap)''=\var$, Section 2.4} \nonumber
 \end{align}
 \begin{itemize}
@@ -367,10 +367,10 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
     \begin{align}
       \varphi_1\Lambda(y) &> \varphi_2\Lambda(y) && \why{$\varphi_1>\varphi_2$, $\Lambda(y)>0$} \nonumber\\
       m\big(\varphi_1\Lambda(y)\big) &< m\big(\varphi_2\Lambda(y)\big) && \why{$m$ strictly decreasing} \nonumber\\
-      \frac{\theta(y\mid x_1)}{\theta(y\mid x_2)} = \frac{\varphi_1}{\varphi_2}\cdot\underbrace{\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))}}_{<1} &< \frac{\varphi_1}{\varphi_2} && \why{\eqref{eq:ratio}} \nonumber
+      \frac{\bar\theta(y\mid x_1)}{\bar\theta(y\mid x_2)} = \frac{\varphi_1}{\varphi_2}\cdot\underbrace{\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))}}_{<1} &< \frac{\varphi_1}{\varphi_2} && \why{\eqref{eq:ratio}} \nonumber
     \end{align}
     At $y=0$: $\Lambda(0)=0$, so the second factor is $m(0)/m(0)=1$ and the ratio is $\varphi_1/\varphi_2$.
-  \item The sign of $\theta(y\mid x_1)/\theta(y\mid x_2)-1$ is \emph{not} pinned down: with strong heterogeneity the ratio can fall below 1 (hazards cross). What we know, and what identification uses, is the drift \emph{below} $\varphi_1/\varphi_2$.
+  \item The sign of $\bar\theta(y\mid x_1)/\bar\theta(y\mid x_2)-1$ is \emph{not} pinned down: with strong heterogeneity the ratio can fall below 1 (hazards cross). What we know, and what identification uses, is the drift \emph{below} $\varphi_1/\varphi_2$.
   \item Why: at the same duration, the high-$\varphi$ group is \emph{further along the index}. Its high-$V$ members have left faster, so its selection is more advanced.
   \item Duration dependence $\lambda(y)$ hits both groups equally and cancels in \eqref{eq:ratio}. Sorting does not cancel.
     \begin{itemize}
@@ -382,10 +382,10 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 \end{itemize}
 
 \subsection{Identification (Elbers \& Ridder 1982) in three steps}
-\whynow{recover $\varphi$, then $G$, then $\lambda$ from $S(y\mid x)$. Each step uses one property of $\Lap$ from Section 2.3. Section 4 repeats these steps in two dimensions.}
+\whynow{recover $\varphi$, then $G$, then $\lambda$ from $\bar S(y\mid x)$. Each step uses one property of $\Lap$ from Section 2.3. Section 4 repeats these steps in two dimensions.}
 \textbf{Step 1: $\varphi$ from short durations.} Assume $\E V<\infty$.
 \begin{align}
-  \frac{\theta(y\mid x)}{\theta(y\mid x^*)}
+  \frac{\bar\theta(y\mid x)}{\bar\theta(y\mid x^*)}
   &= \varphi(x)\,\frac{(-\Lap'/\Lap)(\varphi(x)\Lambda(y))}{(-\Lap'/\Lap)(\Lambda(y))} && \why{by \eqref{eq:mphhazard}; $\lambda(y)$ cancels; $\varphi(x^*)=1$} \nonumber\\
   &\xrightarrow{\;y\downarrow0\;} \varphi(x)\,\frac{-\Lap'(0)/\Lap(0)}{-\Lap'(0)/\Lap(0)} = \varphi(x) && \why{$\Lambda(y)\to0$; continuity; $-\Lap'(0)=\E V<\infty$} \nonumber
 \end{align}
@@ -396,7 +396,7 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 
 \textbf{Step 2: $G$ at the normalization date.}
 \begin{align}
-  S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{\eqref{eq:mphsurv} with $\Lambda(y^*)=1$} \nonumber
+  \bar S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{\eqref{eq:mphsurv} with $\Lambda(y^*)=1$} \nonumber
 \end{align}
 \begin{itemize}
   \item $\varphi(x)$ known from step 1. Varying $x$ traces $\Lap$ on an interval.
@@ -405,7 +405,7 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 
 \textbf{Step 3: baseline.}
 \begin{align}
-  \Lambda(y) &= \frac{\Lap^{-1}\big(S(y\mid x)\big)}{\varphi(x)} && \why{invert \eqref{eq:mphsurv}; $\Lap$ strictly decreasing} \nonumber
+  \Lambda(y) &= \frac{\Lap^{-1}\big(\bar S(y\mid x)\big)}{\varphi(x)} && \why{invert \eqref{eq:mphsurv}; $\Lap$ strictly decreasing} \nonumber
 \end{align}
 
 \textbf{What was assumed:} proportionality, $V\perp X$, $\E V<\infty$, variation in $\varphi(x)$.
@@ -504,8 +504,10 @@ where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $\bar\theta^S_
   \item $\bar\theta^Y_0$ is \emph{cause-specific}: the rate of exit through one route (a job) in a group the \emph{other} route (treatment) has already filtered.
     \begin{itemize}
       \item Observed: $\bar\theta^Y_0=\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ S>t,\ x]$, job-finding among the unemployed \emph{and} untreated.
-      \item Not observed: $\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ x]$, job-finding ignoring treatment. For the treated we never see when they would have found a job without treatment.
-      \item The treatment exit removes high-$V_S$ types early. If $V_S\perp V_Y$ the $V_Y$ mix is unchanged and the two coincide; if correlated (low motivation $\Rightarrow$ low $V_Y$, early treatment), the untreated group is left with higher $V_Y$.
+      \item Not observed: $\bar\theta_Y(t\mid x)=\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ x]$, the one-duration observed hazard of $Y$, now cut short by treatment. For the treated we never see when they would have found a job without treatment.
+      \item What changes, with $W:=e^{-\Lambda_S(t\mid x)V_S}$ (probability still untreated) and everything conditional on $Y>t,x$: $\E[V_Y\mid S>t]=\E[V_YW]/\E[W]=\E[V_Y]+\cov(V_Y,W)/\E[W]$ [Bayes reweighting; $\E XY=\E X\E Y+\cov$].
+      \item If $V_S\perp V_Y$: $\cov=0$, the two coincide. If correlated: $\cov\neq0$, with sign opposite to the correlation of $V_Y,V_S$ (low motivation $\Rightarrow$ low $V_Y$, early treatment $\Rightarrow$ untreated left with higher $V_Y$).
+      \item Why it matters: the effect compares the just treated with the not yet treated at the same $s$. If their $V_Y$ mix differs, the exit-rate ratio is $\delta\times$(selection factor) (Section 8.3), the duration analogue of an endogenous regressor.
       \item \textbf{The gap between the two is the selection.} Section 4.3 locates it in the data.
     \end{itemize}
 \end{itemize}
