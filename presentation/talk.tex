@@ -5,6 +5,7 @@
 \setbeamertemplate{footline}[frame number]
 
 \usepackage{amsmath,amssymb,booktabs}
+\usepackage{appendixnumberbeamer}
 \graphicspath{{../figures/}}
 
 \newcommand{\E}{\mathbb{E}}
@@ -21,7 +22,7 @@
 \begin{document}
 
 % ---------------------------------------------------------------------
-\begin{frame}
+\begin{frame}[plain,noframenumbering]
   \titlepage
 \end{frame}
 
@@ -255,7 +256,7 @@
 \end{frame}
 
 % =====================================================================
-\begin{frame}
+\begin{frame}[plain,noframenumbering]
   \centering\Huge Adding a Treatment
 \end{frame}
 
@@ -528,11 +529,12 @@
 
 
 % =====================================================================
-\begin{frame}
+\begin{frame}[plain,noframenumbering]
   \centering\Huge Thank You!
 \end{frame}
 
 \appendix
+\setbeamertemplate{footline}{}
 \newcommand{\back}[1]{\vfill\hfill\hyperlink{#1}{\beamerreturnbutton{Back}}}
 
 \begin{frame}[label=p-hazard]{Proof: hazard and survival}
