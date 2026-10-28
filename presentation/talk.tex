@@ -507,12 +507,6 @@
   \end{itemize}
   \textbf{4.} $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$.
 
-  \medskip
-  \textbf{Why naive comparisons fail, and how this handles it}
-  \begin{itemize}
-    \item At $d$: the treated have mix $\Pr(V=v\mid\text{treated at }d)\neq\Pr(V=v\mid\text{at risk at }d)$. Step 2 averages over the treated mix.
-    \item At $y>d$: the treated still unemployed have mix $\propto e^{-\varphi_Yv_Y\Delta}\Pr(V=v\mid\text{treated at }d)$, fast types gone. Their exit rate is $\lambda_Y\varphi_Y\,\delta(y\mid d,x)\,\E[V_Y\mid\text{treated at }d,\,Y>y]$, not $\delta\times$ the mean at $d$. Averaging \emph{survival} in step 2 builds this in.
-  \end{itemize}
   \vfill\hfill\hyperlink{p-p1}{\beamergotobutton{Proof}}
 \end{frame}
 
@@ -534,6 +528,10 @@
 
 
 % =====================================================================
+\begin{frame}
+  \centering\Huge Thank You!
+\end{frame}
+
 \appendix
 \newcommand{\back}[1]{\vfill\hfill\hyperlink{#1}{\beamerreturnbutton{Back}}}
 
