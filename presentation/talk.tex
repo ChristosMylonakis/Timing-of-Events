@@ -286,19 +286,21 @@
 
 % ---------------------------------------------------------------------
 \begin{frame}[label=m-race]{Competing risks: model and data}
+  \small
   \[ \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y,\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S,\qquad (V_Y,V_S)\sim G. \]
   \textbf{Assumption:} $Y\perp S\mid(x,V)$. All dependence runs through $(x,V)$.
   \begin{align*}
     \Pr(Y>y,S>s\mid x) &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_S\Lambda_S(s)V_S}\big] && \why{LIE; assumption} \\
-    &= \Lap\big(\varphi_Y(x)\Lambda_Y(y),\ \varphi_S(x)\Lambda_S(s)\big) && \why{$\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$}
+    &= \Lap\Big(\underbrace{\varphi_Y(x)\Lambda_Y(y)}_{=:\,\Lambda_Y(y\mid x)},\ \underbrace{\varphi_S(x)\Lambda_S(s)}_{=:\,\Lambda_S(s\mid x)}\Big) && \why{$\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$}
   \end{align*}
-  Only the first event is seen. With $\Lambda_Y(t\mid x):=\varphi_Y(x)\Lambda_Y(t)$, $\Lambda_S(t\mid x):=\varphi_S(x)\Lambda_S(t)$:
+  \textbf{Data:} only the first event and which one it was. The joint survival above is seen only on the diagonal $y=s=t$:
   \begin{align*}
-    P_0(t\mid x) &:= \Pr(\text{nothing yet by }t\mid x)=\Lap(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)) \\
-    h_Y(t\mid x) &:= \text{exit rate among those with nothing yet} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x]
+    P_0(t\mid x) &:= \Pr(Y>t,\,S>t\mid x) = \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{nothing happened by $t$} \\
+    h_Y(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\,S\ge t,\,x)}{dt} && \why{exit rate among the risk set} \\
+    &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{see proof}
   \end{align*}
   \begin{itemize}
-    \item $R_t$: the risk set, still unemployed and untreated at $t$.
+    \item $R_t:=\{Y\ge t,\,S\ge t\}$: the risk set, still unemployed and untreated at $t$. $h_S$ is defined symmetrically.
   \end{itemize}
   \vfill\hfill\hyperlink{p-race}{\beamergotobutton{Proof}}
 \end{frame}
