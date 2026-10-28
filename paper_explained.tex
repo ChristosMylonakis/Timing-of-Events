@@ -500,7 +500,7 @@ Cause-specific hazard of exit (rate of $Y$ happening first, among those with not
 where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $\bar\theta^S_0(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
 \begin{itemize}
   \item Notation: $\bar S_0,\bar\theta_0$ = observed survival and hazards \emph{before treatment} (later $\bar S_1$: after). Superscript: which exit.
-  \item Same structure as Section 1, split by cause: $\bar\theta^Y_0+\bar\theta^S_0=-\frac{d}{dt}\log\bar S_0$.
+  \item Same structure as Section 1, split by cause: $\bar\theta^Y_0+\bar\theta^S_0=\bar\theta_0$, the observed hazard of leaving by either exit (the hazard of $\bar S_0$).
   \item $\bar\theta^Y_0$ is \emph{cause-specific}: it conditions on $S>t$ too, so it is not the hazard of $Y$ (unless $V_Y\perp V_S$).
 \end{itemize}
 
