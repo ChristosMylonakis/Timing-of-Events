@@ -162,7 +162,7 @@
     \item They cannot match on a stretch and then diverge, so knowing $\Lap_G$ on a stretch is knowing it everywhere.
   \end{itemize}
   \bigskip
-  \textbf{Together:} $\Lap_G$ on any interval $[a_{lo},a_{hi}]$ $\Rightarrow$ $G$.
+  \textbf{So identifying $G$ reduces to one task:} observe $\Lap_G(a)$ on some interval of $a$, i.e.\ the observed survival $\bar S(y)$ at \emph{known} values of the accumulated baseline hazard $a=\Lambda(y)$.
   \vfill\hfill\hyperlink{p-lap2}{\beamergotobutton{Proof}}
 \end{frame}
 
@@ -185,19 +185,22 @@
   \end{itemize}
   \bigskip
   \textbf{But $\Lambda$ is unknown:} we see the values $\Lap_G(\Lambda(y))$, not the points $\Lambda(y)$ where they sit.\\[4pt]
-  $\rightarrow$ Can a different pair $(\tilde\Lambda,\tilde G)$ produce the same $\bar S$?
+  $\rightarrow$ Can $\bar S$ alone separate $\Lambda$ from $G$?
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-nonid]{Duration dependence or sorting? Not identified from one duration}
+\begin{frame}[label=m-nonid]{Duration Dependence or Sorting? Not Identified}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
       \small
-      \textbf{Yes.} Pick \emph{any} $\tilde G$ and set
-      \[ \tilde\Lambda(y):=\Lap_{\tilde G}^{-1}\big(\bar S(y)\big)\ \Rightarrow\ \Lap_{\tilde G}\big(\tilde\Lambda(y)\big)=\bar S(y)\ \ \forall y. \]
       \begin{itemize}
-        \item At each $y$: one equation, one unknown number $\tilde\Lambda(y)$.
-        \item In hazards: $\bar\theta(y)=\underbrace{\tilde\lambda(y)}_{\text{duration dep.}}\cdot\underbrace{\tilde\E[V\mid Y>y]}_{\text{sorting}}$; $\tilde\lambda$ absorbs whatever sorting $\tilde G$ implies.
+        \item Observed: $\bar S(y)$, equivalently $\bar\theta(y)$.
+        \item Not observed: $\lambda$ (duration dependence) and $G$ (sorting).
+        \item They are mixed in one observed function of $y$:
+      \end{itemize}
+      \[ \bar\theta(y)=\underbrace{\lambda(y)}_{\text{duration dep.}}\cdot\underbrace{\E[V\mid Y>y]}_{\text{sorting}} \]
+      \begin{itemize}
+        \item Any sorting pattern can be offset by a matching $\lambda$: every $G$ fits the data (figure).
       \end{itemize}
       \medskip
       \textbf{To separate them}, we need variation that moves one but not the other:
