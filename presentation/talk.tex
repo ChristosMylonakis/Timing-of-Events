@@ -138,7 +138,7 @@
   \textbf{Link to the data:} plug in $a=\Lambda(y)$.
   \begin{align*}
     \bar S(y) &= \E_G\big[e^{-\Lambda(y)V}\big] = \Lap_G\big(\Lambda(y)\big) && \why{definition, $a=\Lambda(y)$} \\
-    \bar\theta(y) &= -\frac{d}{dy}\log\Lap_G\big(\Lambda(y)\big) = \underbrace{\lambda(y)}_{\text{from }\Lambda}\cdot\underbrace{m_G\big(\Lambda(y)\big)}_{\text{from }G}, \quad m_G(a):=-\frac{\Lap_G'(a)}{\Lap_G(a)} && \why{chain rule}
+    \bar\theta(y) &= \underbrace{\lambda(y)}_{\text{from }\Lambda}\cdot\underbrace{m_G\big(\Lambda(y)\big)}_{\text{from }G}, \qquad m_G(a):=-\frac{\Lap_G'(a)}{\Lap_G(a)} && \why{$\bar\theta=-\tfrac{d}{dy}\log\bar S$; chain rule}
   \end{align*}
   \begin{itemize}
     \item $\bar S=\Lap_G\circ\Lambda$: first $y\mapsto\Lambda(y)$ (duration dependence), then $a\mapsto\Lap_G(a)$ (heterogeneity).
@@ -148,27 +148,44 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-lap2]{What $\Lap_G$ pins down, and what we lack}
-  \textbf{Uniqueness:} $\Lap_{G_1}(a)=\Lap_{G_2}(a)\ \forall a\ge0 \Rightarrow G_1=G_2$. \quad $\Lap_G$ is a fingerprint of $G$.\\[2pt]
-  \textbf{Analyticity:} $\Lap_{G_1}=\Lap_{G_2}$ on some $[a_{lo},a_{hi}]$ $\Rightarrow$ on all $a>0$. \quad A piece of the fingerprint gives all of it.
+\begin{frame}[label=m-lap2]{What $\Lap_G$ pins down}
+  \textbf{Uniqueness}
+  \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\ge0 \quad\Longrightarrow\quad G_1=G_2. \]
+  \begin{itemize}
+    \item $G_1\neq G_2$ $\Rightarrow$ different $\bar S=\Lap_G(\Lambda(y))$ as functions of $\Lambda(y)$.
+  \end{itemize}
+  \bigskip
+  \textbf{Analyticity:} for any $0<a_{lo}<a_{hi}$,
+  \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\in[a_{lo},a_{hi}] \quad\Longrightarrow\quad \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a>0. \]
+  \begin{itemize}
+    \item Equivalently: $G_1\neq G_2$ $\Rightarrow$ $\Lap_{G_1}\neq\Lap_{G_2}$ on \emph{every} interval.
+    \item They cannot match on a stretch and then diverge, so knowing $\Lap_G$ on a stretch is knowing it everywhere.
+  \end{itemize}
+  \bigskip
+  \textbf{Together:} $\Lap_G$ on any interval $[a_{lo},a_{hi}]$ $\Rightarrow$ $G$.
+  \vfill\hfill\hyperlink{p-lap2}{\beamergotobutton{Proof}}
+\end{frame}
 
-  \medskip
+% ---------------------------------------------------------------------
+\begin{frame}[label=m-lack]{What we lack: the baseline $\Lambda$}
   \textbf{What the data give}
   \begin{itemize}
-    \item Observed: $\bar S(y)$ for all $y$ (equivalently $\bar\theta(y)$, or $-\log\bar S(y)$).
-    \item Not observed: $\Lambda(y)=\int_0^y\lambda$, the baseline of the \emph{individual} hazard. In data it is mixed with sorting: $\bar\theta(y)=\lambda(y)\,m_G(\Lambda(y))$.
+    \item Observed: $\bar S(y)$, equivalently $\bar\theta(y)$, for all $y$.
+    \item Not observed: $\Lambda(y)=\int_0^y\lambda$, the baseline of the \emph{individual} hazard.
+    \item In data it is mixed with sorting: $\bar\theta(y)=\lambda(y)\,m_G(\Lambda(y))$.
   \end{itemize}
+  \bigskip
   \textbf{If $\Lambda$ were known}
   \begin{align*}
     \Lap_G(a) &= \bar S\big(\Lambda^{-1}(a)\big)\quad\text{for $a$ in the range of }\Lambda && \why{$\bar S(y)=\Lap_G(\Lambda(y))$, set $y=\Lambda^{-1}(a)$}
   \end{align*}
   \begin{itemize}
     \item $\Rightarrow$ $\Lap_G$ on an interval $\Rightarrow$ (analyticity) everywhere $\Rightarrow$ (uniqueness) $G$.
-    \item E.g.\ $\Lambda(y)=y$: then $\Lap_G=\bar S$. The observed survival curve \emph{is} the fingerprint.
+    \item E.g.\ $\Lambda(y)=y$: then $\Lap_G=\bar S$. The observed survival curve \emph{is} the Laplace transform of $G$.
   \end{itemize}
-  \textbf{But $\Lambda$ is unknown:} we see the values $\Lap_G(\Lambda(y))$, not the points $\Lambda(y)$ where they sit.\\
+  \bigskip
+  \textbf{But $\Lambda$ is unknown:} we see the values $\Lap_G(\Lambda(y))$, not the points $\Lambda(y)$ where they sit.\\[4pt]
   $\rightarrow$ Can a different pair $(\tilde\Lambda,\tilde G)$ produce the same $\bar S$?
-  \vfill\hfill\hyperlink{p-lap2}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
