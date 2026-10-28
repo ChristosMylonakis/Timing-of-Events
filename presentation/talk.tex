@@ -451,7 +451,10 @@
 % ---------------------------------------------------------------------
 \begin{frame}[label=m-luck]{Where the exogenous variation comes from: timing luck}
   \small
-  Given $(x,V)$, the integrated treatment hazard is $\Theta_D(t\mid x,V)=\Lambda_D(t\mid x)V_D$. Define $E_D:=\Theta_D(D\mid x,V)$:
+  Given $(x,V)$, the integrated treatment hazard is $\Theta_D(t\mid x,V)=\Lambda_D(t\mid x)V_D$. Define
+  \[ E_D:=\Theta_D(D\mid x,V): \text{ the treatment hazard a person has accumulated by the moment of treatment.} \]
+  \textbf{Why:} it splits the treatment date into a part fixed by $(x,V)$ and a part that is pure chance. The chance part is the exogenous variation.
+
   \begin{align*}
     \Pr(E_D>e\mid x,V) &= \Pr\big(D>\Theta_D^{-1}(e\mid x,V)\mid x,V\big) = e^{-e} && \why{$\Theta_D$ increasing; $S=e^{-\Theta}$} \\
     \Longrightarrow\ D &= \Lambda_D^{-1}\!\Big(\frac{E_D}{\varphi_D(x)\,V_D}\Big),\qquad E_D\sim\text{Exp}(1),\ E_D\perp(x,V) && \why{invert}
