@@ -148,26 +148,26 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-lap2]{What $\Lap_G$ pins down}
-  \textbf{Uniqueness:} the map $G\mapsto\Lap_G$ is one-to-one.
-  \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\ge0 \quad\Longrightarrow\quad G_1=G_2. \]
+\begin{frame}[label=m-lap2]{What $\Lap_G$ pins down, and what we lack}
+  \textbf{Uniqueness:} $\Lap_{G_1}(a)=\Lap_{G_2}(a)\ \forall a\ge0 \Rightarrow G_1=G_2$. \quad $\Lap_G$ is a fingerprint of $G$.\\[2pt]
+  \textbf{Analyticity:} $\Lap_{G_1}=\Lap_{G_2}$ on some $[a_{lo},a_{hi}]$ $\Rightarrow$ on all $a>0$. \quad A piece of the fingerprint gives all of it.
+
+  \medskip
+  \textbf{What the data give}
   \begin{itemize}
-    \item With $a=\Lambda(y)$: if we knew $\Lambda$, the share still unemployed at every level of accumulated baseline hazard would reveal the type mix $G$.
+    \item Observed: $\bar S(y)$ for all $y$ (equivalently $\bar\theta(y)$, or $-\log\bar S(y)$).
+    \item Not observed: $\Lambda(y)=\int_0^y\lambda$, the baseline of the \emph{individual} hazard. In data it is mixed with sorting: $\bar\theta(y)=\lambda(y)\,m_G(\Lambda(y))$.
   \end{itemize}
-  \textbf{Analyticity:} for any $0<a_{lo}<a_{hi}$,
-  \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\in[a_{lo},a_{hi}] \quad\Longrightarrow\quad \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a>0. \]
+  \textbf{If $\Lambda$ were known}
+  \begin{align*}
+    \Lap_G(a) &= \bar S\big(\Lambda^{-1}(a)\big)\quad\text{for $a$ in the range of }\Lambda && \why{$\bar S(y)=\Lap_G(\Lambda(y))$, set $y=\Lambda^{-1}(a)$}
+  \end{align*}
   \begin{itemize}
-    \item With $a=\Lambda(y)$: a short stretch is enough. Survival over $\Lambda(y)\in[\Lambda(y_1),\Lambda(y_2)]$ already pins down $\Lap_G$ everywhere, hence $G$.
+    \item $\Rightarrow$ $\Lap_G$ on an interval $\Rightarrow$ (analyticity) everywhere $\Rightarrow$ (uniqueness) $G$.
+    \item E.g.\ $\Lambda(y)=y$: then $\Lap_G=\bar S$. The observed survival curve \emph{is} the fingerprint.
   \end{itemize}
-  \textbf{How it is used:} we need values of $\Lap_G$ at \emph{known} points $a$.
-  \begin{itemize}
-    \item One duration: values $\bar S(y)=\Lap_G(\Lambda(y))$, but at \emph{unknown} points $\Lambda(y)$. Stuck (next slide).
-    \item With covariates (MPH, step 2): fix $y^*$ with $\Lambda(y^*)=1$. Then $S(y^*\mid x)=\Lap_G(\varphi(x))$.
-      \begin{itemize}
-        \item Each group $x$ gives the value of $\Lap_G$ at the known point $a=\varphi(x)$.
-        \item Groups with $\varphi(x)\in[0.5,2]$ $\Rightarrow$ $\Lap_G$ on $[0.5,2]$ $\Rightarrow$ all $a$ $\Rightarrow$ $G$.
-      \end{itemize}
-  \end{itemize}
+  \textbf{But $\Lambda$ is unknown:} we see the values $\Lap_G(\Lambda(y))$, not the points $\Lambda(y)$ where they sit.\\
+  $\rightarrow$ Can a different pair $(\tilde\Lambda,\tilde G)$ produce the same $\bar S$?
   \vfill\hfill\hyperlink{p-lap2}{\beamergotobutton{Proof}}
 \end{frame}
 
@@ -175,12 +175,12 @@
 \begin{frame}[label=m-nonid]{Duration dependence or sorting? Not identified from one duration}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
-      \[ \bar\theta(y)=\underbrace{\lambda(y)}_{\text{duration dep.}}\cdot\underbrace{\E[V\mid Y>y]}_{\text{sorting}} \]
+      \small
+      \textbf{Yes.} Pick \emph{any} $\tilde G$ and set
+      \[ \tilde\Lambda(y):=\Lap_{\tilde G}^{-1}\big(\bar S(y)\big)\ \Rightarrow\ \Lap_{\tilde G}\big(\tilde\Lambda(y)\big)=\bar S(y)\ \ \forall y. \]
       \begin{itemize}
-        \item Data: $\bar S(y)$ for all $y$.
-        \item Unknowns: $\Lambda$ and $G$, with $\bar S(y)=\Lap_G(\Lambda(y))$.
-        \item One data function, two unknown functions of the same $y$.
-        \item Any $G$ fits: $\Lambda$ bends to absorb the rest.
+        \item At each $y$: one equation, one unknown number $\tilde\Lambda(y)$.
+        \item In hazards: $\bar\theta(y)=\underbrace{\tilde\lambda(y)}_{\text{duration dep.}}\cdot\underbrace{\tilde\E[V\mid Y>y]}_{\text{sorting}}$; $\tilde\lambda$ absorbs whatever sorting $\tilde G$ implies.
       \end{itemize}
       \medskip
       \textbf{To separate them}, we need variation that moves one but not the other:
