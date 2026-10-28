@@ -130,7 +130,7 @@
   For a distribution $G$ of $V\ge0$, define the \textbf{function}
   \[ \Lap_G:[0,\infty)\to(0,1],\qquad \Lap_G(a):=\E_G\big[e^{-aV}\big]=\int_0^\infty e^{-av}\,dG(v). \]
   \begin{itemize}
-    \item $a$ is just the argument (a number). \emph{Which} function $\Lap_G$ is depends only on $G$:
+    \item \emph{Which} function $\Lap_G$ is depends only on $G$:
       \begin{itemize}
         \item $V\equiv1$: $\Lap_G(a)=e^{-a}$;\quad two types $v_1,v_2$ w.p.\ $p,1-p$: $\Lap_G(a)=p\,e^{-av_1}+(1-p)\,e^{-av_2}$.
       \end{itemize}
@@ -151,19 +151,22 @@
 \begin{frame}[label=m-lap2]{What $\Lap_G$ pins down}
   \textbf{Uniqueness:} the map $G\mapsto\Lap_G$ is one-to-one.
   \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\ge0 \quad\Longrightarrow\quad G_1=G_2. \]
+  \begin{itemize}
+    \item With $a=\Lambda(y)$: if we knew $\Lambda$, the share still unemployed at every level of accumulated baseline hazard would reveal the type mix $G$.
+  \end{itemize}
   \textbf{Analyticity:} for any $0<a_{lo}<a_{hi}$,
   \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\in[a_{lo},a_{hi}] \quad\Longrightarrow\quad \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a>0. \]
   \begin{itemize}
-    \item The interval is a range of values of the argument $a$. Any positive length works, however short.
+    \item With $a=\Lambda(y)$: a short stretch is enough. Survival over $\Lambda(y)\in[\Lambda(y_1),\Lambda(y_2)]$ already pins down $\Lap_G$ everywhere, hence $G$.
   \end{itemize}
-  \textbf{Together:} the values of $\Lap_G$ on any interval $[a_{lo},a_{hi}]$ determine $G$.
-
-  \bigskip
-  \textbf{How this is used}
+  \textbf{How it is used:} we need values of $\Lap_G$ at \emph{known} points $a$.
   \begin{itemize}
-    \item Data give values of $\Lap_G$ at points $a=\Lambda(y)$: we see the value $\bar S(y)$.
-    \item If we also knew \emph{where} those points are ($\Lambda$) and they cover an interval $\Rightarrow$ $G$.
-    \item With one duration we do not know $\Lambda$. Next slide.
+    \item One duration: values $\bar S(y)=\Lap_G(\Lambda(y))$, but at \emph{unknown} points $\Lambda(y)$. Stuck (next slide).
+    \item With covariates (MPH, step 2): fix $y^*$ with $\Lambda(y^*)=1$. Then $S(y^*\mid x)=\Lap_G(\varphi(x))$.
+      \begin{itemize}
+        \item Each group $x$ gives the value of $\Lap_G$ at the known point $a=\varphi(x)$.
+        \item Groups with $\varphi(x)\in[0.5,2]$ $\Rightarrow$ $\Lap_G$ on $[0.5,2]$ $\Rightarrow$ all $a$ $\Rightarrow$ $G$.
+      \end{itemize}
   \end{itemize}
   \vfill\hfill\hyperlink{p-lap2}{\beamergotobutton{Proof}}
 \end{frame}
