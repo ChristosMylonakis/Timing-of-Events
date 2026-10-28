@@ -488,19 +488,24 @@ This section studies the competing-risks part alone. No treatment effect is invo
 \whynow{we never see both durations, only the first event. Derive which pieces of \eqref{eq:jointsurv} are observable.}
 Probability that nothing has happened by $t$ (the diagonal $y=s=t$):
 \begin{align}
-  P_0(t\mid x) := \Pr(Y>t,S>t\mid x) &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{\eqref{eq:jointsurv} at $y=s=t$} \label{eq:P0}
+  \bar S_0(t\mid x) := \Pr(Y>t,S>t\mid x) &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{\eqref{eq:jointsurv} at $y=s=t$} \label{eq:P0}
 \end{align}
 Cause-specific hazard of exit (rate of $Y$ happening first, among those with nothing yet):
 \begin{align}
-  h_Y(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\ S>t\mid x)}{dt\;P_0(t\mid x)} && \why{definition} \nonumber\\
-  &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{P_0(t\mid x)} && \why{derivative of a survival in $y$} \nonumber\\
+  \bar\theta^Y_0(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\ S>t\mid x)}{dt\;\bar S_0(t\mid x)} && \why{definition} \nonumber\\
+  &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{\bar S_0(t\mid x)} && \why{derivative of a survival in $y$} \nonumber\\
   &= \frac{-\Lap_a(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))\,\varphi_Y(x)\lambda_Y(t)}{\Lap(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))} && \why{chain rule on \eqref{eq:jointsurv}; $\Lambda_Y'=\lambda_Y$} \nonumber\\
   &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{$-\Lap_a/\Lap$ = survivor mean, as in \eqref{eq:survmeanexp}} \label{eq:hY}
 \end{align}
-where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $h_S(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
+where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $\bar\theta^S_0(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
+\begin{itemize}
+  \item Notation: $\bar S_0,\bar\theta_0$ = observed survival and hazards \emph{before treatment} (later $\bar S_1$: after). Superscript: which exit.
+  \item Same structure as Section 1, split by cause: $\bar\theta^Y_0+\bar\theta^S_0=-\frac{d}{dt}\log\bar S_0$.
+  \item $\bar\theta^Y_0$ is \emph{cause-specific}: it conditions on $S>t$ too, so it is not the hazard of $Y$ (unless $V_Y\perp V_S$).
+\end{itemize}
 
 \subsection{Where the dependence of $V_Y,V_S$ lives}
-\whynow{the selection is the dependence of $V_Y$ and $V_S$. Locate it inside the observable $P_0$.}
+\whynow{the selection is the dependence of $V_Y$ and $V_S$. Locate it inside the observable $\bar S_0$.}
 Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectations under them.
 \begin{align}
   \partial_a\log\Lap &= \frac{\Lap_a}{\Lap} = -\E_w[V_Y] && \why{chain rule; differentiate under $\E$} \nonumber\\
@@ -509,8 +514,8 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
   &= \cov(V_Y,V_S\mid R_t,x) && \why{definition of covariance; at $(a,b)=(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))$} \label{eq:crossderiv}
 \end{align}
 \begin{itemize}
-  \item $V_Y\perp V_S$ $\iff$ $\Lap(a,b)=\Lap_Y(a)\Lap_S(b)$ $\iff$ $\log P_0$ additively separable in the two indices.
-  \item Dependence (selection) $=$ an \textbf{interaction} of the two indices in $\log P_0$.
+  \item $V_Y\perp V_S$ $\iff$ $\Lap(a,b)=\Lap_Y(a)\Lap_S(b)$ $\iff$ $\log \bar S_0$ additively separable in the two indices.
+  \item Dependence (selection) $=$ an \textbf{interaction} of the two indices in $\log \bar S_0$.
 \end{itemize}
 
 \subsection{Deeper look: how selection shows up in competing risks}
@@ -518,10 +523,10 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
 
 Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where reductions happen more often):
 \begin{align}
-  h_Y &= \lambda_Y\varphi_Y\,\E_w[V_Y], \qquad w\propto e^{-aV_Y-bV_S} && \why{\eqref{eq:hY}} \nonumber\\
+  \bar\theta^Y_0 &= \lambda_Y\varphi_Y\,\E_w[V_Y], \qquad w\propto e^{-aV_Y-bV_S} && \why{\eqref{eq:hY}} \nonumber\\
   \frac{\partial}{\partial b}\E_w[V_Y] &= -\E_w[V_YV_S]+\E_w[V_Y]\E_w[V_S] && \why{quotient rule, as in Section 2.4} \nonumber\\
   &= -\cov(V_Y,V_S\mid R_t,x) && \why{definition of covariance} \nonumber\\
-  \Longrightarrow\quad \frac{\partial\log h_Y}{\partial b} &= -\frac{\cov(V_Y,V_S\mid R_t,x)}{\E[V_Y\mid R_t,x]} && \why{$\log$ derivative; $\lambda_Y\varphi_Y$ do not depend on $b$} \label{eq:fingerprint}
+  \Longrightarrow\quad \frac{\partial\log \bar\theta^Y_0}{\partial b} &= -\frac{\cov(V_Y,V_S\mid R_t,x)}{\E[V_Y\mid R_t,x]} && \why{$\log$ derivative; $\lambda_Y\varphi_Y$ do not depend on $b$} \label{eq:fingerprint}
 \end{align}
 \begin{itemize}
   \item Those in the risk set are \emph{untreated}. By no anticipation, treatment intensity has no causal effect on their exit rate.
@@ -577,7 +582,7 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
   \item Each plotted point is one group $x$ at one duration $t$:
     \begin{itemize}
       \item location: $\big(\varphi_Y(x)\Lambda_Y(t),\ \varphi_S(x)\Lambda_S(t)\big)$, from model pieces identified in Section 4.6 (steps 1 and 3);
-      \item height: $P_0(t\mid x)$, the share of group $x$ with neither event by $t$. This is \textbf{estimated from data}.
+      \item height: $\bar S_0(t\mid x)$, the share of group $x$ with neither event by $t$. This is \textbf{estimated from data}.
     \end{itemize}
   \item So at plotted locations the height is known; elsewhere it is not. Laplace properties (analyticity, uniqueness) are what extend the known heights to the whole surface and then to $G$.
   \item Left (one group): as $t$ grows, the location moves along one path $t\mapsto(\Lambda_Y(t),\Lambda_S(t))$.
@@ -601,14 +606,14 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
 
 \textbf{Step 1: $\varphi_Y,\varphi_S$.}
 \begin{align}
-  \frac{h_Y(t\mid x)}{h_Y(t\mid x^*)} &= \varphi_Y(x)\,\frac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]} && \why{by \eqref{eq:hY}; $\lambda_Y(t)$ cancels} \nonumber\\
+  \frac{\bar\theta^Y_0(t\mid x)}{\bar\theta^Y_0(t\mid x^*)} &= \varphi_Y(x)\,\frac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]} && \why{by \eqref{eq:hY}; $\lambda_Y(t)$ cancels} \nonumber\\
   &\xrightarrow{\;t\downarrow0\;}\varphi_Y(x)\,\frac{\E V_Y}{\E V_Y}=\varphi_Y(x) && \why{risk set $\to$ everyone; $V\perp X$; (A4)} \nonumber
 \end{align}
-Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
+Same for $\varphi_S$ with $\bar\theta^S_0$. Uses \emph{which} event happened.
 
 \textbf{Step 2: $G$, including the dependence.}
 \begin{align}
-  P_0(t^*\mid x) &= \Lap\big(\varphi_Y(x),\varphi_S(x)\big) && \why{\eqref{eq:P0} with $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$} \nonumber
+  \bar S_0(t^*\mid x) &= \Lap\big(\varphi_Y(x),\varphi_S(x)\big) && \why{\eqref{eq:P0} with $\Lambda_Y(t^*)=\Lambda_S(t^*)=1$} \nonumber
 \end{align}
 \begin{itemize}
   \item Known points fill an open set (A3) $\Rightarrow$ $\Lap$ known there.
@@ -617,7 +622,7 @@ Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
 
 \textbf{Step 3: baselines.} For each $t$, $(\Lambda_Y(t),\Lambda_S(t))$ is the unique $(a,b)$ with
 \begin{align}
-  P_0(t\mid x)=\Lap\big(\varphi_Y(x)a,\ \varphi_S(x)b\big)\quad\text{for all }x. && \why{\eqref{eq:P0}; $\Lap,\varphi$'s known} \nonumber
+  \bar S_0(t\mid x)=\Lap\big(\varphi_Y(x)a,\ \varphi_S(x)b\big)\quad\text{for all }x. && \why{\eqref{eq:P0}; $\Lap,\varphi$'s known} \nonumber
 \end{align}
 \begin{itemize}
   \item Uniqueness: two solutions would give $\Lap(u,v)=\Lap(ku,mv)$ on $(0,\infty)^2$, $(k,m)\neq(1,1)$.
@@ -673,24 +678,24 @@ Take $s'=\infty$ and differentiate in $y$:
 
 \textbf{Pre-treatment objects}
 \begin{align}
-  P_0(t) &= \Pr(Y>t,S>t,Y>S)+\Pr(Y>t,S>t,Y<S) && \why{partition by $Y\gtrless S$; $\Pr(Y=S)=0$} \nonumber\\
+  \bar S_0(t) &= \Pr(Y>t,S>t,Y>S)+\Pr(Y>t,S>t,Y<S) && \why{partition by $Y\gtrless S$; $\Pr(Y=S)=0$} \nonumber\\
   &= Q_S(t,t)+Q_Y(t) && \why{$Y>t,Y<S$ implies $S>t$} \nonumber\\[3pt]
-  h_Y(t) &= \frac{-Q_Y'(t)}{P_0(t)} && \why{$-Q_Y'$: density of untreated exits} \nonumber\\
-  h_S(t) &= \frac{-\partial_sQ_S(y,s)\big|_{y\downarrow t,\,s=t}}{P_0(t)} && \why{density of $S$ at $t$, still unemployed} \nonumber
+  \bar\theta^Y_0(t) &= \frac{-Q_Y'(t)}{\bar S_0(t)} && \why{$-Q_Y'$: density of untreated exits} \nonumber\\
+  \bar\theta^S_0(t) &= \frac{-\partial_sQ_S(y,s)\big|_{y\downarrow t,\,s=t}}{\bar S_0(t)} && \why{density of $S$ at $t$, still unemployed} \nonumber
 \end{align}
 
 \textbf{Post-treatment object: survival of the cohort treated at $s$.} For $y>s$:
 \begin{align}
   -\partial_sQ_S(y,s) &= \lim_{ds\downarrow0}\frac{\Pr(Y>y,\ s\le S<s+ds,\ Y>S)}{ds} && \why{derivative of $Q_S$ in $s$} \nonumber\\
   &= \lim_{ds\downarrow0}\frac{\Pr(Y>y,\ s\le S<s+ds)}{ds} && \why{$Y>y>S$ implies $Y>S$} \nonumber\\[3pt]
-  P_1(y\mid s) &:= \Pr(Y>y\mid S=s,\,Y>s) && \why{definition} \nonumber\\
+  \bar S_1(y\mid s) &:= \Pr(Y>y\mid S=s,\,Y>s) && \why{definition} \nonumber\\
   &= \frac{\partial_sQ_S(y,s)}{\lim_{y'\downarrow s}\partial_sQ_S(y',s)} && \why{cond.\ probability; $ds$ cancels} \label{eq:P1data}
 \end{align}
 \begin{itemize}
-  \item $(P_0,h_Y,h_S)$ = competing-risks data, as in Section 4.
-  \item $P_1$ = the only place where the treatment effect can show up.
+  \item $(\bar S_0,\bar\theta^Y_0,\bar\theta^S_0)$ = competing-risks data, as in Section 4.
+  \item $\bar S_1$ = the only place where the treatment effect can show up.
 \end{itemize}
-\takeaway{pre-treatment data identify the competing-risks model (Section 4). Post-treatment data $P_1$ must deliver $\delta$. Next: the model linking both.}
+\takeaway{pre-treatment data identify the competing-risks model (Section 4). Post-treatment data $\bar S_1$ must deliver $\delta$. Next: the model linking both.}
 
 % =====================================================================
 \section{The model of the paper (Model 1a)}
@@ -764,12 +769,12 @@ Invert the definition of $E_S$:
 \subsection{Step A: the pre-treatment data are the competing-risks model of Section 4}
 \whynow{check that the pre-treatment data are exactly the competing-risks model of Section 4, so its results apply.}
 \begin{align}
-  P_0(t\mid x) &= \E\big[\Pr(Y>t,S>t\mid x,V)\big] && \why{LIE; $V\perp X$} \nonumber\\
+  \bar S_0(t\mid x) &= \E\big[\Pr(Y>t,S>t\mid x,V)\big] && \why{LIE; $V\perp X$} \nonumber\\
   &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(t)V_Y}\,e^{-\varphi_S(x)\Lambda_S(t)V_S}\big] && \why{Assumption 2; before $S$, $\delta$ absent (no anticipation)} \nonumber\\
   &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{as in \eqref{eq:P0}} \nonumber
 \end{align}
 \begin{itemize}
-  \item Same for $h_Y,h_S$. So Prop.~2 (Section 4.6) applies: $\varphi_Y,\varphi_S,\Lambda_Y,\Lambda_S,G$ are identified.
+  \item Same for $\bar\theta^Y_0,\bar\theta^S_0$. So Prop.~2 (Section 4.6) applies: $\varphi_Y,\varphi_S,\Lambda_Y,\Lambda_S,G$ are identified.
   \item This uses no post-treatment data.
 \end{itemize}
 
@@ -822,7 +827,7 @@ For $y>s$, let $g(y,s\mid x)$ be the density of ``treated at $s$ and still unemp
 \end{align}
 Divide by the same expression at $y\downarrow s$ (where $D=0$), as in \eqref{eq:P1data}:
 \begin{align}
-  P_1(y\mid s,x) &= \frac{\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D(y\mid s,x),\ \Lambda_S(s\mid x)\big)}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{the $\lambda_S\varphi_S$ cancel} \nonumber\\
+  \bar S_1(y\mid s,x) &= \frac{\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D(y\mid s,x),\ \Lambda_S(s\mid x)\big)}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{the $\lambda_S\varphi_S$ cancel} \nonumber\\
   &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{rewrite with weights \eqref{eq:Gs}} \label{eq:P1model}
 \end{align}
 \begin{itemize}
