@@ -126,8 +126,8 @@ def simulate(n, delta, correlated, rng):
 
 def fig_local_vs_global():
     rng = np.random.default_rng(1)
-    worlds = [("World A: causal effect, no selection\n" + r"$\delta=4$, $V_Y \perp V_S$", 4.0, False),
-              ("World B: no effect, pure selection\n" + r"$\delta=1$, $V_Y = V_S$", 1.0, True)]
+    worlds = [("World A: causal effect, no selection\n" + r"$\delta=4$, $V_Y \perp V_D$", 4.0, False),
+              ("World B: no effect, pure selection\n" + r"$\delta=1$, $V_Y = V_D$", 1.0, True)]
     fig, ax = plt.subplots(1, 2, figsize=(10, 4.4), sharex=True, sharey=True)
     for a, (title, delta, corr) in zip(ax, worlds):
         S, Y = simulate(3000, delta, corr, rng)
@@ -135,9 +135,9 @@ def fig_local_vs_global():
         a.scatter(S[treated], Y[treated], s=4, alpha=0.35, color="tab:blue")
         a.plot([0, 6], [0, 6], color="black", lw=1)
         frac = np.mean(Y[treated] - S[treated] < 0.25)
-        a.set(xlim=(0, 6), ylim=(0, 6), xlabel="treatment time S", title=title)
+        a.set(xlim=(0, 6), ylim=(0, 6), xlabel="treatment time D", title=title)
         a.text(3.2, 0.6, f"share exiting within 0.25\nof treatment: {frac:.0%}", fontsize=9)
-    ax[0].set_ylabel("outcome duration Y  (treated only, S < Y)")
+    ax[0].set_ylabel("outcome duration Y  (treated only, D < Y)")
     fig.tight_layout()
     fig.savefig(OUT / "fig3_local_vs_global.png", dpi=200)
     plt.close(fig)
@@ -168,7 +168,7 @@ def fig_competing_risks_geometry():
     ax[1].legend(frameon=False, fontsize=9, markerscale=5, loc="upper left")
     for a in ax:
         a.set(xlim=(0, 2.6), ylim=(0, 3.6),
-              xlabel=r"$\Lambda_Y(t\mid x)$", ylabel=r"$\Lambda_S(t\mid x)$")
+              xlabel=r"$\Lambda_Y(t\mid x)$", ylabel=r"$\Lambda_D(t\mid x)$")
     fig.tight_layout()
     fig.savefig(OUT / "fig4_competing_risks_geometry.png", dpi=200)
     plt.close(fig)

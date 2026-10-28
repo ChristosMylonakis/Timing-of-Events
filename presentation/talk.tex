@@ -264,22 +264,22 @@
 \begin{frame}{A second duration: the treatment}
   \textbf{Where it comes from}
   \begin{itemize}
-    \item A treatment that \emph{arrives} at a random time $S$, with its own hazard, is itself a duration.
-    \item Before $S$: \textbf{competing risks} between $Y$ (job) and $S$ (treatment); whichever comes first.
-    \item After $S$: $Y$ continues under treatment. The effect shows up here.
+    \item A treatment that \emph{arrives} at a random time $D$ (the paper's $S$), with its own hazard, is itself a duration.
+    \item Before $D$: \textbf{competing risks} between $Y$ (job) and $D$ (treatment); whichever comes first.
+    \item After $D$: $Y$ continues under treatment. The effect shows up here.
   \end{itemize}
   \textbf{Why it is a hurdle}
   \begin{itemize}
-    \item Censoring: if the job comes first, $S$ is never seen.
+    \item Censoring: if the job comes first, $D$ is never seen.
     \item Endogeneity: the same unobserved traits may drive both.
     \item Tsiatis (1975): competing-risks data alone cannot reveal that dependence.
   \end{itemize}
   \textbf{Why modelling it is the solution}
   \begin{itemize}
-    \item If $S$ were exogenous, it would be an ordinary time-varying covariate.
-    \item Otherwise, model $S$'s hazard: a dynamic \textbf{selection equation}.
+    \item If $D$ were exogenous, it would be an ordinary time-varying covariate.
+    \item Otherwise, model $D$'s hazard: a dynamic \textbf{selection equation}.
       \begin{itemize}
-        \item Before $S$ there is no effect yet: a clean window to learn the selection.
+        \item Before $D$ there is no effect yet: a clean window to learn the selection.
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -287,20 +287,20 @@
 % ---------------------------------------------------------------------
 \begin{frame}[label=m-race]{Competing risks: model and data}
   \small
-  \[ \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y,\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S,\qquad (V_Y,V_S)\sim G. \]
-  \textbf{Assumption:} $Y\perp S\mid(x,V)$. All dependence runs through $(x,V)$.
+  \[ \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y,\qquad \theta_D(t\mid x,V)=\lambda_D(t)\varphi_D(x)V_D,\qquad (V_Y,V_D)\sim G. \]
+  \textbf{Assumption:} $Y\perp D\mid(x,V)$. All dependence runs through $(x,V)$.
   \begin{align*}
-    \Pr(Y>y,S>s\mid x) &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_S\Lambda_S(s)V_S}\big] && \why{LIE; assumption} \\
-    &= \Lap\Big(\underbrace{\varphi_Y(x)\Lambda_Y(y)}_{=:\,\Lambda_Y(y\mid x)},\ \underbrace{\varphi_S(x)\Lambda_S(s)}_{=:\,\Lambda_S(s\mid x)}\Big) && \why{$\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$}
+    \Pr(Y>y,D>d\mid x) &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_D\Lambda_D(d)V_D}\big] && \why{LIE; assumption} \\
+    &= \Lap\Big(\underbrace{\varphi_Y(x)\Lambda_Y(y)}_{=:\,\Lambda_Y(y\mid x)},\ \underbrace{\varphi_D(x)\Lambda_D(d)}_{=:\,\Lambda_D(d\mid x)}\Big) && \why{$\Lap(a,b):=\E[e^{-aV_Y-bV_D}]$}
   \end{align*}
-  \textbf{Data:} only the first event and which one, i.e.\ the diagonal $y=s=t$:
+  \textbf{Data:} only the first event and which one, i.e.\ the diagonal $y=d=t$:
   \begin{align*}
-    \bar S_0(t\mid x) &:= \Pr(Y>t,\,S>t\mid x) = \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{nothing happened by $t$} \\
-    \bar\theta^Y_0(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\,S\ge t,\,x)}{dt} && \why{exit rate among the risk set} \\
+    \bar S_0(t\mid x) &:= \Pr(Y>t,\,D>t\mid x) = \Lap\big(\Lambda_Y(t\mid x),\Lambda_D(t\mid x)\big) && \why{nothing happened by $t$} \\
+    \bar\theta^Y_0(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\,D\ge t,\,x)}{dt} && \why{exit rate among the risk set} \\
     &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{see proof}
   \end{align*}
   \begin{itemize}
-    \item $R_t:=\{Y\ge t,\,S\ge t\}$: still unemployed and untreated. Subscript $0$: before treatment; superscript: which exit. $\bar\theta^Y_0+\bar\theta^S_0=\bar\theta_0$, the observed hazard of leaving by either exit.
+    \item $R_t:=\{Y\ge t,\,D\ge t\}$: still unemployed and untreated. Subscript $0$: before treatment; superscript: which exit. $\bar\theta^Y_0+\bar\theta^D_0=\bar\theta_0$, the observed hazard of leaving by either exit.
   \end{itemize}
   \vfill\hfill\hyperlink{p-race}{\beamergotobutton{Proof}}
 \end{frame}
@@ -309,19 +309,19 @@
 \begin{frame}{The cause-specific hazard is filtered by the other exit}
   \small
   \textbf{Observed:} job-finding rate among those still unemployed \emph{and} untreated
-  \[ \bar\theta^Y_0(t\mid x)=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ \mathbf{S\ge t},\ x] \]
+  \[ \bar\theta^Y_0(t\mid x)=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ \mathbf{D\ge t},\ x] \]
   \textbf{Not observed:} the one-duration observed hazard of $Y$, now cut short by treatment
   \[ \bar\theta_Y(t\mid x)=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ x] \]
-  \textbf{What changes:} with $W:=e^{-\Lambda_S(t\mid x)V_S}$ = Pr(still untreated $\mid V_S$), all conditional on $Y\ge t,x$:
+  \textbf{What changes:} with $W:=e^{-\Lambda_D(t\mid x)V_D}$ = Pr(still untreated $\mid V_D$), all conditional on $Y\ge t,x$:
   \begin{align*}
-    \E[V_Y\mid S\ge t] &= \frac{\E[V_Y\,W]}{\E[W]} && \why{Bayes: reweight by $W$} \\
+    \E[V_Y\mid D\ge t] &= \frac{\E[V_Y\,W]}{\E[W]} && \why{Bayes: reweight by $W$} \\
     &= \E[V_Y]+\frac{\cov(V_Y,W)}{\E[W]} && \why{$\E XY=\E X\,\E Y+\cov(X,Y)$}
   \end{align*}
   \begin{itemize}
-    \item $V_S\perp V_Y$: $\cov=0$, so $\bar\theta^Y_0=\bar\theta_Y$. Treatment removes people at random in $V_Y$.
-    \item Correlated: $\cov\neq0$. $W$ falls in $V_S$, so the sign is opposite to the correlation of $V_Y,V_S$.
+    \item $V_D\perp V_Y$: $\cov=0$, so $\bar\theta^Y_0=\bar\theta_Y$. Treatment removes people at random in $V_Y$.
+    \item Correlated: $\cov\neq0$. $W$ falls in $V_D$, so the sign is opposite to the correlation of $V_Y,V_D$.
       \begin{itemize}
-        \item Low motivation: low $V_Y$, high $V_S$ $\Rightarrow$ the untreated are left with \emph{higher} $V_Y$.
+        \item Low motivation: low $V_Y$, high $V_D$ $\Rightarrow$ the untreated are left with \emph{higher} $V_Y$.
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -329,16 +329,16 @@
 % ---------------------------------------------------------------------
 \begin{frame}{Why selection matters for the treatment effect}
   \begin{itemize}
-    \item The effect is measured by comparing, at the same $s$, the \textbf{just treated} with the \textbf{not yet treated}.
-    \item Who is treated at $s$: those at risk, reweighted by $V_S$.
+    \item The effect is measured by comparing, at the same $d$, the \textbf{just treated} with the \textbf{not yet treated}.
+    \item Who is treated at $d$: those at risk, reweighted by $V_D$.
       \begin{itemize}
-        \item $V_S$ correlated with $V_Y$ $\Rightarrow$ the treated have a different $V_Y$ mix.
+        \item $V_D$ correlated with $V_Y$ $\Rightarrow$ the treated have a different $V_Y$ mix.
       \end{itemize}
     \item Then
       \[ \frac{\text{exit rate, just treated}}{\text{exit rate, not yet treated}}=\delta\times\text{(selection factor)}. \]
     \item A higher exit rate after treatment: does treatment work, or are the treated fast types anyway?
       \begin{itemize}
-        \item Without the dependence of $V_Y,V_S$ we cannot tell. The duration analogue of an endogenous regressor.
+        \item Without the dependence of $V_Y,V_D$ we cannot tell. The duration analogue of an endogenous regressor.
       \end{itemize}
     \item \textbf{So:} identify the dependence \emph{before} treatment, where no effect is present.
   \end{itemize}
@@ -347,21 +347,44 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-sel]{Where the selection lives}
-  Selection = dependence of $V_Y$ and $V_S$ among those at risk:
-  \begin{align*}
-    \frac{\partial^2\log \bar S_0}{\partial a\,\partial b} &= \cov(V_Y,V_S\mid R_t,x) && \why{quotient rule} \\
-    \frac{\partial\log \bar\theta^Y_0}{\partial b} &= -\frac{\cov(V_Y,V_S\mid R_t,x)}{\E[V_Y\mid R_t,x]} && \why{hold $a$ fixed}
-  \end{align*}
+\begin{frame}[label=m-sel]{Where the selection shows up in the data}
+  \textbf{Recall:} selection $=\cov(V_Y,V_D\mid R_t,x)$ among those still at risk. We need it in observed objects.
+
+  \medskip
+  \textbf{Thought experiment:} two groups with the \emph{same} job index $\Lambda_Y(t\mid x)$, but one is \textbf{treated sooner} (higher $\Lambda_D(t\mid x)$).
   \begin{itemize}
-    \item Raise treatment intensity, hold the exit index fixed. Those at risk are untreated, so no causal channel.
-    \item Any response of their exit rate is \textbf{pure selection}.
+    \item In the group treated sooner, more high-$V_D$ people have already left the untreated pool.
+    \item Those still untreated have not received treatment, and by no anticipation are not affected by it.
+    \item So any difference in their job-finding rate comes only from \emph{who was removed}: selection.
   \end{itemize}
-  \textbf{Assumption 3:} $\{(\varphi_Y(x),\varphi_S(x))\}$ contains an open set of $\mathbb R^2$.
+  \[ \frac{\partial\log\bar\theta^Y_0(t\mid x)}{\partial\Lambda_D(t\mid x)}\bigg|_{\Lambda_Y(t\mid x)\ \text{fixed}} = -\frac{\cov(V_Y,V_D\mid R_t,x)}{\E[V_Y\mid R_t,x]} \]
   \begin{itemize}
-    \item At least two continuous covariates that cannot affect both hazards in the same proportions. One covariate only traces a curve.
-    \item E.g.\ $\varphi_j=e^{x'\beta_j}$, two covariates: direction $d=(\beta_{Y2},-\beta_{Y1})$ gives $d'\beta_Y=0$, $d'\beta_S\neq0$ iff $(\beta_Y\ \beta_S)$ full rank.
-    \item \textbf{vs.\ exclusion restriction:} no variable is excluded; a \emph{direction} is, and it is learned from data.
+    \item \% change in the untreated job-finding rate when treatment comes sooner $=$ minus the selection, scaled by the mean type.
+    \item Zero iff no dependence. Negative if fast job-finders are also treated early.
+  \end{itemize}
+  $\rightarrow$ Needs groups that differ in $\Lambda_D$ but not in $\Lambda_Y$.
+  \vfill\hfill\hyperlink{p-sel}{\beamergotobutton{Proof}}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}[label=m-a3]{The variation we need: Assumption 3}
+  \textbf{Need:} move the treatment index $\Lambda_D(t\mid x)$ while holding the job index $\Lambda_Y(t\mid x)$ fixed.
+
+  \medskip
+  \textbf{Assumption 3:} $\{(\varphi_Y(x),\varphi_D(x)):x\in\mathcal X\}$ contains an open set of $\mathbb R^2$.
+  \begin{itemize}
+    \item At least two continuous covariates that cannot affect both hazards in the same proportions.
+    \item One covariate only traces a curve.
+  \end{itemize}
+  \textbf{Example:} $\varphi_j(x)=e^{x'\beta_j}$, two covariates. Move $x$ in direction $r=(\beta_{Y2},-\beta_{Y1})$:
+  \begin{align*}
+    r'\beta_Y &= 0 && \why{job index fixed} \\
+    r'\beta_D &= \beta_{Y2}\beta_{D1}-\beta_{Y1}\beta_{D2}\neq0 && \why{iff $(\beta_Y\ \beta_D)$ full rank: treatment index moves}
+  \end{align*}
+  \textbf{vs.\ an exclusion restriction}
+  \begin{itemize}
+    \item Exclusion: a named variable has zero effect on the job hazard.
+    \item Assumption 3: no variable is excluded. A \emph{direction} is, and it is learned from data.
   \end{itemize}
   \vfill\hfill\hyperlink{p-sel}{\beamergotobutton{Proof}}
 \end{frame}
@@ -374,15 +397,15 @@
       \begin{itemize}
         \item The surface $\Lap(a,b)$ = Pr(nothing yet) at indices $(a,b)$. Selection lives in its shape.
         \item Each (group $x$, duration $t$) gives its height $\bar S_0(t\mid x)$ at one location.
-        \item \textbf{No covariates:} locations lie on one curve $t\mapsto(\Lambda_Y(t),\Lambda_S(t))$. Cannot pin down a surface.
+        \item \textbf{No covariates:} locations lie on one curve $t\mapsto(\Lambda_Y(t),\Lambda_D(t))$. Cannot pin down a surface.
         \item \textbf{Covariates (Assn.~3):} locations fill a 2-D patch $\Rightarrow$ surface $\Rightarrow$ $G$.
       \end{itemize}
       \medskip
       \textbf{Three steps, as before:}
       \begin{enumerate}
-        \item $\bar\theta^Y_0,\bar\theta^S_0$ ratios as $t\downarrow0$ $\Rightarrow$ $\varphi_Y,\varphi_S$
-        \item $\bar S_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_S(x))$ $\Rightarrow$ $G$
-        \item solve for $\Lambda_Y(t),\Lambda_S(t)$
+        \item $\bar\theta^Y_0,\bar\theta^D_0$ ratios as $t\downarrow0$ $\Rightarrow$ $\varphi_Y,\varphi_D$
+        \item $\bar S_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_D(x))$ $\Rightarrow$ $G$
+        \item solve for $\Lambda_Y(t),\Lambda_D(t)$
       \end{enumerate}
     \end{column}
     \begin{column}{0.56\textwidth}
@@ -396,31 +419,31 @@
 \section{Treatment effects}
 \begin{frame}[label=m-treat]{Adding the treatment effect \hfill {\small Abbring \& Van den Berg (2003)}}
   \begin{itemize}
-    \item Potential outcomes indexed by treatment date: $Y^*(s)$, $s\in[0,\infty]$. Observed $Y=Y^*(S)$.
-    \item \textbf{No anticipation:} $\theta_{Y^*(s)}(t)=\theta_{Y^*(\infty)}(t)$ for $t<s$. The future date does not affect today's hazard.
-    \item \textbf{Selection on $(x,V)$:} $Y^*(\cdot)\perp S\mid(x,V)$.
+    \item Potential outcomes indexed by treatment date: $Y^*(d)$, $d\in[0,\infty]$. Observed $Y=Y^*(D)$.
+    \item \textbf{No anticipation:} $\theta_{Y^*(d)}(t)=\theta_{Y^*(\infty)}(t)$ for $t<d$. The future date does not affect today's hazard.
+    \item \textbf{Selection on $(x,V)$:} $Y^*(\cdot)\perp D\mid(x,V)$.
   \end{itemize}
   \textbf{Model 1a}
-  \[ \theta_Y(t\mid s,x,V)=\lambda_Y(t)\varphi_Y(x)V_Y\cdot\delta(t\mid s,x)^{\mathbf 1\{t>s\}},\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S. \]
+  \[ \theta_Y(t\mid d,x,V)=\lambda_Y(t)\varphi_Y(x)V_Y\cdot\delta(t\mid d,x)^{\mathbf 1\{t>d\}},\qquad \theta_D(t\mid x,V)=\lambda_D(t)\varphi_D(x)V_D. \]
   \begin{itemize}
-    \item $\delta$: the causal effect, a multiplier on the exit rate after treatment. May vary with $t$, $s$, $x$.
-    \item Before $S$: exactly the competing-risks model. So $\varphi$'s, $\Lambda$'s and $G$ are identified.
-    \item After $S$: the treated cohort's survival $\bar S_1(y\mid s)=\Pr(Y>y\mid S=s,Y>s)$ carries $\delta$.
-    \item Given $(x,V)$, the timing of $S$ is still pure luck: the instrument-like variation.
+    \item $\delta$: the causal effect, a multiplier on the exit rate after treatment. May vary with $t$, $d$, $x$.
+    \item Before $D$: exactly the competing-risks model. So $\varphi$'s, $\Lambda$'s and $G$ are identified.
+    \item After $D$: the treated cohort's survival $\bar S_1(y\mid d)=\Pr(Y>y\mid D=d,Y>d)$ carries $\delta$.
+    \item Given $(x,V)$, the timing of $D$ is still pure luck: the instrument-like variation.
   \end{itemize}
   \vfill\hfill\hyperlink{p-treat}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-sf]{Who is treated at $s$? The selection factor}
+\begin{frame}[label=m-sf]{Who is treated at $d$? The selection factor}
   \begin{align*}
-    dG_{R_s}(v) &\propto e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{Bayes: survivors at $s$} \\
-    dG_s(v) &\propto v_S\;dG_{R_s}(v) && \why{treated in $[s,s+ds)$ w.p.\ $\propto v_S$}
+    dG_{R_d}(v) &\propto e^{-\Lambda_Y(d\mid x)v_Y-\Lambda_D(d\mid x)v_D}\,dG(v) && \why{Bayes: survivors at $d$} \\
+    dG_d(v) &\propto v_D\;dG_{R_d}(v) && \why{treated in $[d,d+h)$ w.p.\ $\propto v_D$}
   \end{align*}
-  Exit rate right after $s$, treated vs.\ not-yet-treated:
+  Exit rate right after $d$, treated vs.\ not-yet-treated:
   \begin{align*}
-    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\cdot\frac{\E_{G_s}[V_Y]}{\E_{R_s}[V_Y]} && \why{$\lambda_Y\varphi_Y$ cancel} \\
-    &= \delta(s\mid s,x)\cdot\Big(1+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}V_Y\;\E_{R_s}V_S}\Big) && \why{reweight by $v_S$}
+    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(d\mid d,x)\cdot\frac{\E_{G_d}[V_Y]}{\E_{R_d}[V_Y]} && \why{$\lambda_Y\varphi_Y$ cancel} \\
+    &= \delta(d\mid d,x)\cdot\Big(1+\frac{\cov_{R_d}(V_Y,V_D)}{\E_{R_d}V_Y\;\E_{R_d}V_D}\Big) && \why{reweight by $v_D$}
   \end{align*}
   \begin{itemize}
     \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
@@ -432,22 +455,22 @@
 
 % ---------------------------------------------------------------------
 \begin{frame}[label=m-p1]{After the moment of treatment}
-  With $D(y\mid s,x):=\int_s^y\lambda_Y(\tau)\delta(\tau\mid s,x)\,d\tau$:
+  With $\Delta(y\mid d,x):=\int_d^y\lambda_Y(\tau)\delta(\tau\mid d,x)\,d\tau$:
   \begin{align*}
-    \bar S_1(y\mid s,x) &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{LIE over the treated cohort} \\
-    &= \frac{\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D,\ \Lambda_S(s\mid x)\big)}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{the paper's eq.\ (10)}
+    \bar S_1(y\mid d,x) &= \E_{G_d}\big[e^{-\varphi_Y(x)V_Y \Delta(y\mid d,x)}\big] && \why{LIE over the treated cohort} \\
+    &= \frac{\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta,\ \Lambda_D(d\mid x)\big)}{\Lap_b(\Lambda_Y(d\mid x),\Lambda_D(d\mid x))} && \why{the paper's eq.\ (10)}
   \end{align*}
   \begin{itemize}
-    \item Left: data. Right: known except $D$. Decreasing in $D$ $\Rightarrow$ invert $\Rightarrow$ $\delta=\partial_yD/\lambda_Y$.
+    \item Left: data. Right: known except $\Delta$. Decreasing in $\Delta$ $\Rightarrow$ invert $\Rightarrow$ $\delta=\partial_y\Delta/\lambda_Y$.
     \item Two selection problems, both handled by knowing $G$:
       \begin{enumerate}
-        \item \textbf{into} treatment at $s$: the $v_S$ tilt;
-        \item \textbf{out of} the treated cohort after $s$: its survivors drift to low $V_Y$, even with random timing.
+        \item \textbf{into} treatment at $d$: the $v_D$ tilt;
+        \item \textbf{out of} the treated cohort after $d$: its survivors drift to low $V_Y$, even with random timing.
       \end{enumerate}
   \end{itemize}
   \bigskip
   \centering
-  pre-treatment competing risks $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $s$ $\Rightarrow$ $+\,\bar S_1$ $\Rightarrow$ $\delta$
+  pre-treatment competing risks $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $d$ $\Rightarrow$ $+\,\bar S_1$ $\Rightarrow$ $\delta$
   \vfill\hfill\hyperlink{p-p1}{\beamergotobutton{Proof}}
 \end{frame}
 
@@ -474,7 +497,7 @@
     \begin{column}{0.5\textwidth}
       \textbf{The idea in one line}
       \begin{itemize}
-        \item The treatment acts only \emph{after} $S$; unobserved types act throughout.
+        \item The treatment acts only \emph{after} $D$; unobserved types act throughout.
         \item The excluded \emph{variable} becomes an excluded timing \emph{shock}.
       \end{itemize}
       \medskip
@@ -492,7 +515,7 @@
 \begin{frame}{Connections}
   \textbf{Staggered-adoption DiD}
   \begin{itemize}
-    \item $Y^*(s)\leftrightarrow Y_t(g)$; the same no-anticipation assumption; risk set $\leftrightarrow$ not-yet-treated.
+    \item $Y^*(d)\leftrightarrow Y_t(g)$; the same no-anticipation assumption; risk set $\leftrightarrow$ not-yet-treated.
     \item Difference: an absorbing exit changes who remains, so parallel trends in hazards fails even with random timing.
   \end{itemize}
   \textbf{Sequential exogeneity and feedback}
@@ -633,44 +656,44 @@
 \begin{frame}[label=p-race]{Proof: competing risks}
   \small
   \begin{align*}
-    \Pr(Y>y,S>s\mid x) &= \E\big[\Pr(Y>y,S>s\mid x,V)\big] && \why{LIE; $V\perp X$} \\
-    &= \E\big[\Pr(Y>y\mid x,V)\Pr(S>s\mid x,V)\big] && \why{$Y\perp S\mid(x,V)$} \\
-    &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_S\Lambda_S(s)V_S}\big] && \why{$S=e^{-\Theta}$ each} \\
-    &= \Lap\big(\varphi_Y\Lambda_Y(y),\varphi_S\Lambda_S(s)\big) && \why{definition of $\Lap$}
+    \Pr(Y>y,D>d\mid x) &= \E\big[\Pr(Y>y,D>d\mid x,V)\big] && \why{LIE; $V\perp X$} \\
+    &= \E\big[\Pr(Y>y\mid x,V)\Pr(D>d\mid x,V)\big] && \why{$Y\perp D\mid(x,V)$} \\
+    &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_D\Lambda_D(d)V_D}\big] && \why{$S=e^{-\Theta}$ each} \\
+    &= \Lap\big(\varphi_Y\Lambda_Y(y),\varphi_D\Lambda_D(d)\big) && \why{definition of $\Lap$}
   \end{align*}
-  $\bar S_0(t\mid x)$: set $y=s=t$. Cause-specific hazard:
+  $\bar S_0(t\mid x)$: set $y=d=t$. Cause-specific hazard:
   \begin{align*}
-    \bar\theta^Y_0(t\mid x) &= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\,S>t\mid x)}{dt\,\bar S_0(t\mid x)} && \why{definition} \\
-    &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{\bar S_0(t\mid x)} && \why{derivative of a survival} \\
-    &= \lambda_Y(t)\varphi_Y(x)\,\frac{-\Lap_a(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))}{\Lap(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{chain rule; survivor mean}
+    \bar\theta^Y_0(t\mid x) &= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\,D>t\mid x)}{dt\,\bar S_0(t\mid x)} && \why{definition} \\
+    &= \frac{-\partial_y\Pr(Y>y,D>t\mid x)\big|_{y=t}}{\bar S_0(t\mid x)} && \why{derivative of a survival} \\
+    &= \lambda_Y(t)\varphi_Y(x)\,\frac{-\Lap_a(\Lambda_Y(t\mid x),\Lambda_D(t\mid x))}{\Lap(\Lambda_Y(t\mid x),\Lambda_D(t\mid x))} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{chain rule; survivor mean}
   \end{align*}
   \back{m-race}
 \end{frame}
 
 \begin{frame}[label=p-sel]{Proof: where the selection lives}
-  Weights $w\propto e^{-aV_Y-bV_S}$ (those at risk), $\E_w$ the corresponding expectation.
+  Weights $w\propto e^{-aV_Y-bV_D}$ (those at risk), $\E_w$ the corresponding expectation.
   \begin{align*}
     \partial_a\log\Lap &= \Lap_a/\Lap = -\E_w[V_Y] && \why{differentiate under $\E$} \\
-    \partial_b\partial_a\log\Lap &= \frac{\Lap_{ab}}{\Lap}-\frac{\Lap_a\Lap_b}{\Lap^2} = \E_w[V_YV_S]-\E_w[V_Y]\E_w[V_S] && \why{quotient rule} \\
-    &= \cov_w(V_Y,V_S) && \why{definition} \\
-    \partial_b\log \bar\theta^Y_0 &= \partial_b\log\E_w[V_Y] = \frac{-\cov_w(V_Y,V_S)}{\E_w[V_Y]} && \why{$\bar\theta^Y_0=\lambda_Y\varphi_Y\E_w[V_Y]$; same quotient rule}
+    \partial_b\partial_a\log\Lap &= \frac{\Lap_{ab}}{\Lap}-\frac{\Lap_a\Lap_b}{\Lap^2} = \E_w[V_YV_D]-\E_w[V_Y]\E_w[V_D] && \why{quotient rule} \\
+    &= \cov_w(V_Y,V_D) && \why{definition} \\
+    \partial_b\log \bar\theta^Y_0 &= \partial_b\log\E_w[V_Y] = \frac{-\cov_w(V_Y,V_D)}{\E_w[V_Y]} && \why{$\bar\theta^Y_0=\lambda_Y\varphi_Y\E_w[V_Y]$; same quotient rule}
   \end{align*}
-  Direction example, $\varphi_j=e^{x'\beta_j}$, $d=(\beta_{Y2},-\beta_{Y1})$:
+  Direction example, $\varphi_j=e^{x'\beta_j}$, $r=(\beta_{Y2},-\beta_{Y1})$:
   \begin{align*}
-    d'\beta_Y = \beta_{Y2}\beta_{Y1}-\beta_{Y1}\beta_{Y2}=0, \qquad d'\beta_S=\beta_{Y2}\beta_{S1}-\beta_{Y1}\beta_{S2}\neq0 && \why{iff $(\beta_Y\ \beta_S)$ full rank}
+    r'\beta_Y = \beta_{Y2}\beta_{Y1}-\beta_{Y1}\beta_{Y2}=0, \qquad r'\beta_D=\beta_{Y2}\beta_{D1}-\beta_{Y1}\beta_{D2}\neq0 && \why{iff $(\beta_Y\ \beta_D)$ full rank}
   \end{align*}
   \back{m-sel}
 \end{frame}
 
 \begin{frame}[label=p-ts]{Proof: identification of the competing-risks model (Prop.~2)}
   \small
-  \textbf{Step 1.} $\dfrac{\bar\theta^Y_0(t\mid x)}{\bar\theta^Y_0(t\mid x^*)}=\varphi_Y(x)\dfrac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]}\xrightarrow{t\downarrow0}\varphi_Y(x)$ \why{$R_t\to$ everyone; $V\perp X$; $\E V_Y<\infty$}. Same for $\varphi_S$.
+  \textbf{Step 1.} $\dfrac{\bar\theta^Y_0(t\mid x)}{\bar\theta^Y_0(t\mid x^*)}=\varphi_Y(x)\dfrac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]}\xrightarrow{t\downarrow0}\varphi_Y(x)$ \why{$R_t\to$ everyone; $V\perp X$; $\E V_Y<\infty$}. Same for $\varphi_D$.
 
   \medskip
-  \textbf{Step 2.} $\bar S_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_S(x))$. Assn.~3: an open set $\Rightarrow$ $\Lap$ on $(0,\infty)^2$ $\Rightarrow$ $G$.
+  \textbf{Step 2.} $\bar S_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_D(x))$. Assn.~3: an open set $\Rightarrow$ $\Lap$ on $(0,\infty)^2$ $\Rightarrow$ $G$.
 
   \medskip
-  \textbf{Step 3.} Suppose $(a,b)\neq(a',b')$ both satisfy $\bar S_0(t\mid x)=\Lap(\varphi_Y(x)a,\varphi_S(x)b)$ for all $x$.
+  \textbf{Step 3.} Suppose $(a,b)\neq(a',b')$ both satisfy $\bar S_0(t\mid x)=\Lap(\varphi_Y(x)a,\varphi_D(x)b)$ for all $x$.
   \begin{align*}
     \Lap(pa,qb) &= \Lap(pa',qb') \text{ on an open set of }(p,q) && \why{Assn.~3} \\
     \Lap(u,v) &= \Lap(ku,mv)\ \ \forall(u,v),\quad k=a'/a,\ m=b'/b && \why{analyticity}
@@ -685,19 +708,19 @@
 
 \begin{frame}[label=p-treat]{Proof: no anticipation, data, timing luck}
   \small
-  \textbf{No anticipation} $\Theta_{Y^*(s)}(y)=\Theta_{Y^*(s')}(y)$, $y\le\min\{s,s'\}$. Take $s'=\infty$, differentiate in $y$: $\theta_{Y^*(s)}(y)=\theta_{Y^*(\infty)}(y)$ for $y<s$.
+  \textbf{No anticipation} $\Theta_{Y^*(d)}(y)=\Theta_{Y^*(d')}(y)$, $y\le\min\{d,d'\}$. Take $d'=\infty$, differentiate in $y$: $\theta_{Y^*(d)}(y)=\theta_{Y^*(\infty)}(y)$ for $y<d$.
 
   \medskip
-  \textbf{Data} $Q_S(y,s)=\Pr(Y>y,S>s,Y>S)$, $Q_Y(y)=\Pr(Y>y,Y<S)$:
+  \textbf{Data} (paper's $Q_S$) $Q_D(y,d)=\Pr(Y>y,D>d,Y>D)$, $Q_Y(y)=\Pr(Y>y,Y<D)$:
   \begin{align*}
-    \bar S_0(t) &= Q_S(t,t)+Q_Y(t) && \why{partition by $Y\gtrless S$; $\Pr(Y=S)=0$} \\
+    \bar S_0(t) &= Q_D(t,t)+Q_Y(t) && \why{partition by $Y\gtrless D$; $\Pr(Y=D)=0$} \\
     \bar\theta^Y_0(t) &= -Q_Y'(t)/\bar S_0(t) && \why{density of untreated exits} \\
-    \bar S_1(y\mid s) &= \partial_sQ_S(y,s)\big/\lim_{y'\downarrow s}\partial_sQ_S(y',s) && \why{$-\partial_sQ_S$: density of $S=s$ with $Y>y$}
+    \bar S_1(y\mid d) &= \partial_dQ_D(y,d)\big/\lim_{y'\downarrow d}\partial_dQ_D(y',d) && \why{$-\partial_dQ_D$: density of $D=d$ with $Y>y$}
   \end{align*}
-  \textbf{Timing luck} $E_S:=\Theta_S(S\mid x,V)=\varphi_S(x)V_S\Lambda_S(S)$:
+  \textbf{Timing luck} $E_D:=\Theta_D(D\mid x,V)=\varphi_D(x)V_D\Lambda_D(D)$:
   \begin{align*}
-    \Pr(E_S>e\mid x,V) &= \Pr\big(S>\Theta_S^{-1}(e)\mid x,V\big) = e^{-e} && \why{$\Theta_S$ increasing; $S=e^{-\Theta}$} \\
-    \Longrightarrow\ S &= \Lambda_S^{-1}\big(E_S/(\varphi_S(x)V_S)\big),\quad E_S\sim\text{Exp}(1)\perp(x,V) && \why{invert}
+    \Pr(E_D>e\mid x,V) &= \Pr\big(D>\Theta_D^{-1}(e)\mid x,V\big) = e^{-e} && \why{$\Theta_D$ increasing; $S=e^{-\Theta}$} \\
+    \Longrightarrow\ D &= \Lambda_D^{-1}\big(E_D/(\varphi_D(x)V_D)\big),\quad E_D\sim\text{Exp}(1)\perp(x,V) && \why{invert}
   \end{align*}
   \back{m-treat}
 \end{frame}
@@ -705,30 +728,30 @@
 \begin{frame}[label=p-sf]{Proof: the selection factor}
   \small
   \begin{align*}
-    dG_{R_s}(v) &= \frac{\Pr(R_s\mid x,v)\,dG(v)}{\Pr(R_s\mid x)} \propto e^{-a_sv_Y-b_sv_S}\,dG(v) && \why{Bayes; no anticipation; Assn.~2} \\
-    dG_s(v) &\propto \Pr(s\le S<s+ds\mid R_s,x,v)\,dG_{R_s}(v) \propto v_S\,dG_{R_s}(v) && \why{Bayes; $\theta_S\propto v_S$}
+    dG_{R_d}(v) &= \frac{\Pr(R_d\mid x,v)\,dG(v)}{\Pr(R_d\mid x)} \propto e^{-\Lambda_Y(d\mid x)v_Y-\Lambda_D(d\mid x)v_D}\,dG(v) && \why{Bayes; no anticipation; Assn.~2} \\
+    dG_d(v) &\propto \Pr(d\le D<d+h\mid R_d,x,v)\,dG_{R_d}(v) \propto v_D\,dG_{R_d}(v) && \why{Bayes; $\theta_D\propto v_D$}
   \end{align*}
-  Exit hazards at $s$: just treated $\lambda_Y\varphi_Y\delta(s\mid s,x)\E_{G_s}[V_Y]$; not yet treated $\lambda_Y\varphi_Y\E_{R_s}[V_Y]$.
+  Exit hazards at $d$: just treated $\lambda_Y\varphi_Y\delta(d\mid d,x)\E_{G_d}[V_Y]$; not yet treated $\lambda_Y\varphi_Y\E_{R_d}[V_Y]$.
   \begin{align*}
-    \E_{G_s}[V_Y] &= \frac{\E_{R_s}[V_YV_S]}{\E_{R_s}[V_S]} = \E_{R_s}[V_Y]+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_S]} && \why{reweight by $v_S$; $\E XY=\E X\E Y+\cov$} \\
-    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\Big(1+\frac{\cov_{R_s}}{\E_{R_s}V_Y\,\E_{R_s}V_S}\Big) && \why{divide} \\
-    &= \delta(s\mid s,x)\,\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{$\E V_Y=-\tfrac{\Lap_a}{\Lap}$, $\E V_S=-\tfrac{\Lap_b}{\Lap}$, $\E V_YV_S=\tfrac{\Lap_{ab}}{\Lap}$}
+    \E_{G_d}[V_Y] &= \frac{\E_{R_d}[V_YV_D]}{\E_{R_d}[V_D]} = \E_{R_d}[V_Y]+\frac{\cov_{R_d}(V_Y,V_D)}{\E_{R_d}[V_D]} && \why{reweight by $v_D$; $\E XY=\E X\E Y+\cov$} \\
+    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(d\mid d,x)\Big(1+\frac{\cov_{R_d}}{\E_{R_d}V_Y\,\E_{R_d}V_D}\Big) && \why{divide} \\
+    &= \delta(d\mid d,x)\,\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(\Lambda_Y(d\mid x),\Lambda_D(d\mid x))} && \why{$\E V_Y=-\tfrac{\Lap_a}{\Lap}$, $\E V_D=-\tfrac{\Lap_b}{\Lap}$, $\E V_YV_D=\tfrac{\Lap_{ab}}{\Lap}$}
   \end{align*}
   \back{m-sf}
 \end{frame}
 
 \begin{frame}[label=p-p1]{Proof: after the moment of treatment (eq.~10)}
   \small
-  $\Theta_Y(y\mid s,x,V)=\varphi_YV_Y[\Lambda_Y(s)+D(y\mid s,x)]$ for $y>s$ \why{split the integral at $s$}. Density $g$ of ``treated at $s$, still unemployed at $y$'':
+  $\Theta_Y(y\mid d,x,V)=\varphi_YV_Y[\Lambda_Y(d)+\Delta(y\mid d,x)]$ for $y>d$ \why{split the integral at $d$}. Density $g$ of ``treated at $d$, still unemployed at $y$'':
   \begin{align*}
-    g(y,s\mid x) &= \E\big[f_S(s\mid x,V)\,\Pr(Y>y\mid S=s,x,V)\big] && \why{LIE; Assn.~2} \\
-    &= \E\big[\lambda_S\varphi_SV_Se^{-b_sV_S}\cdot e^{-\varphi_YV_Y[\Lambda_Y(s)+D]}\big] && \why{$f=\theta e^{-\Theta}$; $S=e^{-\Theta}$} \\
-    &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D,\ \Lambda_S(s\mid x)\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \\
-    \bar S_1(y\mid s,x) &= \frac{g(y,s\mid x)}{g(s,s\mid x)} = \frac{\Lap_b(\Lambda_Y(s\mid x)+\varphi_YD,\,\Lambda_S(s\mid x))}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{$D(s\mid s,x)=0$}
+    g(y,d\mid x) &= \E\big[f_D(d\mid x,V)\,\Pr(Y>y\mid D=d,x,V)\big] && \why{LIE; Assn.~2} \\
+    &= \E\big[\lambda_D\varphi_DV_De^{-\Lambda_D(d\mid x)V_D}\cdot e^{-\varphi_YV_Y[\Lambda_Y(d)+\Delta]}\big] && \why{$f=\theta e^{-\Theta}$; $S=e^{-\Theta}$} \\
+    &= -\lambda_D(d)\varphi_D(x)\,\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta,\ \Lambda_D(d\mid x)\big) && \why{$\Lap_b=-\E[V_De^{-aV_Y-bV_D}]$} \\
+    \bar S_1(y\mid d,x) &= \frac{g(y,d\mid x)}{g(d,d\mid x)} = \frac{\Lap_b(\Lambda_Y(d\mid x)+\varphi_YD,\,\Lambda_D(d\mid x))}{\Lap_b(\Lambda_Y(d\mid x),\Lambda_D(d\mid x))} && \why{$\Delta(d\mid d,x)=0$}
   \end{align*}
   \begin{itemize}
-    \item $\partial_D\Lap_b(\Lambda_Y(s\mid x)+\varphi_YD,\Lambda_S(s\mid x))=\varphi_Y\E[V_YV_Se^{\cdots}]>0$ and $\Lap_b<0$: $\bar S_1$ strictly decreasing in $D$ $\Rightarrow$ invert.
-    \item $\delta(y\mid s,x)=\partial_yD(y\mid s,x)/\lambda_Y(y)$ \why{fundamental theorem of calculus}.
+    \item $\partial_\Delta\Lap_b(\Lambda_Y(d\mid x)+\varphi_YD,\Lambda_D(d\mid x))=\varphi_Y\E[V_YV_De^{\cdots}]>0$ and $\Lap_b<0$: $\bar S_1$ strictly decreasing in $\Delta$ $\Rightarrow$ invert.
+    \item $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$ \why{fundamental theorem of calculus}.
   \end{itemize}
   \hyperlink{p-local}{\beamergotobutton{Local vs.\ global picture}}
   \back{m-p1}
@@ -739,7 +762,7 @@
   \includegraphics[width=0.8\linewidth]{fig3_local_vs_global.png}
 
   \raggedright\small
-  Left: causal effect, no selection; exits bunch right after treatment at every $S$. Right: no effect, pure selection; $S$ and $Y$ correlated overall.
+  Left: causal effect, no selection; exits bunch right after treatment at every $D$. Right: no effect, pure selection; $D$ and $Y$ correlated overall.
   \back{p-p1}
 \end{frame}
 
