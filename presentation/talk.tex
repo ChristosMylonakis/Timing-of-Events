@@ -376,11 +376,12 @@
     \item At least two continuous covariates that cannot affect both hazards in the same proportions.
     \item One covariate only traces a curve.
   \end{itemize}
-  \textbf{Example:} $\varphi_j(x)=e^{x'\beta_j}$, two covariates. Move $x$ in direction $r=(\beta_{Y2},-\beta_{Y1})$:
+  \textbf{Example:} $\varphi_j(x)=e^{x'\beta_j}$, two covariates. Compare group $x$ with group $x+r$, $r=(\beta_{Y2},-\beta_{Y1})$:
   \begin{align*}
-    r'\beta_Y &= 0 && \why{job index fixed} \\
-    r'\beta_D &= \beta_{Y2}\beta_{D1}-\beta_{Y1}\beta_{D2}\neq0 && \why{iff $(\beta_Y\ \beta_D)$ full rank: treatment index moves}
+    r'\beta_Y &= 0 && \why{same job index} \\
+    r'\beta_D &= \beta_{Y2}\beta_{D1}-\beta_{Y1}\beta_{D2}\neq0 && \why{iff $(\beta_Y\ \beta_D)$ full rank: different treatment index}
   \end{align*}
+  {\small E.g.\ $\beta_Y=(1,1)$, $\beta_D=(1,2)$, $r=(1,-1)$: groups $(0,0)$ and $(1,-1)$ share the job index ($0$) but differ in the treatment index ($0$ vs.\ $-1$).}
   \textbf{vs.\ an exclusion restriction}
   \begin{itemize}
     \item Exclusion: a named variable has zero effect on the job hazard.
