@@ -491,24 +491,28 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-p1]{Identifying $\delta$: stripping out selection}
-  Integrated post-treatment hazard: $\Delta(y\mid d,x):=\int_d^y\lambda_Y(\tau)\,\delta(\tau\mid d,x)\,d\tau$.
-  \begin{align*}
-    \bar S_1(y\mid d,x) &= \E\big[e^{-\varphi_Y(x)V_Y\,\Delta(y\mid d,x)}\ \big|\ \text{treated at }d\big] && \why{LIE over the treated cohort} \\
-    &= \frac{\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta,\ \Lambda_D(d\mid x)\big)}{\Lap_b\big(\Lambda_Y(d\mid x),\Lambda_D(d\mid x)\big)} && \why{the paper's eq.\ (10)}
-  \end{align*}
-  \begin{itemize}
-    \item Left: data. Right: everything known except $\Delta$. Decreasing in $\Delta$ $\Rightarrow$ invert for $\Delta$.
-    \item Then $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$.
-  \end{itemize}
-  \textbf{Two selection problems, both handled by knowing $G$}
-  \begin{enumerate}
-    \item \textbf{Into} treatment at $d$: the $v_D$ tilt (previous slide).
-    \item \textbf{Out of} the treated cohort after $d$: its survivors drift to low $V_Y$, even with random timing.
-  \end{enumerate}
+\begin{frame}[label=m-p1]{Identifying $\delta$}
+  \small
+  \textbf{1. Observed after treatment:} $\bar S_1(y\mid d,x)$ = share of those treated at $d$ still unemployed at $y>d$.
+
   \medskip
-  \centering
-  competing risks $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $d$ $\Rightarrow$ $+\,\bar S_1$ $\Rightarrow$ $\delta$
+  \textbf{2. What the model says it is.} With $\Delta(y\mid d,x):=\int_d^y\lambda_Y(\tau)\,\delta(\tau\mid d,x)\,d\tau$ (baseline hazard accumulated after treatment, effect included):
+  \begin{align*}
+    \bar S_1(y\mid d,x) &= \sum_v \underbrace{e^{-\varphi_Y(x)\,v_Y\,\Delta(y\mid d,x)}}_{\text{type $v$ survives from $d$ to $y$}}\ \Pr(V=v\mid\text{treated at }d) && \why{LIE over the treated cohort}
+  \end{align*}
+  \textbf{3. Everything on the right is known except the number $\Delta(y\mid d,x)$.}
+  \begin{itemize}
+    \item $\Pr(V=v\mid\text{treated at }d)$ follows from $G$ (previous slide); $\varphi_Y$ from competing risks.
+    \item The right side falls strictly in $\Delta$: exactly one value matches the data $\Rightarrow$ $\Delta$ identified.
+  \end{itemize}
+  \textbf{4.} $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$.
+
+  \medskip
+  \textbf{Why naive comparisons fail, and how this handles it}
+  \begin{itemize}
+    \item At $d$: the treated have mix $\Pr(V=v\mid\text{treated at }d)\neq\Pr(V=v\mid\text{at risk at }d)$. Step 2 averages over the treated mix.
+    \item At $y>d$: the treated still unemployed have mix $\propto e^{-\varphi_Yv_Y\Delta}\Pr(V=v\mid\text{treated at }d)$, fast types gone. Their exit rate is $\lambda_Y\varphi_Y\,\delta(y\mid d,x)\,\E[V_Y\mid\text{treated at }d,\,Y>y]$, not $\delta\times$ the mean at $d$. Averaging \emph{survival} in step 2 builds this in.
+  \end{itemize}
   \vfill\hfill\hyperlink{p-p1}{\beamergotobutton{Proof}}
 \end{frame}
 
