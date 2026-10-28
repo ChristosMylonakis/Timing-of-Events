@@ -87,7 +87,7 @@
 \begin{frame}[label=m-pop]{People differ: individual vs.\ observed hazard}
   Unobserved type $V\ge0$, $V\sim G$. Assume
   \[ \theta(y\mid V)=\lambda(y)\,V, \qquad \lambda(y)=\theta(y\mid V=1),\qquad S(y\mid V)=e^{-\Lambda(y)V}. \]
-  Data reveal the \textbf{observed} hazard, averaged over types (the paper's ``mixture hazard''):
+  Data reveal the \textbf{observed} hazard, averaged over types:
   \begin{align*}
     \bar S(y) &= \E\big[S(y\mid V)\big]=\E\big[e^{-\Lambda(y)V}\big] && \why{LIE} \\
     \bar\theta(y) &= \frac{\bar f(y)}{\bar S(y)} = -\frac{\bar S'(y)}{\bar S(y)} = \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$}
@@ -126,24 +126,46 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-lap]{The Laplace transform: isolating the type distribution}
-  \[ \Lap(a):=\E\big[e^{-aV}\big], \qquad \bar S(y)=\Lap\big(\Lambda(y)\big). \]
+\begin{frame}[label=m-lap]{The Laplace transform of $G$}
+  For a distribution $G$ of $V\ge0$, define the \textbf{function}
+  \[ \Lap_G:[0,\infty)\to(0,1],\qquad \Lap_G(a):=\E_G\big[e^{-aV}\big]=\int_0^\infty e^{-av}\,dG(v). \]
   \begin{itemize}
-    \item $\Lap$ depends only on $G$; $\Lambda$ only on duration dependence.
-    \item Survival = (heterogeneity) applied to (duration dependence).
+    \item $a$ is just the argument (a number). \emph{Which} function $\Lap_G$ is depends only on $G$:
+      \begin{itemize}
+        \item $V\equiv1$: $\Lap_G(a)=e^{-a}$;\quad two types $v_1,v_2$ w.p.\ $p,1-p$: $\Lap_G(a)=p\,e^{-av_1}+(1-p)\,e^{-av_2}$.
+      \end{itemize}
   \end{itemize}
-  \textbf{Properties}
+  \textbf{Link to the data:} plug in $a=\Lambda(y)$.
   \begin{align*}
-    -\frac{\Lap'(a)}{\Lap(a)} &= \E[V\mid\text{survived to }a] && \why{differentiate under $\E$} \\
-    \frac{d^2}{da^2}\log\Lap(a) &= \var(V\mid\text{survived to }a) && \why{quotient rule} \\
-    \Longrightarrow\ \frac{d}{dy}\E[V\mid Y>y] &= -\lambda(y)\var(V\mid Y>y)\ \le 0 && \why{chain rule}
+    \bar S(y) &= \E_G\big[e^{-\Lambda(y)V}\big] = \Lap_G\big(\Lambda(y)\big) && \why{definition, $a=\Lambda(y)$} \\
+    \bar\theta(y) &= -\frac{d}{dy}\log\Lap_G\big(\Lambda(y)\big) = \underbrace{\lambda(y)}_{\text{from }\Lambda}\cdot\underbrace{m_G\big(\Lambda(y)\big)}_{\text{from }G}, \quad m_G(a):=-\frac{\Lap_G'(a)}{\Lap_G(a)} && \why{chain rule}
   \end{align*}
   \begin{itemize}
-    \item \textbf{Uniqueness:} $\Lap$ determines $G$.
-    \item \textbf{Analyticity:} $\Lap$ on any small interval $\Rightarrow$ $\Lap$ everywhere.
-    \item Strategy: learn the index, learn $\Lap$ on an interval $\Rightarrow$ $G$.
+    \item $\bar S=\Lap_G\circ\Lambda$: first $y\mapsto\Lambda(y)$ (duration dependence), then $a\mapsto\Lap_G(a)$ (heterogeneity).
+    \item $m_G(a)=\E[V\mid\text{survived to }a]$ and $m_G'(a)=-\var(V\mid\text{survived to }a)\le0$: sorting.
   \end{itemize}
   \vfill\hfill\hyperlink{p-lap}{\beamergotobutton{Proof}}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}[label=m-lap2]{What $\Lap_G$ pins down}
+  \textbf{Uniqueness:} the map $G\mapsto\Lap_G$ is one-to-one.
+  \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\ge0 \quad\Longrightarrow\quad G_1=G_2. \]
+  \textbf{Analyticity:} for any $0<a_{lo}<a_{hi}$,
+  \[ \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a\in[a_{lo},a_{hi}] \quad\Longrightarrow\quad \Lap_{G_1}(a)=\Lap_{G_2}(a)\ \ \forall a>0. \]
+  \begin{itemize}
+    \item The interval is a range of values of the argument $a$. Any positive length works, however short.
+  \end{itemize}
+  \textbf{Together:} the values of $\Lap_G$ on any interval $[a_{lo},a_{hi}]$ determine $G$.
+
+  \bigskip
+  \textbf{How this is used}
+  \begin{itemize}
+    \item Data give values of $\Lap_G$ at points $a=\Lambda(y)$: we see the value $\bar S(y)$.
+    \item If we also knew \emph{where} those points are ($\Lambda$) and they cover an interval $\Rightarrow$ $G$.
+    \item With one duration we do not know $\Lambda$. Next slide.
+  \end{itemize}
+  \vfill\hfill\hyperlink{p-lap2}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
@@ -485,7 +507,7 @@
     \item If $\Lap$ is known on an interval, all derivatives at an interior point are known, so $\Lap$ is known on a neighbourhood. Chain neighbourhoods across $(0,\infty)$.
     \item Same in two dimensions, but an \emph{open set} of $\mathbb R^2$ is needed: a curve is not enough.
   \end{itemize}
-  \back{p-lap}
+  \back{m-lap2}
 \end{frame}
 
 \begin{frame}[label=p-nonid]{Proof: any $G$ fits one survival curve}
