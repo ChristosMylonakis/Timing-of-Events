@@ -14,7 +14,7 @@ plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.rig
 
 # ---------------------------------------------------------------------------
 # Figure 1: dynamic selection. Two types with constant individual hazards.
-# The population hazard falls over time even though nobody's hazard changes,
+# The observed hazard falls over time even though nobody's hazard changes,
 # because the high-hazard type leaves first.
 # ---------------------------------------------------------------------------
 def fig_dynamic_selection():
@@ -51,8 +51,8 @@ def fig_dynamic_selection():
     fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
     ax[0].plot(y, np.full_like(y, v_hi), "--", color="tab:red", label="high type: hazard 1.5")
     ax[0].plot(y, np.full_like(y, v_lo), "--", color="tab:blue", label="low type: hazard 0.3")
-    ax[0].plot(y, pop_hazard, color="black", lw=2.5, label="hazard we observe in the population")
-    ax[0].set(xlabel="elapsed duration y", ylabel="hazard rate", title="Individual vs. population hazard")
+    ax[0].plot(y, pop_hazard, color="black", lw=2.5, label="observed hazard")
+    ax[0].set(xlabel="elapsed duration y", ylabel="hazard rate", title="Individual vs. observed hazard")
     ax[0].legend(frameon=False, fontsize=9)
     for label, L, c in specs:
         Lam = invert(L, pop_surv)
@@ -64,7 +64,7 @@ def fig_dynamic_selection():
     fig.tight_layout()
     fig.savefig(OUT / "fig1_dynamic_selection.png", dpi=200)
     # single panels for slides
-    for i, name in enumerate(["fig1a_population_hazard.png", "fig1b_same_data.png"]):
+    for i, name in enumerate(["fig1a_observed_hazard.png", "fig1b_same_data.png"]):
         extent = ax[i].get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
         fig.savefig(OUT / name, dpi=200, bbox_inches=extent.expanded(1.03, 1.03))
     plt.close(fig)

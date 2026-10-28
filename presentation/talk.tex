@@ -13,7 +13,7 @@
 \newcommand{\cov}{\operatorname{Cov}}
 \newcommand{\why}[1]{\text{\scriptsize[#1]}}
 
-\title{Duration Models: From Hazards to Treatment Effects}
+\title{Duration Models and Treatment Effects}
 \subtitle{Motivated by Abbring \& Van den Berg (2003, \textit{Econometrica})}
 \author{Econometrics Reading Group}
 \date{}
@@ -84,10 +84,10 @@
 
 % =====================================================================
 \section{People differ}
-\begin{frame}[label=m-pop]{People differ: individual vs.\ population hazard}
+\begin{frame}[label=m-pop]{People differ: individual vs.\ observed hazard}
   Unobserved type $V\ge0$, $V\sim G$. Assume
   \[ \theta(y\mid V)=\lambda(y)\,V, \qquad \lambda(y)=\theta(y\mid V=1),\qquad S(y\mid V)=e^{-\Lambda(y)V}. \]
-  What we observe is the \textbf{population}:
+  Data reveal the \textbf{observed} hazard, averaged over types (the paper's ``mixture hazard''):
   \begin{align*}
     \bar S(y) &= \E\big[S(y\mid V)\big]=\E\big[e^{-\Lambda(y)V}\big] && \why{LIE} \\
     \bar\theta(y) &= \frac{\bar f(y)}{\bar S(y)} = -\frac{\bar S'(y)}{\bar S(y)} = \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$}
@@ -117,7 +117,7 @@
       \end{itemize}
     \end{column}
     \begin{column}{0.42\textwidth}
-      \includegraphics[width=\linewidth]{fig1a_population_hazard.png}
+      \includegraphics[width=\linewidth]{fig1a_observed_hazard.png}
 
       {\scriptsize Two types, constant hazards. Nobody's hazard falls; the observed one does.}
     \end{column}
@@ -430,7 +430,7 @@
   \back{m-hazard}
 \end{frame}
 
-\begin{frame}[label=p-pop]{Proof: population survival and hazard}
+\begin{frame}[label=p-pop]{Proof: observed survival and hazard}
   Model: $\theta(y\mid V)=\lambda(y)V$, so $\Theta(y\mid V)=\Lambda(y)V$ and $S(y\mid V)=e^{-\Lambda(y)V}$.
   \begin{align*}
     \bar S(y) &= \Pr(Y>y) = \E\big[\Pr(Y>y\mid V)\big] && \why{LIE} \\
@@ -570,7 +570,7 @@
 
 \begin{frame}[label=p-ts]{Proof: identification of the race (Prop.~2)}
   \small
-  \textbf{Step 1.} $\dfrac{h_Y(t\mid x)}{h_Y(t\mid x^*)}=\varphi_Y(x)\dfrac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]}\xrightarrow{t\downarrow0}\varphi_Y(x)$ \why{$R_t\to$ population; $V\perp X$; $\E V_Y<\infty$}. Same for $\varphi_S$.
+  \textbf{Step 1.} $\dfrac{h_Y(t\mid x)}{h_Y(t\mid x^*)}=\varphi_Y(x)\dfrac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]}\xrightarrow{t\downarrow0}\varphi_Y(x)$ \why{$R_t\to$ everyone; $V\perp X$; $\E V_Y<\infty$}. Same for $\varphi_S$.
 
   \medskip
   \textbf{Step 2.} $P_0(t^*\mid x)=\Lap(\varphi_Y(x),\varphi_S(x))$. Assn.~3: an open set $\Rightarrow$ $\Lap$ on $(0,\infty)^2$ $\Rightarrow$ $G$.

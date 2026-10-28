@@ -155,11 +155,11 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
       \item ``$V=1$ type'' needs a normalization, since $(\lambda,V)$ and $(c\lambda,V/c)$ give the same hazard.
     \end{itemize}
   \item Integrated baseline $\Lambda(y):=\int_0^y\lambda$. So $\Theta(y\mid V)=\Lambda(y)V$ and, by \eqref{eq:survival}, $\Pr(Y>y\mid V)=e^{-\Lambda(y)V}$.
-  \item The \textbf{population} hazard $\bar\theta=\bar f/\bar S$ (Section 1 applied to everyone pooled) is \emph{not} assumed. It is derived below.
+  \item The \textbf{observed} hazard $\bar\theta=\bar f/\bar S$ (Section 1 applied to everyone pooled; the paper's ``mixture hazard'') is \emph{not} assumed. It is derived below.
 \end{itemize}
 
-\subsection{Population survival and hazard}
-\whynow{we only observe the population, not each type. Compute what the population hazard looks like.}
+\subsection{Observed survival and hazard}
+\whynow{we only observe everyone pooled, not each type. Compute what the observed hazard looks like.}
 \begin{align}
   \bar S(y) := \Pr(Y>y) &= \E\big[\Pr(Y>y\mid V)\big] && \why{law of iterated expectations (LIE)} \nonumber\\
   &= \E\big[e^{-\Lambda(y)V}\big] && \why{$S(y\mid V)=e^{-\Lambda(y)V}$} \nonumber\\[4pt]
@@ -202,7 +202,7 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
   &= \frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{$\int h(v)\,dG(v)=\E[h(V)]$} \label{eq:survmeanexp}
 \end{align}
 
-\textbf{Step 3: back to the population hazard}
+\textbf{Step 3: back to the observed hazard}
 \begin{align}
   \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{\eqref{eq:survmeanexp} is the ratio in \eqref{eq:pophazard}} \label{eq:dynsel}
 \end{align}
@@ -222,7 +222,7 @@ Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,
   \item Reading in our model: $a=\Lambda(y)$ is the accumulated baseline hazard.
     \begin{itemize}
       \item $e^{-av}$: probability that a type-$v$ person is still unemployed.
-      \item $\Lap(a)$: share of the whole population still unemployed. Indeed $\bar S(y)=\Lap(\Lambda(y))$.
+      \item $\Lap(a)$: share of everyone still unemployed. Indeed $\bar S(y)=\Lap(\Lambda(y))$.
     \end{itemize}
   \item Same family as the moment generating function: $\Lap(a)=M_V(-a)$, $M_V(u):=\E[e^{uV}]$.
     \begin{itemize}
@@ -263,7 +263,7 @@ Two facts we state without proof:
   \frac{d}{dy}\E[V\mid Y>y] &= -\lambda(y)\,\var(V\mid Y>y)\ \le\ 0 && \why{chain rule: $\Lambda'=\lambda$} \nonumber
 \end{align}
 \begin{itemize}
-  \item The population hazard falls \emph{even if no individual hazard falls}. This is \textbf{dynamic selection}.
+  \item The observed hazard falls \emph{even if no individual hazard falls}. This is \textbf{dynamic selection}.
   \item Hence two explanations for a falling exit rate:
     \begin{itemize}
       \item true duration dependence: $\lambda\downarrow$ (e.g.\ skill loss: a \emph{trap});
@@ -277,7 +277,7 @@ Two facts we state without proof:
 
 \textbf{The identification question}
 \begin{itemize}
-  \item Data: the population survival $\bar S(y)$ for all $y$ (equivalently $\bar\theta(y)=-\frac{d}{dy}\log\bar S(y)$). That is all one duration gives us.
+  \item Data: the observed survival $\bar S(y)$ for all $y$ (equivalently $\bar\theta(y)=-\frac{d}{dy}\log\bar S(y)$). That is all one duration gives us.
   \item Unknowns: the baseline $\Lambda$ (duration dependence) and the type distribution $G$ (sorting).
   \item The model links them: $\bar S(y)=\Lap_G\big(\Lambda(y)\big)$ (Section 2.3), where $\Lap_G$ is the Laplace transform of $G$.
   \item Not identified $\iff$ a \emph{different} pair $(\tilde\Lambda,\tilde G)$ gives the \emph{same} $\bar S$.
@@ -602,7 +602,7 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
 \textbf{Step 1: $\varphi_Y,\varphi_S$.}
 \begin{align}
   \frac{h_Y(t\mid x)}{h_Y(t\mid x^*)} &= \varphi_Y(x)\,\frac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]} && \why{by \eqref{eq:hY}; $\lambda_Y(t)$ cancels} \nonumber\\
-  &\xrightarrow{\;t\downarrow0\;}\varphi_Y(x)\,\frac{\E V_Y}{\E V_Y}=\varphi_Y(x) && \why{risk set $\to$ population; $V\perp X$; (A4)} \nonumber
+  &\xrightarrow{\;t\downarrow0\;}\varphi_Y(x)\,\frac{\E V_Y}{\E V_Y}=\varphi_Y(x) && \why{risk set $\to$ everyone; $V\perp X$; (A4)} \nonumber
 \end{align}
 Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
 
