@@ -55,7 +55,7 @@
     \medskip
     \item \textbf{When can the two be separated?}\\ The mixed proportional hazard model. \hfill {\small Elbers \& Ridder (1982)}
     \medskip
-    \item \textbf{Two durations racing.}\\ Competing risks. \hfill {\small Cox (1959), Tsiatis (1975), Heckman \& Honor\'e (1989)}
+    \item \textbf{Two durations.}\\ Competing risks. \hfill {\small Cox (1959), Tsiatis (1975), Heckman \& Honor\'e (1989)}
     \medskip
     \item \textbf{A treatment arriving during the spell.}\\ \hfill {\small Abbring \& Van den Berg (2003)}
   \end{enumerate}
@@ -265,14 +265,14 @@
   \textbf{Where it comes from}
   \begin{itemize}
     \item A treatment that \emph{arrives} at a random time $S$, with its own hazard, is itself a duration.
-    \item Before $S$: a race between $Y$ (job) and $S$ (treatment), \textbf{competing risks}.
+    \item Before $S$: \textbf{competing risks} between $Y$ (job) and $S$ (treatment); whichever comes first.
     \item After $S$: $Y$ continues under treatment. The effect shows up here.
   \end{itemize}
   \textbf{Why it is a hurdle}
   \begin{itemize}
     \item Censoring: if the job comes first, $S$ is never seen.
     \item Endogeneity: the same unobserved traits may drive both.
-    \item Tsiatis (1975): race data alone cannot reveal that dependence.
+    \item Tsiatis (1975): competing-risks data alone cannot reveal that dependence.
   \end{itemize}
   \textbf{Why modelling it is the solution}
   \begin{itemize}
@@ -285,16 +285,16 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-race]{The race: model and data}
+\begin{frame}[label=m-race]{Competing risks: model and data}
   \[ \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y,\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S,\qquad (V_Y,V_S)\sim G. \]
   \textbf{Assumption:} $Y\perp S\mid(x,V)$. All dependence runs through $(x,V)$.
   \begin{align*}
     \Pr(Y>y,S>s\mid x) &= \E\big[e^{-\varphi_Y\Lambda_Y(y)V_Y}e^{-\varphi_S\Lambda_S(s)V_S}\big] && \why{LIE; assumption} \\
     &= \Lap\big(\varphi_Y(x)\Lambda_Y(y),\ \varphi_S(x)\Lambda_S(s)\big) && \why{$\Lap(a,b):=\E[e^{-aV_Y-bV_S}]$}
   \end{align*}
-  Only the first event is seen. With $a_t=\varphi_Y\Lambda_Y(t)$, $b_t=\varphi_S\Lambda_S(t)$:
+  Only the first event is seen. With $\Lambda_Y(t\mid x):=\varphi_Y(x)\Lambda_Y(t)$, $\Lambda_S(t\mid x):=\varphi_S(x)\Lambda_S(t)$:
   \begin{align*}
-    P_0(t\mid x) &:= \Pr(\text{nothing yet by }t\mid x)=\Lap(a_t,b_t) \\
+    P_0(t\mid x) &:= \Pr(\text{nothing yet by }t\mid x)=\Lap(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)) \\
     h_Y(t\mid x) &:= \text{exit rate among those with nothing yet} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x]
   \end{align*}
   \begin{itemize}
@@ -360,7 +360,7 @@
   \[ \theta_Y(t\mid s,x,V)=\lambda_Y(t)\varphi_Y(x)V_Y\cdot\delta(t\mid s,x)^{\mathbf 1\{t>s\}},\qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S. \]
   \begin{itemize}
     \item $\delta$: the causal effect, a multiplier on the exit rate after treatment. May vary with $t$, $s$, $x$.
-    \item Before $S$: exactly the race. So $\varphi$'s, $\Lambda$'s and $G$ are identified.
+    \item Before $S$: exactly the competing-risks model. So $\varphi$'s, $\Lambda$'s and $G$ are identified.
     \item After $S$: the treated cohort's survival $P_1(y\mid s)=\Pr(Y>y\mid S=s,Y>s)$ carries $\delta$.
     \item Given $(x,V)$, the timing of $S$ is still pure luck: the instrument-like variation.
   \end{itemize}
@@ -381,7 +381,7 @@
   \begin{itemize}
     \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
     \item No dependence $\Rightarrow$ factor 1: timing as good as random.
-    \item The factor is a function of $\Lap$, known from the race $\Rightarrow$ $\delta$ identified.
+    \item The factor is a function of $\Lap$, known from the competing-risks part $\Rightarrow$ $\delta$ identified.
   \end{itemize}
   \vfill\hfill\hyperlink{p-sf}{\beamergotobutton{Proof}}
 \end{frame}
@@ -391,7 +391,7 @@
   With $D(y\mid s,x):=\int_s^y\lambda_Y(\tau)\delta(\tau\mid s,x)\,d\tau$:
   \begin{align*}
     P_1(y\mid s,x) &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{LIE over the treated cohort} \\
-    &= \frac{\Lap_b\big(a_s+\varphi_Y(x)D,\ b_s\big)}{\Lap_b(a_s,b_s)} && \why{the paper's eq.\ (10)}
+    &= \frac{\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D,\ \Lambda_S(s\mid x)\big)}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{the paper's eq.\ (10)}
   \end{align*}
   \begin{itemize}
     \item Left: data. Right: known except $D$. Decreasing in $D$ $\Rightarrow$ invert $\Rightarrow$ $\delta=\partial_yD/\lambda_Y$.
@@ -403,7 +403,7 @@
   \end{itemize}
   \bigskip
   \centering
-  pre-treatment race $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $s$ $\Rightarrow$ $+\,P_1$ $\Rightarrow$ $\delta$
+  pre-treatment competing risks $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $s$ $\Rightarrow$ $+\,P_1$ $\Rightarrow$ $\delta$
   \vfill\hfill\hyperlink{p-p1}{\beamergotobutton{Proof}}
 \end{frame}
 
@@ -586,7 +586,7 @@
   \back{m-er}
 \end{frame}
 
-\begin{frame}[label=p-race]{Proof: the race}
+\begin{frame}[label=p-race]{Proof: competing risks}
   \small
   \begin{align*}
     \Pr(Y>y,S>s\mid x) &= \E\big[\Pr(Y>y,S>s\mid x,V)\big] && \why{LIE; $V\perp X$} \\
@@ -598,7 +598,7 @@
   \begin{align*}
     h_Y(t\mid x) &= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\,S>t\mid x)}{dt\,P_0(t\mid x)} && \why{definition} \\
     &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{P_0(t\mid x)} && \why{derivative of a survival} \\
-    &= \lambda_Y(t)\varphi_Y(x)\,\frac{-\Lap_a(a_t,b_t)}{\Lap(a_t,b_t)} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{chain rule; survivor mean}
+    &= \lambda_Y(t)\varphi_Y(x)\,\frac{-\Lap_a(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))}{\Lap(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))} = \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{chain rule; survivor mean}
   \end{align*}
   \back{m-race}
 \end{frame}
@@ -618,7 +618,7 @@
   \back{m-sel}
 \end{frame}
 
-\begin{frame}[label=p-ts]{Proof: identification of the race (Prop.~2)}
+\begin{frame}[label=p-ts]{Proof: identification of the competing-risks model (Prop.~2)}
   \small
   \textbf{Step 1.} $\dfrac{h_Y(t\mid x)}{h_Y(t\mid x^*)}=\varphi_Y(x)\dfrac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]}\xrightarrow{t\downarrow0}\varphi_Y(x)$ \why{$R_t\to$ everyone; $V\perp X$; $\E V_Y<\infty$}. Same for $\varphi_S$.
 
@@ -668,7 +668,7 @@
   \begin{align*}
     \E_{G_s}[V_Y] &= \frac{\E_{R_s}[V_YV_S]}{\E_{R_s}[V_S]} = \E_{R_s}[V_Y]+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_S]} && \why{reweight by $v_S$; $\E XY=\E X\E Y+\cov$} \\
     \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\Big(1+\frac{\cov_{R_s}}{\E_{R_s}V_Y\,\E_{R_s}V_S}\Big) && \why{divide} \\
-    &= \delta(s\mid s,x)\,\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(a_s,b_s)} && \why{$\E V_Y=-\tfrac{\Lap_a}{\Lap}$, $\E V_S=-\tfrac{\Lap_b}{\Lap}$, $\E V_YV_S=\tfrac{\Lap_{ab}}{\Lap}$}
+    &= \delta(s\mid s,x)\,\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{$\E V_Y=-\tfrac{\Lap_a}{\Lap}$, $\E V_S=-\tfrac{\Lap_b}{\Lap}$, $\E V_YV_S=\tfrac{\Lap_{ab}}{\Lap}$}
   \end{align*}
   \back{m-sf}
 \end{frame}
@@ -679,11 +679,11 @@
   \begin{align*}
     g(y,s\mid x) &= \E\big[f_S(s\mid x,V)\,\Pr(Y>y\mid S=s,x,V)\big] && \why{LIE; Assn.~2} \\
     &= \E\big[\lambda_S\varphi_SV_Se^{-b_sV_S}\cdot e^{-\varphi_YV_Y[\Lambda_Y(s)+D]}\big] && \why{$f=\theta e^{-\Theta}$; $S=e^{-\Theta}$} \\
-    &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(a_s+\varphi_Y(x)D,\ b_s\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \\
-    P_1(y\mid s,x) &= \frac{g(y,s\mid x)}{g(s,s\mid x)} = \frac{\Lap_b(a_s+\varphi_YD,\,b_s)}{\Lap_b(a_s,b_s)} && \why{$D(s\mid s,x)=0$}
+    &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D,\ \Lambda_S(s\mid x)\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \\
+    P_1(y\mid s,x) &= \frac{g(y,s\mid x)}{g(s,s\mid x)} = \frac{\Lap_b(\Lambda_Y(s\mid x)+\varphi_YD,\,\Lambda_S(s\mid x))}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{$D(s\mid s,x)=0$}
   \end{align*}
   \begin{itemize}
-    \item $\partial_D\Lap_b(a_s+\varphi_YD,b_s)=\varphi_Y\E[V_YV_Se^{\cdots}]>0$ and $\Lap_b<0$: $P_1$ strictly decreasing in $D$ $\Rightarrow$ invert.
+    \item $\partial_D\Lap_b(\Lambda_Y(s\mid x)+\varphi_YD,\Lambda_S(s\mid x))=\varphi_Y\E[V_YV_Se^{\cdots}]>0$ and $\Lap_b<0$: $P_1$ strictly decreasing in $D$ $\Rightarrow$ invert.
     \item $\delta(y\mid s,x)=\partial_yD(y\mid s,x)/\lambda_Y(y)$ \why{fundamental theorem of calculus}.
   \end{itemize}
   \hyperlink{p-local}{\beamergotobutton{Local vs.\ global picture}}

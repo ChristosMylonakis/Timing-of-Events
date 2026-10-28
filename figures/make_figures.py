@@ -168,7 +168,7 @@ def fig_competing_risks_geometry():
     ax[1].legend(frameon=False, fontsize=9, markerscale=5, loc="upper left")
     for a in ax:
         a.set(xlim=(0, 2.6), ylim=(0, 3.6),
-              xlabel=r"$a = \varphi_Y(x)\Lambda_Y(t)$", ylabel=r"$b = \varphi_S(x)\Lambda_S(t)$")
+              xlabel=r"$\Lambda_Y(t\mid x)$", ylabel=r"$\Lambda_S(t\mid x)$")
     fig.tight_layout()
     fig.savefig(OUT / "fig4_competing_risks_geometry.png", dpi=200)
     plt.close(fig)

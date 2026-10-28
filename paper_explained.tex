@@ -27,7 +27,7 @@
   \item One duration: survival, hazard, integrated hazard
   \item People differ: unobserved heterogeneity and dynamic selection
   \item The mixed proportional hazard (MPH) model
-  \item Two durations racing: competing risks
+  \item Two durations: competing risks
   \item Adding a treatment: potential outcomes indexed by treatment time, no anticipation
   \item What we actually observe
   \item The model of the paper (Model 1a)
@@ -413,7 +413,7 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 \takeaway{with MPH structure and covariates, one duration reveals $\lambda$, $\varphi$ and the full distribution of unobserved types. In the paper, \emph{before} treatment, two durations compete: job vs.\ benefits reduction. Their link through unobserved types is exactly the selection problem. Next: extend the argument to two durations.}
 
 % =====================================================================
-\section{Two durations racing: competing risks}
+\section{Two durations: competing risks}
 \whynow{Section 3 learned the heterogeneity of \emph{one} duration. The treatment brings a second one.}
 
 \textbf{Where the second duration comes from}
@@ -422,7 +422,7 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
   \item So two durations run at once: $Y$ (time to a job) and $S$ (time to the reduction).
   \item Two phases:
     \begin{itemize}
-      \item \textbf{before $S$:} a race; whichever comes first ends it (\textbf{competing risks}, this section);
+      \item \textbf{before $S$:} \textbf{competing risks}; whichever comes first ends it (this section);
       \item \textbf{after $S$:} $Y$ continues under treatment; the effect $\delta$ shows up here (Sections 7--8).
     \end{itemize}
 \end{itemize}
@@ -431,7 +431,7 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
 \begin{itemize}
   \item \textbf{Censoring:} if the job comes first, we never see when the reduction would have come.
   \item \textbf{Endogeneity:} the same unobserved traits may drive both (low motivation $\Rightarrow$ slow job finding \emph{and} early reduction), so $V_Y$ and $V_S$ are correlated. This \emph{is} the selection problem.
-  \item \textbf{Negative result} (Tsiatis, Section 4.5): race data alone cannot reveal that correlation.
+  \item \textbf{Negative result} (Tsiatis, Section 4.5): competing-risks data alone cannot reveal that correlation.
 \end{itemize}
 
 \textbf{Why modelling it is also the solution}
@@ -439,12 +439,12 @@ Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1
   \item If $S$ were exogenous ($V_S\perp V_Y$), ``reduced yet?'' would be an ordinary time-varying covariate in $Y$'s hazard, and Section 3 would suffice.
   \item It is not, so we model $S$'s own process: the paper's dynamic \textbf{selection equation} (as in Heckman's selection model). This buys:
     \begin{itemize}
-      \item \textbf{A clean window:} before $S$ there is no causal effect (no anticipation, Section 5), so the race reflects only the joint heterogeneity of $(V_Y,V_S)$.
+      \item \textbf{A clean window:} before $S$ there is no causal effect (no anticipation, Section 5), so the competing-risks data reflect only the joint heterogeneity of $(V_Y,V_S)$.
       \item \textbf{The correlation becomes identifiable:} MPH plus covariates beat Tsiatis (Section 4.6), the two-duration version of Section 3.
       \item \textbf{Instrument-like variation:} given $(x,V)$, the timing of $S$ still contains pure luck (Section 7).
     \end{itemize}
 \end{itemize}
-This section studies the race alone. No treatment effect is involved yet.
+This section studies the competing-risks part alone. No treatment effect is involved yet.
 
 \textbf{Set-up}
 \begin{itemize}
@@ -452,7 +452,7 @@ This section studies the race alone. No treatment effect is involved yet.
     \begin{itemize}
       \item Here $Y$ is the time to a job \emph{if never treated} ($=Y^*(\infty)$ in Section 5).
     \end{itemize}
-  \item Only the \textbf{first} event of the race is seen, plus which one it was.
+  \item Only the \textbf{first} event is seen, plus which one it was.
     \begin{itemize}
       \item If $Y$ comes first: $S$ is censored.
       \item If $S$ comes first: we do see a job time later, but it is a \emph{treated} outcome, not this $Y$. It is used in Sections 6--8, not here.
@@ -462,7 +462,7 @@ This section studies the race alone. No treatment effect is involved yet.
   \begin{align}
     \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y, \qquad \theta_S(t\mid x,V)=\lambda_S(t)\varphi_S(x)V_S. \nonumber
   \end{align}
-  \item \textbf{Assumption} (race version of the paper's Assumption 2, Section 7): $Y\perp S\mid(x,V)$.
+  \item \textbf{Assumption} (competing-risks version of the paper's Assumption 2, Section 7): $Y\perp S\mid(x,V)$.
     \begin{itemize}
       \item Given observed $x$ and unobserved type $V$, the luck in job timing is unrelated to the luck in reduction timing.
       \item All dependence between $Y$ and $S$ runs through $(x,V)$: selection on observables and unobservables.
@@ -472,7 +472,7 @@ This section studies the race alone. No treatment effect is involved yet.
     \begin{itemize}
       \item Same properties as Section 2.3: derivatives give moments among survivors; uniqueness; analyticity.
     \end{itemize}
-  \item Indices: $a_t(x):=\varphi_Y(x)\Lambda_Y(t)$, \ $b_t(x):=\varphi_S(x)\Lambda_S(t)$.
+  \item Integrated baselines with covariates (no $V$): $\Lambda_Y(t\mid x):=\varphi_Y(x)\Lambda_Y(t)$, \ $\Lambda_S(t\mid x):=\varphi_S(x)\Lambda_S(t)$.
 \end{itemize}
 
 \subsection{Joint survival}
@@ -488,13 +488,13 @@ This section studies the race alone. No treatment effect is involved yet.
 \whynow{we never see both durations, only the first event. Derive which pieces of \eqref{eq:jointsurv} are observable.}
 Probability that nothing has happened by $t$ (the diagonal $y=s=t$):
 \begin{align}
-  P_0(t\mid x) := \Pr(Y>t,S>t\mid x) &= \Lap\big(a_t(x),b_t(x)\big) && \why{\eqref{eq:jointsurv} at $y=s=t$} \label{eq:P0}
+  P_0(t\mid x) := \Pr(Y>t,S>t\mid x) &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{\eqref{eq:jointsurv} at $y=s=t$} \label{eq:P0}
 \end{align}
 Cause-specific hazard of exit (rate of $Y$ happening first, among those with nothing yet):
 \begin{align}
   h_Y(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\ S>t\mid x)}{dt\;P_0(t\mid x)} && \why{definition} \nonumber\\
   &= \frac{-\partial_y\Pr(Y>y,S>t\mid x)\big|_{y=t}}{P_0(t\mid x)} && \why{derivative of a survival in $y$} \nonumber\\
-  &= \frac{-\Lap_a(a_t,b_t)\,\varphi_Y(x)\lambda_Y(t)}{\Lap(a_t,b_t)} && \why{chain rule on \eqref{eq:jointsurv}; $\Lambda_Y'=\lambda_Y$} \nonumber\\
+  &= \frac{-\Lap_a(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))\,\varphi_Y(x)\lambda_Y(t)}{\Lap(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))} && \why{chain rule on \eqref{eq:jointsurv}; $\Lambda_Y'=\lambda_Y$} \nonumber\\
   &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{$-\Lap_a/\Lap$ = survivor mean, as in \eqref{eq:survmeanexp}} \label{eq:hY}
 \end{align}
 where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $h_S(t\mid x)=\lambda_S(t)\varphi_S(x)\E[V_S\mid R_t,x]$.
@@ -506,14 +506,14 @@ Write $w(v)\propto e^{-av_Y-bv_S}$ (survivor weights) and $\E_w$ for expectation
   \partial_a\log\Lap &= \frac{\Lap_a}{\Lap} = -\E_w[V_Y] && \why{chain rule; differentiate under $\E$} \nonumber\\
   \partial_b\partial_a\log\Lap &= \frac{\Lap_{ab}}{\Lap}-\frac{\Lap_a\Lap_b}{\Lap^2} && \why{quotient rule} \nonumber\\
   &= \E_w[V_YV_S]-\E_w[V_Y]\E_w[V_S] && \why{$\Lap_{ab}=\E[V_YV_Se^{\cdots}]$, $\Lap_b/\Lap=-\E_w[V_S]$} \nonumber\\
-  &= \cov(V_Y,V_S\mid R_t,x) && \why{definition of covariance; at $(a,b)=(a_t,b_t)$} \label{eq:crossderiv}
+  &= \cov(V_Y,V_S\mid R_t,x) && \why{definition of covariance; at $(a,b)=(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))$} \label{eq:crossderiv}
 \end{align}
 \begin{itemize}
   \item $V_Y\perp V_S$ $\iff$ $\Lap(a,b)=\Lap_Y(a)\Lap_S(b)$ $\iff$ $\log P_0$ additively separable in the two indices.
   \item Dependence (selection) $=$ an \textbf{interaction} of the two indices in $\log P_0$.
 \end{itemize}
 
-\subsection{Deeper look: how selection shows up in the race}
+\subsection{Deeper look: how selection shows up in competing risks}
 \whynow{\eqref{eq:crossderiv} is abstract. Translate it into something observable: how a shift in treatment intensity changes the exit rate of those \emph{not} treated.}
 
 Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where reductions happen more often):
@@ -567,7 +567,7 @@ Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where r
       \item the data reveal $\Lap$ only at points $(\Lambda_Y(t),\Lambda_S(t))$, i.e.\ along a \textbf{curve};
       \item a curve cannot pin down a function of two variables, so the dependence is not identified.
     \end{itemize}
-  \item With covariates moving $\varphi_Y$ and $\varphi_S$ separately: points $(a_t(x),b_t(x))$ fill \textbf{open sets}.
+  \item With covariates moving $\varphi_Y$ and $\varphi_S$ separately: points $(\Lambda_Y(t\mid x),\Lambda_S(t\mid x))$ fill \textbf{open sets}.
 \end{itemize}
 \textbf{How to read the figure}
 \begin{itemize}
@@ -624,11 +624,11 @@ Same for $\varphi_S$ with $h_S$. Uses \emph{which} event happened.
   \item Iterating, $\Lap$ would be constant, contradicting strict monotonicity.
   \item These three steps are our reconstruction; the paper cites Abbring \& Van den Berg (2003, JRSSB).
 \end{itemize}
-\takeaway{the race alone reveals $\lambda_Y,\lambda_S,\varphi_Y,\varphi_S$ and the joint $G$, i.e.\ how selected those still at risk are. Next: introduce the treatment and define its causal effect.}
+\takeaway{the competing-risks data alone reveal $\lambda_Y,\lambda_S,\varphi_Y,\varphi_S$ and the joint $G$, i.e.\ how selected those still at risk are. Next: introduce the treatment and define its causal effect.}
 
 % =====================================================================
 \section{Adding a treatment}
-\whynow{so far no causal effect. We need to define ``the effect of a benefits reduction at $s$'', and say when the pre-treatment race of Section 4 is untouched by the treatment.}
+\whynow{so far no causal effect. We need to define ``the effect of a benefits reduction at $s$'', and say when the pre-treatment competing-risks part of Section 4 is untouched by the treatment.}
 
 \subsection{Potential outcomes indexed by treatment time}
 \whynow{a dynamic treatment is a choice of \emph{date}, so the causal objects are one outcome per date.}
@@ -659,7 +659,7 @@ Take $s'=\infty$ and differentiate in $y$:
     \end{itemize}
   \item Prop.~1: without more structure, data cannot distinguish (i) causal effects from selection, nor (ii) anticipation from no anticipation. Hence Assumption 1 is maintained, and selection must be modelled.
 \end{itemize}
-\takeaway{under no anticipation, the period before treatment is a pure race, as in Section 4. Next: what exactly do the data contain?}
+\takeaway{under no anticipation, the period before treatment is a pure competing-risks problem, as in Section 4. Next: what exactly do the data contain?}
 
 % =====================================================================
 \section{What we actually observe}
@@ -690,7 +690,7 @@ Take $s'=\infty$ and differentiate in $y$:
   \item $(P_0,h_Y,h_S)$ = competing-risks data, as in Section 4.
   \item $P_1$ = the only place where the treatment effect can show up.
 \end{itemize}
-\takeaway{pre-treatment data identify the race (Section 4). Post-treatment data $P_1$ must deliver $\delta$. Next: the model linking both.}
+\takeaway{pre-treatment data identify the competing-risks model (Section 4). Post-treatment data $P_1$ must deliver $\delta$. Next: the model linking both.}
 
 % =====================================================================
 \section{The model of the paper (Model 1a)}
@@ -749,7 +749,7 @@ Invert the definition of $E_S$:
     \end{itemize}
   \item Contrast with a static threshold model $D=\1\{\mu(x)>U\}$: given $(x,U)$, $D$ is deterministic, so no luck is left.
 \end{itemize}
-\takeaway{the model has a random component in timing (like an instrument) and selection through $V$ (to be learned from the race). Next: show $\delta$ is identified.}
+\takeaway{the model has a random component in timing (like an instrument) and selection through $V$ (to be learned from the competing-risks part). Next: show $\delta$ is identified.}
 
 % =====================================================================
 \section{Identification, step by step}
@@ -762,11 +762,11 @@ Invert the definition of $E_S$:
 \end{itemize}
 
 \subsection{Step A: the pre-treatment data are the competing-risks model of Section 4}
-\whynow{check that the pre-treatment data are exactly the race of Section 4, so its results apply.}
+\whynow{check that the pre-treatment data are exactly the competing-risks model of Section 4, so its results apply.}
 \begin{align}
   P_0(t\mid x) &= \E\big[\Pr(Y>t,S>t\mid x,V)\big] && \why{LIE; $V\perp X$} \nonumber\\
   &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(t)V_Y}\,e^{-\varphi_S(x)\Lambda_S(t)V_S}\big] && \why{Assumption 2; before $S$, $\delta$ absent (no anticipation)} \nonumber\\
-  &= \Lap\big(a_t(x),b_t(x)\big) && \why{as in \eqref{eq:P0}} \nonumber
+  &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_S(t\mid x)\big) && \why{as in \eqref{eq:P0}} \nonumber
 \end{align}
 \begin{itemize}
   \item Same for $h_Y,h_S$. So Prop.~2 (Section 4.6) applies: $\varphi_Y,\varphi_S,\Lambda_Y,\Lambda_S,G$ are identified.
@@ -802,7 +802,7 @@ Exit hazard of the just-treated vs.\ the not-yet-treated, at $s$:
   \E_{G_s}[V_Y] &= \frac{\E_{R_s}[V_YV_S]}{\E_{R_s}[V_S]} && \why{\eqref{eq:Gs}: $G_s$ = $G_{R_s}$ reweighted by $v_S$} \nonumber\\
   &= \E_{R_s}[V_Y]+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_S]} && \why{$\E[XY]=\E X\E Y+\cov(X,Y)$} \nonumber\\[3pt]
   \frac{\text{just treated}}{\text{not yet treated}} &= \delta(s\mid s,x)\Big(1+\frac{\cov_{R_s}(V_Y,V_S)}{\E_{R_s}[V_Y]\E_{R_s}[V_S]}\Big) && \why{divide; $\lambda_Y\varphi_Y$ cancel} \nonumber\\
-  &= \delta(s\mid s,x)\cdot\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(a_s,b_s)} && \why{survivor moments from Section 4.3} \nonumber
+  &= \delta(s\mid s,x)\cdot\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{survivor moments from Section 4.3} \nonumber
 \end{align}
 \begin{itemize}
   \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
@@ -817,12 +817,12 @@ For $y>s$, let $g(y,s\mid x)$ be the density of ``treated at $s$ and still unemp
   g(y,s\mid x)
   &= \E\big[f_S(s\mid x,V)\,\Pr(Y>y\mid S=s,x,V)\big] && \why{LIE; Assumption 2} \nonumber\\
   &= \E\big[\lambda_S(s)\varphi_SV_Se^{-b_sV_S}\cdot e^{-\varphi_YV_Y[\Lambda_Y(s)+D]}\big] && \why{\eqref{eq:density}; \eqref{eq:survival} with \eqref{eq:ThetaY}} \nonumber\\
-  &= \lambda_S(s)\varphi_S\,\E\big[V_S\,e^{-(a_s+\varphi_YD)V_Y-b_sV_S}\big] && \why{linearity; $a_s=\varphi_Y\Lambda_Y(s)$} \nonumber\\
-  &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(a_s+\varphi_Y(x)D,\ b_s\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \nonumber
+  &= \lambda_S(s)\varphi_S\,\E\big[V_S\,e^{-(\Lambda_Y(s\mid x)+\varphi_YD)V_Y-b_sV_S}\big] && \why{linearity; $\Lambda_Y(s\mid x)=\varphi_Y\Lambda_Y(s)$} \nonumber\\
+  &= -\lambda_S(s)\varphi_S(x)\,\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D,\ \Lambda_S(s\mid x)\big) && \why{$\Lap_b=-\E[V_Se^{-aV_Y-bV_S}]$} \nonumber
 \end{align}
 Divide by the same expression at $y\downarrow s$ (where $D=0$), as in \eqref{eq:P1data}:
 \begin{align}
-  P_1(y\mid s,x) &= \frac{\Lap_b\big(a_s+\varphi_Y(x)D(y\mid s,x),\ b_s\big)}{\Lap_b(a_s,b_s)} && \why{the $\lambda_S\varphi_S$ cancel} \nonumber\\
+  P_1(y\mid s,x) &= \frac{\Lap_b\big(\Lambda_Y(s\mid x)+\varphi_Y(x)D(y\mid s,x),\ \Lambda_S(s\mid x)\big)}{\Lap_b(\Lambda_Y(s\mid x),\Lambda_S(s\mid x))} && \why{the $\lambda_S\varphi_S$ cancel} \nonumber\\
   &= \E_{G_s}\big[e^{-\varphi_Y(x)V_Y D(y\mid s,x)}\big] && \why{rewrite with weights \eqref{eq:Gs}} \label{eq:P1model}
 \end{align}
 \begin{itemize}
