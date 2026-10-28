@@ -1,0 +1,925 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{amsmath,amssymb,graphicx,booktabs}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.5em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\graphicspath{{figures/}}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\Lap}{\mathcal{L}}
+\newcommand{\cov}{\operatorname{Cov}}
+\newcommand{\var}{\operatorname{Var}}
+\newcommand{\why}[1]{\text{\small[#1]}}
+\newcommand{\whynow}[1]{\par\noindent\textit{$\rightarrow$ Why now:} #1\par}
+\newcommand{\takeaway}[1]{\par\noindent\textbf{Takeaway $\rightarrow$ next:} #1\par}
+
+\title{Abbring \& Van den Berg (2003), built up step by step}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Plan}
+\begin{enumerate}
+  \item One duration: survival, hazard, integrated hazard
+  \item People differ: unobserved heterogeneity and dynamic selection
+  \item The mixed proportional hazard (MPH) model
+  \item Two durations: competing risks
+  \item Adding a treatment: potential outcomes indexed by treatment time, no anticipation
+  \item What we actually observe
+  \item The model of the paper (Model 1a)
+  \item Identification, step by step
+  \item Extensions: heterogeneous effects, multiple spells
+  \item Connections: DiD with staggered adoption, sequential exogeneity, traps
+\end{enumerate}
+
+\section*{Running example (the paper's, Sections 1 and 2.4)}
+\begin{itemize}
+  \item Unemployed workers receive unemployment benefits.
+  \item At a random time $D$ during the spell, their \textbf{benefits are reduced} (from level $w$ to $b<w$). (The paper calls this time $S$.)
+  \item Outcome: unemployment duration $Y$.
+  \item Question: what is the causal effect of the benefits reduction on the \textbf{transition rate to work}?
+\end{itemize}
+
+\section*{Road map: why each section is needed}
+\begin{itemize}
+  \item The effect is on a \emph{rate} $\Rightarrow$ we need the language of rates (Section 1).
+  \item Workers differ in ways we do not see, and those still unemployed are selected $\Rightarrow$ Sections 2--3.
+  \item Before treatment, two things compete: finding a job vs.\ the benefits reduction $\Rightarrow$ Section 4.
+  \item Define the causal effect and what we observe $\Rightarrow$ Sections 5--6.
+  \item Put it together and show the effect is identified $\Rightarrow$ Sections 7--8.
+\end{itemize}
+
+% =====================================================================
+\section{One duration}
+\whynow{the paper's effect is on a \emph{transition rate}. Before anything else: what is a rate for one duration, and how does it relate to probabilities?}
+
+\textbf{Objects}
+\begin{itemize}
+  \item $Y \ge 0$: a continuous duration; $y$: a value.
+  \item Density $f(y)$, CDF $F(y)$.
+  \item Survival function $S(y) := \Pr(Y>y) = 1-F(y)$: share still in the state at $y$.
+\end{itemize}
+
+\subsection{Hazard rate}
+\whynow{this is the object the treatment effect will act on.}
+\begin{align}
+  \theta(y) &:= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy \mid Y \ge y)}{dy} && \why{definition} \nonumber\\
+  &= \lim_{dy\downarrow 0} \frac{\Pr(y \le Y < y+dy)}{dy\;\Pr(Y\ge y)} && \why{conditional probability: $\Pr(A\mid B)=\Pr(A\cap B)/\Pr(B)$} \nonumber\\
+  &= \lim_{dy\downarrow 0} \frac{F(y+dy)-F(y)}{dy}\cdot\frac{1}{S(y)} && \why{$Y$ continuous: $\Pr(Y\ge y)=\Pr(Y>y)$} \nonumber\\
+  &= \frac{f(y)}{S(y)} && \why{definition of the derivative: $F'=f$} \label{eq:hazard}
+\end{align}
+\begin{itemize}
+  \item Exit rate \emph{among those still in the state} at $y$.
+  \item $\theta(y)\,dy \approx$ probability of leaving in $[y,y+dy)$, given still there at $y$.
+  \item A rate, not a probability: can exceed 1.
+\end{itemize}
+
+\subsection{Integrated hazard and survival}
+\whynow{we model hazards, but data and likelihoods are about probabilities. We need the map from $\theta$ back to $S$ and $f$; it is used in every later derivation.}
+\begin{align}
+  \theta(y) &= \frac{f(y)}{S(y)} && \why{by \eqref{eq:hazard}} \nonumber\\
+  &= -\frac{S'(y)}{S(y)} && \why{$S=1-F$, so $S'=-f$} \nonumber\\
+  &= -\frac{d}{dy}\log S(y) && \why{chain rule: $(\log S)'=S'/S$} \nonumber
+\end{align}
+\begin{align}
+  \Theta(y) := \int_0^y \theta(u)\,du
+  &= -\big[\log S(u)\big]_0^y && \why{fundamental theorem of calculus} \nonumber\\
+  &= -\log S(y) && \why{$S(0)=1$, so $\log S(0)=0$} \nonumber\\[2pt]
+  \Longrightarrow\quad S(y) &= e^{-\Theta(y)} && \why{exponentiate} \label{eq:survival}\\
+  f(y) &= \theta(y)\,e^{-\Theta(y)} && \why{$f=\theta S$ by \eqref{eq:hazard}} \label{eq:density}
+\end{align}
+\begin{itemize}
+  \item $\Theta$: integrated hazard.
+  \item $\theta$, $\Theta$, $S$, $f$: four descriptions of the same distribution.
+\end{itemize}
+
+\subsection{Deeper look: survival = surviving many small coin flips}
+\whynow{\eqref{eq:survival} came out of calculus. Here is what it \emph{means}, and it shows the key fact that every hazard is about a selected group.}
+
+Split $[0,y]$ into $n$ intervals of length $\Delta=y/n$, starting at $u_1,\dots,u_n$:
+\begin{align}
+  S(y) &= \prod_{k=1}^n \Pr\big(\text{survive interval }k \mid \text{survived to }u_k\big) && \why{multiplication rule, repeated} \nonumber\\
+  &= \prod_{k=1}^n \big(1-\theta(u_k)\Delta+o(\Delta)\big) && \why{definition of the hazard} \nonumber\\
+  \log S(y) &= \sum_{k=1}^n \log\big(1-\theta(u_k)\Delta+o(\Delta)\big) && \why{log of a product} \nonumber\\
+  &= -\sum_{k=1}^n \theta(u_k)\Delta + o(1) && \why{$\log(1-z)=-z+O(z^2)$} \nonumber\\
+  &\xrightarrow{\;n\to\infty\;} -\int_0^y\theta(u)\,du = -\Theta(y) && \why{Riemann sum} \nonumber
+\end{align}
+\begin{itemize}
+  \item Being still in the state at $y$ = winning a sequence of coin flips, each with exit probability $\theta(u_k)\Delta$.
+  \item Each coin flip is made \emph{only by those who won all earlier ones}.
+    \begin{itemize}
+      \item So a hazard always describes a \textbf{selected group}: the survivors.
+      \item With heterogeneous people this selection changes who is in the group (Section 2).
+    \end{itemize}
+  \item Given the hazard, \emph{when} the exit happens is pure chance (the coin flips). Section 7 exploits this for treatment timing.
+\end{itemize}
+
+\subsection{Example: constant hazard}
+\whynow{the simplest benchmark; it defines ``duration dependence'', which Section 2 will show is hard to read from data.}
+\begin{align}
+  \theta(y) = c \quad\Longrightarrow\quad \Theta(y) &= cy, \qquad S(y)=e^{-cy} && \why{integrate; then \eqref{eq:survival}} \nonumber\\
+  \Pr(Y>y+u \mid Y>y) &= \frac{S(y+u)}{S(y)} && \why{conditional probability; $\{Y>y+u\}\subset\{Y>y\}$} \nonumber\\
+  &= e^{-cu} && \why{plug in $S$} \nonumber
+\end{align}
+\begin{itemize}
+  \item Does not depend on $y$: \textbf{memoryless}.
+  \item $\theta$ decreasing in $y$: \textbf{negative duration dependence}. Increasing: \textbf{positive}.
+\end{itemize}
+
+\takeaway{with one homogeneous population, the hazard is directly read from data via $\theta=f/S$. Next: what if people differ in ways we do not observe?}
+
+% =====================================================================
+\section{Unobserved heterogeneity and dynamic selection}
+\whynow{workers differ in unobserved ways (e.g.\ motivation). The paper compares treated and not-yet-treated workers \emph{among those still unemployed}. So we must know what heterogeneity does to the group that is still there.}
+
+\textbf{Model}
+\begin{itemize}
+  \item Individuals differ by an unobserved type $V\ge0$ (motivation, skills, \ldots), fixed during the spell.
+  \item $G$: distribution of $V$ in the population, $G(v)=\Pr(V\le v)$.
+    \begin{itemize}
+      \item Notation: $dG(v)$ = ``probability that $V$ is (around) $v$'': $\Pr(V=v)$ if discrete, $g(v)\,dv$ if continuous.
+      \item So $\int h(v)\,dG(v)=\E[h(V)]$.
+    \end{itemize}
+  \item Section 1 applies to \emph{each type}: $\theta(y\mid V)=f(y\mid V)/S(y\mid V)$.
+  \item \textbf{Assumption:} this conditional hazard has the form
+  \begin{align}
+    \theta(y\mid V)=\lambda(y)\,V. \nonumber
+  \end{align}
+    \begin{itemize}
+      \item $\lambda(y)=\theta(y\mid V=1)=f(y\mid V=1)/S(y\mid V=1)$: the \textbf{baseline}, the hazard of the $V=1$ type.
+      \item Common time profile for all; $V$ scales its level.
+      \item ``$V=1$ type'' needs a normalization, since $(\lambda,V)$ and $(c\lambda,V/c)$ give the same hazard.
+    \end{itemize}
+  \item Integrated baseline $\Lambda(y):=\int_0^y\lambda$. So $\Theta(y\mid V)=\Lambda(y)V$ and, by \eqref{eq:survival}, $\Pr(Y>y\mid V)=e^{-\Lambda(y)V}$.
+  \item The \textbf{observed} hazard $\bar\theta=\bar f/\bar S$ (Section 1 applied to everyone pooled) is \emph{not} assumed. It is derived below.
+\end{itemize}
+
+\subsection{Observed survival and hazard}
+\whynow{we only observe everyone pooled, not each type. Compute what the observed hazard looks like.}
+\begin{align}
+  \bar S(y) := \Pr(Y>y) &= \E\big[\Pr(Y>y\mid V)\big] && \why{law of iterated expectations (LIE)} \nonumber\\
+  &= \E\big[e^{-\Lambda(y)V}\big] && \why{$S(y\mid V)=e^{-\Lambda(y)V}$} \nonumber\\[4pt]
+  \bar\theta(y) &= -\frac{\bar S'(y)}{\bar S(y)} && \why{by \eqref{eq:hazard} and $S'=-f$} \nonumber\\
+  &= \frac{\E\big[\lambda(y)V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{differentiate under $\E$; $\Lambda'=\lambda$} \nonumber\\
+  &= \lambda(y)\,\frac{\E\big[V e^{-\Lambda(y)V}\big]}{\E\big[e^{-\Lambda(y)V}\big]} && \why{linearity: $\lambda(y)$ is not random} \label{eq:pophazard}
+\end{align}
+\begin{itemize}
+  \item The ratio is an average of $V$, but with each type weighted by $e^{-\Lambda(y)V}$, its survival probability.
+  \item Next: show this is the average type \emph{among those still unemployed}.
+\end{itemize}
+
+\subsection{Who survives: the type distribution among survivors}
+\whynow{interpret the ratio in \eqref{eq:pophazard}: it is about \emph{who is left}.}
+
+\textbf{Step 1: the distribution of types among survivors}
+\begin{align}
+  dG(v\mid Y>y) &= \frac{\Pr(Y>y\mid V=v)\,dG(v)}{\Pr(Y>y)} && \why{Bayes' rule} \nonumber\\
+  &= \frac{S(y\mid v)\,dG(v)}{\bar S(y)} && \why{definitions of $S(y\mid v)$, $\bar S(y)$} \nonumber\\
+  &= \frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{plug in $S(y\mid v)$ and $\bar S(y)$ from 2.1} \label{eq:survivortypes}
+\end{align}
+\begin{itemize}
+  \item $dG(v\mid Y>y)$: probability that a person \emph{still unemployed at $y$} has type (around) $v$, i.e.\ the share of type $v$ among survivors.
+  \item Bayes flips the conditioning:
+    \begin{itemize}
+      \item $S(y\mid v)=\Pr(\text{still there}\mid\text{type }v)$: given the type, the chance to survive;
+      \item $dG(v\mid Y>y)=\Pr(\text{type }v\mid\text{still there})$: given survival, the chance of the type.
+    \end{itemize}
+  \item New share = old share $dG(v)$ $\times$ survival $S(y\mid v)$, renormalized.
+  \item Bayes reading: prior $dG(v)$ (type mix at entry), likelihood $S(y\mid v)$ of the event ``still unemployed'', posterior $dG(v\mid Y>y)$. Staying unemployed is evidence of a low $v$.
+  \item $V$ is unobserved, so this cannot be counted in data; it follows from $G$ and $\Lambda$ once identified (Section 3).
+  \item Example ($\lambda=1$, types $0.3$ and $1.5$, half each, $y=2$): $S(2\mid v)\approx(0.55,\,0.05)$, so the shares become $\approx(0.92,\,0.08)$.
+\end{itemize}
+
+\textbf{Step 2: the mean type among survivors}
+\begin{align}
+  \E[V\mid Y>y] &= \int v\;dG(v\mid Y>y) && \why{conditional mean: average $v$ using the survivor distribution} \nonumber\\
+  &= \int v\;\frac{e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{plug in \eqref{eq:survivortypes}} \nonumber\\
+  &= \frac{\int v\,e^{-\Lambda(y)v}\,dG(v)}{\E[e^{-\Lambda(y)V}]} && \why{denominator does not depend on $v$: take it out} \nonumber\\
+  &= \frac{\E[V e^{-\Lambda(y)V}]}{\E[e^{-\Lambda(y)V}]} && \why{$\int h(v)\,dG(v)=\E[h(V)]$} \label{eq:survmeanexp}
+\end{align}
+
+\textbf{Step 3: back to the observed hazard}
+\begin{align}
+  \bar\theta(y) &= \lambda(y)\,\E[V\mid Y>y] && \why{\eqref{eq:survmeanexp} is the ratio in \eqref{eq:pophazard}} \label{eq:dynsel}
+\end{align}
+\begin{itemize}
+  \item Example: $\E[V\mid Y>2]\approx0.92\cdot0.3+0.08\cdot1.5\approx0.40$, versus $\E[V]=0.9$. So $\bar\theta(2)\approx0.40$ vs.\ $\bar\theta(0)=0.9$.
+  \item The observed hazard averages over \textbf{survivors only}: $\lambda(y)\E[V\mid Y>y]$, not $\lambda(y)\E[V]$.
+\end{itemize}
+
+\subsection{A name for the object that keeps appearing: the Laplace transform}
+\whynow{every formula above contains $\E[e^{-aV}]$ for some $a$. Naming it and learning its properties is what makes all identification arguments below work.}
+
+\textbf{Definition}
+\begin{align}
+  \Lap(a) := \E\big[e^{-aV}\big] = \int_0^\infty e^{-av}\,dG(v), \qquad a\ge0. \label{eq:laplace}
+\end{align}
+\begin{itemize}
+  \item Reading in our model: $a=\Lambda(y)$ is the accumulated baseline hazard.
+    \begin{itemize}
+      \item $e^{-av}$: probability that a type-$v$ person is still unemployed.
+      \item $\Lap(a)$: share of everyone still unemployed. Indeed $\bar S(y)=\Lap(\Lambda(y))$.
+    \end{itemize}
+  \item Same family as the moment generating function: $\Lap(a)=M_V(-a)$, $M_V(u):=\E[e^{uV}]$.
+    \begin{itemize}
+      \item Always exists, since $V\ge0$ gives $0<e^{-aV}\le1$.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Properties}
+\begin{align}
+  \Lap(0) &= \E[1] = 1 && \why{definition} \nonumber\\
+  \Lap'(a) &= -\E\big[Ve^{-aV}\big] < 0 && \why{differentiate under $\E$; $<0$ if $\Pr(V>0)>0$} \nonumber\\
+  \Lap^{(k)}(a) &= (-1)^k\,\E\big[V^ke^{-aV}\big] && \why{repeat $k$ times} \nonumber\\
+  -\Lap'(0) &= \E[V] && \why{set $a=0$: derivatives at 0 give moments} \nonumber\\[4pt]
+  -\frac{\Lap'(a)}{\Lap(a)} &= \frac{\E[Ve^{-aV}]}{\E[e^{-aV}]} = \E[V\mid\text{survived to }a] && \why{by \eqref{eq:survmeanexp}} \label{eq:survmean}\\
+  \Longrightarrow\quad \bar\theta(y) &= \lambda(y)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\Lambda(y)\big) && \why{by \eqref{eq:dynsel}} \nonumber
+\end{align}
+Two facts we state without proof:
+\begin{itemize}
+  \item \textbf{Uniqueness:} $\Lap$ determines $G$. Two distributions with the same $\Lap$ are equal.
+  \item \textbf{Analyticity:} for $a>0$, $\Lap$ equals its Taylor series.
+    \begin{itemize}
+      \item So knowing $\Lap$ on \emph{any small interval} pins it down on all of $(0,\infty)$.
+      \item Like a polynomial: a short stretch of its graph fixes the whole graph.
+    \end{itemize}
+\end{itemize}
+\textbf{Why this matters for identification}
+\begin{itemize}
+  \item Survival data are always $\Lap$ evaluated at some index (here $\Lambda(y)$).
+  \item Strategy throughout: learn the index; learn $\Lap$ on an interval; then analyticity + uniqueness give $G$.
+\end{itemize}
+
+\subsection{The mean type among survivors falls}
+\whynow{show the \emph{direction} of the composition effect in \eqref{eq:dynsel}.}
+\begin{align}
+  \E[V\mid Y>y] &= -\frac{d}{da}\log\Lap(a)\Big|_{a=\Lambda(y)} && \why{\eqref{eq:survmean}; chain rule: $(\log\Lap)'=\Lap'/\Lap$} \nonumber\\
+  \frac{d^2}{da^2}\log\Lap(a) &= \frac{\Lap''}{\Lap}-\Big(\frac{\Lap'}{\Lap}\Big)^2 && \why{quotient rule} \nonumber\\
+  &= \E[V^2\mid\cdot]-\E[V\mid\cdot]^2 = \var(V\mid\text{survived to }a) && \why{properties above: survivor moments} \nonumber\\[2pt]
+  \frac{d}{dy}\E[V\mid Y>y] &= -\lambda(y)\,\var(V\mid Y>y)\ \le\ 0 && \why{chain rule: $\Lambda'=\lambda$} \nonumber
+\end{align}
+\begin{itemize}
+  \item The observed hazard falls \emph{even if no individual hazard falls}. This is \textbf{dynamic selection}.
+  \item Hence two explanations for a falling exit rate:
+    \begin{itemize}
+      \item true duration dependence: $\lambda\downarrow$ (e.g.\ skill loss: a \emph{trap});
+      \item composition: $\E[V\mid Y>y]\downarrow$ (sorting on permanent heterogeneity).
+    \end{itemize}
+  \item People still unemployed at month 6 are a selected group. Every comparison made at month 6 inherits this.
+\end{itemize}
+
+\subsection{Sorting and duration dependence cannot be separated}
+\whynow{by \eqref{eq:dynsel} the observed hazard is $\lambda(y)\cdot\E[V\mid Y>y]$: duration dependence times sorting. Can data on $Y$ split the two?}
+
+\textbf{The identification question}
+\begin{itemize}
+  \item Data: the observed survival $\bar S(y)$ for all $y$ (equivalently $\bar\theta(y)=-\frac{d}{dy}\log\bar S(y)$). That is all one duration gives us.
+  \item Unknowns: the baseline $\Lambda$ (duration dependence) and the type distribution $G$ (sorting).
+  \item The model links them: $\bar S(y)=\Lap_G\big(\Lambda(y)\big)$ (Section 2.3), where $\Lap_G$ is the Laplace transform of $G$.
+  \item Not identified $\iff$ a \emph{different} pair $(\tilde\Lambda,\tilde G)$ gives the \emph{same} $\bar S$.
+\end{itemize}
+
+\textbf{Answer: no.} For \emph{any} $\tilde G$ there is a $\tilde\Lambda$ that reproduces $\bar S$ exactly (proof in Appendix A).
+
+\textbf{Why one can absorb the other}
+\begin{itemize}
+  \item Both act on the \textbf{same single dimension}, elapsed duration $y$:
+    \begin{align}
+      \bar\theta(y) = \underbrace{\lambda(y)}_{\text{duration dependence}}\cdot\underbrace{\E[V\mid Y>y]}_{\text{sorting}}. \nonumber
+    \end{align}
+  \item Data give one number per $y$ ($\bar\theta(y)$); the model has two unknown functions of $y$.
+  \item $\lambda$ is unrestricted, so whatever sorting path a $G$ implies, $\lambda$ can be bent to absorb the rest:
+    \begin{itemize}
+      \item no heterogeneity: sorting is flat, so $\lambda=\bar\theta$ and the whole decline is duration dependence;
+      \item more heterogeneity: sorting falls faster (Section 2.4), so $\lambda$ falls less.
+    \end{itemize}
+  \item With one duration, \textbf{trap vs.\ sorting is a pure assumption}.
+\end{itemize}
+
+\textbf{What would separate them:} variation that moves \emph{one} factor but not the other.
+\begin{itemize}
+  \item \textbf{Groups at different stages of sorting at the same duration}, sharing the same $\lambda$.
+    \begin{itemize}
+      \item Covariates that shift the hazard proportionally: the MPH model, Section 3.
+    \end{itemize}
+  \item \textbf{The same person observed twice}, i.e.\ same $V$ with the duration restarting.
+    \begin{itemize}
+      \item Multiple spells, Section 9.
+    \end{itemize}
+  \item \textbf{Restrictions on one factor}, e.g.\ a parametric $\lambda$ (constant $\lambda$ $\Rightarrow$ all decline is sorting) or a parametric $G$.
+    \begin{itemize}
+      \item These identify by assumption, not by data.
+    \end{itemize}
+\end{itemize}
+
+\begin{center}
+  \includegraphics[width=0.9\textwidth]{fig1_dynamic_selection.png}
+\end{center}
+{\small Left: two types with constant hazards 0.3 and 1.5 (equal shares); the observed hazard falls from 0.9 to 0.3. Right: the same observed survival, fitted exactly by three type distributions (all with $\E V=1$); each implies a different baseline $\tilde\lambda$.}
+
+\takeaway{the observed hazard mixes $\lambda$ (true duration dependence) and $G$ (who is left). Next: can data separate them? Only with structure, which is the MPH model.}
+
+% =====================================================================
+\section{The mixed proportional hazard (MPH) model}
+\whynow{Section 2 showed that $\lambda$ and $G$ are confounded in the observed hazard. Here: what structure lets data separate them? This is the one-duration version of the argument the paper runs with two durations (Section 4).}
+
+\textbf{Model}
+\begin{itemize}
+  \item $\theta(y\mid x,V)=\lambda(y)\,\varphi(x)\,V$, with $V\sim G$ and $V\perp X$.
+  \item Three multiplicative pieces: duration ($\lambda$), observed ($\varphi$), unobserved ($V$).
+  \item Normalize $\varphi(x^*)=1$ and $\Lambda(y^*)=1$ for some chosen $x^*,y^*$.
+    \begin{itemize}
+      \item Reason: $(\lambda,\varphi,V)$ and $(c\lambda,\varphi,V/c)$ give the same hazard.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Survival through the Laplace transform}
+\whynow{write what the data reveal, $\bar S(y\mid x)$ (equivalently its hazard $\bar\theta(y\mid x)$), in terms of the unknowns $(\lambda,\varphi,G)$.}
+\begin{align}
+  \bar S(y\mid x) &= \E\big[e^{-\varphi(x)\Lambda(y)V}\big] && \why{LIE over $V$; \eqref{eq:survival}; $V\perp X$} \nonumber\\
+  &= \Lap\big(\varphi(x)\Lambda(y)\big) && \why{definition \eqref{eq:laplace}} \label{eq:mphsurv}\\
+  \bar\theta(y\mid x) &= \lambda(y)\varphi(x)\Big(-\frac{\Lap'}{\Lap}\Big)\big(\varphi(x)\Lambda(y)\big) && \why{$-\frac{d}{dy}\log$ of \eqref{eq:mphsurv}; chain rule} \label{eq:mphhazard}
+\end{align}
+\begin{itemize}
+  \item Data: $\bar S(y\mid x)$ for all $(y,x)$. The new information relative to Section 2.5 is the $x$ dimension.
+    \begin{itemize}
+      \item $\bar\theta(y\mid x)$ is \emph{not} extra information. Section 1: $S(y)=e^{-\Theta(y)}$ with $\Theta(y)=\int_0^y\theta$, and conversely $\theta=-\partial_y\log S$. Knowing the whole function $\theta$ $\iff$ knowing the whole function $S$. We use whichever form makes an argument simpler.
+    \end{itemize}
+  \item Data reveal one function $\Lap$ of a \textbf{single index} $\varphi(x)\Lambda(y)$.
+  \item $x$ and $y$ both move the index: this is what the three steps below exploit.
+\end{itemize}
+
+\subsection{Why covariates separate sorting from duration dependence}
+\whynow{in Section 2.5 any $G$ fit because $\Lambda$ could be tailored to the one survival curve. With covariates, \emph{one} $\Lambda$ and \emph{one} $\Lap$ must fit all groups at once: $\bar S(y\mid x)=\Lap(\varphi(x)\Lambda(y))$ for every $x$. Show what this buys.}
+
+Let $m(a):=-\Lap'(a)/\Lap(a)=\E[V\mid\text{survived to }a]$. Compare groups $x_1,x_2$ with $\varphi_1>\varphi_2$:
+\begin{align}
+  \frac{\bar\theta(y\mid x_1)}{\bar\theta(y\mid x_2)} &= \frac{\varphi_1}{\varphi_2}\cdot\frac{m\big(\varphi_1\Lambda(y)\big)}{m\big(\varphi_2\Lambda(y)\big)} && \why{\eqref{eq:mphhazard}; $\lambda(y)$ cancels} \label{eq:ratio}\\
+  m'(a) &= -\var(V\mid\text{survived to }a) && \why{$m=-(\log\Lap)'$; $(\log\Lap)''=\var$, Section 2.4} \nonumber
+\end{align}
+\begin{itemize}
+  \item \textbf{No heterogeneity:} $m$ is constant, so the ratio is $\varphi_1/\varphi_2$ at every $y$.
+  \item \textbf{Heterogeneity} ($\var V>0$): $m$ is strictly decreasing. For $y>0$:
+    \begin{align}
+      \varphi_1\Lambda(y) &> \varphi_2\Lambda(y) && \why{$\varphi_1>\varphi_2$, $\Lambda(y)>0$} \nonumber\\
+      m\big(\varphi_1\Lambda(y)\big) &< m\big(\varphi_2\Lambda(y)\big) && \why{$m$ strictly decreasing} \nonumber\\
+      \frac{\bar\theta(y\mid x_1)}{\bar\theta(y\mid x_2)} = \frac{\varphi_1}{\varphi_2}\cdot\underbrace{\frac{m(\varphi_1\Lambda(y))}{m(\varphi_2\Lambda(y))}}_{<1} &< \frac{\varphi_1}{\varphi_2} && \why{\eqref{eq:ratio}} \nonumber
+    \end{align}
+    At $y=0$: $\Lambda(0)=0$, so the second factor is $m(0)/m(0)=1$ and the ratio is $\varphi_1/\varphi_2$.
+  \item The sign of $\bar\theta(y\mid x_1)/\bar\theta(y\mid x_2)-1$ is \emph{not} pinned down: with strong heterogeneity the ratio can fall below 1 (hazards cross). What we know, and what identification uses, is the drift \emph{below} $\varphi_1/\varphi_2$.
+  \item Why: at the same duration, the high-$\varphi$ group is \emph{further along the index}. Its high-$V$ members have left faster, so its selection is more advanced.
+  \item Duration dependence $\lambda(y)$ hits both groups equally and cancels in \eqref{eq:ratio}. Sorting does not cancel.
+    \begin{itemize}
+      \item So the drift of the ratio away from $\varphi_1/\varphi_2$ measures sorting, separately from $\lambda$.
+      \item This is the separation that was impossible with one curve.
+    \end{itemize}
+  \item The MPH assumption reads: \emph{absent selection, covariate effects would be constant over duration}.
+  \item Caveat: if true covariate effects vary with duration (non-proportional), drift is no longer evidence of sorting.
+\end{itemize}
+
+\subsection{Identification (Elbers \& Ridder 1982) in three steps}
+\whynow{recover $\varphi$, then $G$, then $\lambda$ from $\bar S(y\mid x)$. Each step uses one property of $\Lap$ from Section 2.3. Section 4 repeats these steps in two dimensions.}
+\textbf{Step 1: $\varphi$ from short durations.} Assume $\E V<\infty$.
+\begin{align}
+  \frac{\bar\theta(y\mid x)}{\bar\theta(y\mid x^*)}
+  &= \varphi(x)\,\frac{(-\Lap'/\Lap)(\varphi(x)\Lambda(y))}{(-\Lap'/\Lap)(\Lambda(y))} && \why{by \eqref{eq:mphhazard}; $\lambda(y)$ cancels; $\varphi(x^*)=1$} \nonumber\\
+  &\xrightarrow{\;y\downarrow0\;} \varphi(x)\,\frac{-\Lap'(0)/\Lap(0)}{-\Lap'(0)/\Lap(0)} = \varphi(x) && \why{$\Lambda(y)\to0$; continuity; $-\Lap'(0)=\E V<\infty$} \nonumber
+\end{align}
+\begin{itemize}
+  \item At $y\approx0$ nobody has been selected out yet, so the ratio is free of selection.
+  \item Uses short durations, where data are thin.
+\end{itemize}
+
+\textbf{Step 2: $G$ at the normalization date.}
+\begin{align}
+  \bar S(y^*\mid x) &= \Lap\big(\varphi(x)\big) && \why{\eqref{eq:mphsurv} with $\Lambda(y^*)=1$} \nonumber
+\end{align}
+\begin{itemize}
+  \item $\varphi(x)$ known from step 1. Varying $x$ traces $\Lap$ on an interval.
+  \item Analytic $\Rightarrow$ $\Lap$ known on $(0,\infty)$ $\Rightarrow$ $G$ known.
+\end{itemize}
+
+\textbf{Step 3: baseline.}
+\begin{align}
+  \Lambda(y) &= \frac{\Lap^{-1}\big(\bar S(y\mid x)\big)}{\varphi(x)} && \why{invert \eqref{eq:mphsurv}; $\Lap$ strictly decreasing} \nonumber
+\end{align}
+
+\textbf{What was assumed:} proportionality, $V\perp X$, $\E V<\infty$, variation in $\varphi(x)$.
+
+\takeaway{with MPH structure and covariates, one duration reveals $\lambda$, $\varphi$ and the full distribution of unobserved types. In the paper, \emph{before} treatment, two durations compete: job vs.\ benefits reduction. Their link through unobserved types is exactly the selection problem. Next: extend the argument to two durations.}
+
+% =====================================================================
+\section{Two durations: competing risks}
+\whynow{Section 3 learned the heterogeneity of \emph{one} duration. The treatment brings a second one.}
+
+\textbf{Where the second duration comes from}
+\begin{itemize}
+  \item The treatment is itself a duration: the benefits reduction is not assigned at a fixed date, it \emph{arrives} at a random time $D$ with its own hazard.
+  \item So two durations run at once: $Y$ (time to a job) and $D$ (time to the reduction).
+  \item Two phases:
+    \begin{itemize}
+      \item \textbf{before $D$:} \textbf{competing risks}; whichever comes first ends it (this section);
+      \item \textbf{after $D$:} $Y$ continues under treatment; the effect $\delta$ shows up here (Sections 7--8).
+    \end{itemize}
+\end{itemize}
+
+\textbf{Why it is a hurdle}
+\begin{itemize}
+  \item \textbf{Censoring:} if the job comes first, we never see when the reduction would have come.
+  \item \textbf{Endogeneity:} the same unobserved traits may drive both (low motivation $\Rightarrow$ slow job finding \emph{and} early reduction), so $V_Y$ and $V_D$ are correlated. This \emph{is} the selection problem.
+  \item \textbf{Negative result} (Tsiatis, Section 4.5): competing-risks data alone cannot reveal that correlation.
+\end{itemize}
+
+\textbf{Why modelling it is also the solution}
+\begin{itemize}
+  \item If $D$ were exogenous ($V_D\perp V_Y$), ``reduced yet?'' would be an ordinary time-varying covariate in $Y$'s hazard, and Section 3 would suffice.
+  \item It is not, so we model $D$'s own process: the paper's dynamic \textbf{selection equation} (as in Heckman's selection model). This buys:
+    \begin{itemize}
+      \item \textbf{A clean window:} before $D$ there is no causal effect (no anticipation, Section 5), so the competing-risks data reflect only the joint heterogeneity of $(V_Y,V_D)$.
+      \item \textbf{The correlation becomes identifiable:} MPH plus covariates beat Tsiatis (Section 4.6), the two-duration version of Section 3.
+      \item \textbf{Instrument-like variation:} given $(x,V)$, the timing of $D$ still contains pure luck (Section 7).
+    \end{itemize}
+\end{itemize}
+This section studies the competing-risks part alone. No treatment effect is involved yet.
+
+\textbf{Set-up}
+\begin{itemize}
+  \item Two latent durations: $Y$ (exit to work) and $D$ (benefits reduction).
+    \begin{itemize}
+      \item Here $Y$ is the time to a job \emph{if never treated} ($=Y^*(\infty)$ in Section 5).
+    \end{itemize}
+  \item Only the \textbf{first} event is seen, plus which one it was.
+    \begin{itemize}
+      \item If $Y$ comes first: $D$ is censored.
+      \item If $D$ comes first: we do see a job time later, but it is a \emph{treated} outcome, not this $Y$. It is used in Sections 6--8, not here.
+      \item So the pair of latent durations $(Y,D)$ is never seen in full.
+    \end{itemize}
+  \item MPH for each, with \textbf{correlated} unobservables $V=(V_Y,V_D)\sim G$, $V\perp X$:
+  \begin{align}
+    \theta_Y(t\mid x,V)=\lambda_Y(t)\varphi_Y(x)V_Y, \qquad \theta_D(t\mid x,V)=\lambda_D(t)\varphi_D(x)V_D. \nonumber
+  \end{align}
+  \item \textbf{Assumption} (competing-risks version of the paper's Assumption 2, Section 7): $Y\perp D\mid(x,V)$.
+    \begin{itemize}
+      \item Given observed $x$ and unobserved type $V$, the luck in job timing is unrelated to the luck in reduction timing.
+      \item All dependence between $Y$ and $D$ runs through $(x,V)$: selection on observables and unobservables.
+      \item Rules out shocks outside $V$ that hit both (e.g.\ a bad week that lowers job finding \emph{and} triggers a reduction).
+    \end{itemize}
+  \item Bivariate Laplace transform: $\Lap(a,b):=\E[e^{-aV_Y-bV_D}]$; partials $\Lap_a,\Lap_b,\Lap_{ab}$.
+    \begin{itemize}
+      \item Same properties as Section 2.3: derivatives give moments among survivors; uniqueness; analyticity.
+    \end{itemize}
+  \item Integrated baselines with covariates (no $V$): $\Lambda_Y(t\mid x):=\varphi_Y(x)\Lambda_Y(t)$, \ $\Lambda_D(t\mid x):=\varphi_D(x)\Lambda_D(t)$.
+\end{itemize}
+
+\subsection{Joint survival}
+\whynow{the model's implication for the two latent durations together.}
+\begin{align}
+  \Pr(Y>y,D>d\mid x) &= \E\big[\Pr(Y>y,D>d\mid x,V)\big] && \why{LIE over $V$; $V\perp X$} \nonumber\\
+  &= \E\big[\Pr(Y>y\mid x,V)\Pr(D>d\mid x,V)\big] && \why{$Y\perp D\mid(x,V)$} \nonumber\\
+  &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(y)V_Y}\,e^{-\varphi_D(x)\Lambda_D(d)V_D}\big] && \why{\eqref{eq:survival} for each} \nonumber\\
+  &= \Lap\big(\varphi_Y(x)\Lambda_Y(y),\,\varphi_D(x)\Lambda_D(d)\big) && \why{definition of $\Lap$} \label{eq:jointsurv}
+\end{align}
+
+\subsection{What the data reveal}
+\whynow{we never see both durations, only the first event. Derive which pieces of \eqref{eq:jointsurv} are observable.}
+Probability that nothing has happened by $t$ (the diagonal $y=d=t$):
+\begin{align}
+  \bar S_0(t\mid x) := \Pr(Y>t,D>t\mid x) &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_D(t\mid x)\big) && \why{\eqref{eq:jointsurv} at $y=d=t$} \label{eq:P0}
+\end{align}
+Cause-specific hazard of exit (rate of $Y$ happening first, among those with nothing yet):
+\begin{align}
+  \bar\theta^Y_0(t\mid x) &:= \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt,\ D>t\mid x)}{dt\;\bar S_0(t\mid x)} && \why{definition} \nonumber\\
+  &= \frac{-\partial_y\Pr(Y>y,D>t\mid x)\big|_{y=t}}{\bar S_0(t\mid x)} && \why{derivative of a survival in $y$} \nonumber\\
+  &= \frac{-\Lap_a(\Lambda_Y(t\mid x),\Lambda_D(t\mid x))\,\varphi_Y(x)\lambda_Y(t)}{\Lap(\Lambda_Y(t\mid x),\Lambda_D(t\mid x))} && \why{chain rule on \eqref{eq:jointsurv}; $\Lambda_Y'=\lambda_Y$} \nonumber\\
+  &= \lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid R_t,x] && \why{$-\Lap_a/\Lap$ = survivor mean, as in \eqref{eq:survmeanexp}} \label{eq:hY}
+\end{align}
+where $R_t:=\{Y>t,D>t\}$ is the \textbf{risk set}. Symmetrically, $\bar\theta^D_0(t\mid x)=\lambda_D(t)\varphi_D(x)\E[V_D\mid R_t,x]$.
+\begin{itemize}
+  \item Notation: $\bar S_0,\bar\theta_0$ = observed survival and hazards \emph{before treatment} (later $\bar S_1$: after). Superscript: which exit.
+  \item Same structure as Section 1, split by cause: $\bar\theta^Y_0+\bar\theta^D_0=\bar\theta_0$, the observed hazard of leaving by either exit (the hazard of $\bar S_0$).
+  \item $\bar\theta^Y_0$ is \emph{cause-specific}: the rate of exit through one route (a job) in a group the \emph{other} route (treatment) has already filtered.
+    \begin{itemize}
+      \item Observed: $\bar\theta^Y_0=\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ D>t,\ x]$, job-finding among the unemployed \emph{and} untreated.
+      \item Not observed: $\bar\theta_Y(t\mid x)=\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ x]$, the one-duration observed hazard of $Y$, now cut short by treatment. For the treated we never see when they would have found a job without treatment.
+      \item What changes, with $W:=e^{-\Lambda_D(t\mid x)V_D}$ (probability still untreated) and everything conditional on $Y>t,x$: $\E[V_Y\mid D>t]=\E[V_YW]/\E[W]=\E[V_Y]+\cov(V_Y,W)/\E[W]$ [Bayes reweighting; $\E XY=\E X\E Y+\cov$].
+      \item If $V_D\perp V_Y$: $\cov=0$, the two coincide. If correlated: $\cov\neq0$, with sign opposite to the correlation of $V_Y,V_D$ (low motivation $\Rightarrow$ low $V_Y$, early treatment $\Rightarrow$ untreated left with higher $V_Y$).
+      \item Why it matters: the effect compares the just treated with the not yet treated at the same $d$. If their $V_Y$ mix differs, the exit-rate ratio is $\delta\times$(selection factor) (Section 8.3), the duration analogue of an endogenous regressor.
+      \item \textbf{The gap between the two is the selection.} Section 4.3 locates it in the data.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Where the dependence of $V_Y,V_D$ lives}
+\whynow{the selection is the dependence of $V_Y$ and $V_D$. Locate it inside the observable $\bar S_0$.}
+Write $w(v)\propto e^{-av_Y-bv_D}$ (survivor weights) and $\E_w$ for expectations under them.
+\begin{align}
+  \partial_a\log\Lap &= \frac{\Lap_a}{\Lap} = -\E_w[V_Y] && \why{chain rule; differentiate under $\E$} \nonumber\\
+  \partial_b\partial_a\log\Lap &= \frac{\Lap_{ab}}{\Lap}-\frac{\Lap_a\Lap_b}{\Lap^2} && \why{quotient rule} \nonumber\\
+  &= \E_w[V_YV_D]-\E_w[V_Y]\E_w[V_D] && \why{$\Lap_{ab}=\E[V_YV_De^{\cdots}]$, $\Lap_b/\Lap=-\E_w[V_D]$} \nonumber\\
+  &= \cov(V_Y,V_D\mid R_t,x) && \why{definition of covariance; at $(a,b)=(\Lambda_Y(t\mid x),\Lambda_D(t\mid x))$} \label{eq:crossderiv}
+\end{align}
+\begin{itemize}
+  \item $V_Y\perp V_D$ $\iff$ $\Lap(a,b)=\Lap_Y(a)\Lap_D(b)$ $\iff$ $\log \bar S_0$ additively separable in the two indices.
+  \item Dependence (selection) $=$ an \textbf{interaction} of the two indices in $\log \bar S_0$.
+\end{itemize}
+
+\subsection{Deeper look: how selection shows up in competing risks}
+\whynow{\eqref{eq:crossderiv} is abstract. Translate it into something observable: how treatment coming sooner changes the exit rate of those \emph{not} treated.}
+
+Hold the exit index $a$ fixed and raise the treatment index $b$ (a group where reductions happen more often):
+\begin{align}
+  \bar\theta^Y_0 &= \lambda_Y\varphi_Y\,\E_w[V_Y], \qquad w\propto e^{-aV_Y-bV_D} && \why{\eqref{eq:hY}} \nonumber\\
+  \frac{\partial}{\partial b}\E_w[V_Y] &= -\E_w[V_YV_D]+\E_w[V_Y]\E_w[V_D] && \why{quotient rule, as in Section 2.4} \nonumber\\
+  &= -\cov(V_Y,V_D\mid R_t,x) && \why{definition of covariance} \nonumber\\
+  \Longrightarrow\quad \frac{\partial\log \bar\theta^Y_0}{\partial b} &= -\frac{\cov(V_Y,V_D\mid R_t,x)}{\E[V_Y\mid R_t,x]} && \why{$\log$ derivative; $\lambda_Y\varphi_Y$ do not depend on $b$} \label{eq:fingerprint}
+\end{align}
+\begin{itemize}
+  \item Those in the risk set are \emph{untreated}. By no anticipation, how soon treatment comes has no causal effect on their exit rate.
+  \item So any response of their exit rate to $b$ is \textbf{pure selection}:
+    \begin{itemize}
+      \item more treatment removes high-$V_D$ people from the untreated pool;
+      \item if high $V_D$ goes with high $V_Y$, the untreated survivors are left with lower $V_Y$, so their exit rate falls.
+    \end{itemize}
+  \item No selection ($\cov=0$): treatment coming sooner leaves the untreated exit rate unchanged.
+  \item This is the IV-like role of covariates:
+    \begin{itemize}
+      \item no variable needs to be excluded from the exit hazard;
+      \item but we must move $b$ \emph{holding $a$ fixed}, i.e.\ $x$ must shift the two indices in different directions (A3).
+    \end{itemize}
+  \item Treatment acts like a competing exit: it removes people from the untreated group, just as job-finding removes people in Section 2.
+\end{itemize}
+
+\textbf{Assumption 3 (paper's): non-proportional covariate variation.}
+\begin{align}
+  \big\{\big(\varphi_Y(x),\varphi_D(x)\big):x\in\mathcal X\big\}\ \text{contains a non-empty open set of }\mathbb R^2. \nonumber
+\end{align}
+\begin{itemize}
+  \item Meaning: varying $x$ moves the two indices in genuinely different directions, so $b$ can move with $a$ fixed.
+  \item Example: $\varphi_j(x)=e^{x'\beta_j}$, $x=(x_1,x_2)$ continuous. Move $x$ in direction $r=(\beta_{Y2},-\beta_{Y1})$:
+    \begin{align}
+      r'\beta_Y &= \beta_{Y2}\beta_{Y1}-\beta_{Y1}\beta_{Y2}=0 && \why{$a$ fixed} \nonumber\\
+      r'\beta_D &= \beta_{Y2}\beta_{D1}-\beta_{Y1}\beta_{D2}\neq0 && \why{iff $(\beta_Y\ \beta_D)$ full rank: $b$ moves} \nonumber
+    \end{align}
+\end{itemize}
+\textbf{vs.\ an exclusion restriction}
+\begin{itemize}
+  \item Exclusion: a \emph{named} variable has zero effect on $Y$'s hazard. Assumed, and hard to defend: agents react to what changes their treatment risk.
+  \item Assumption 3: no variable is excluded. Some \emph{direction} $d$ is excluded from $Y$'s index, and it is \textbf{learned} from data ($\varphi_Y,\varphi_D$ are identified first, Section 4.6, step 1).
+  \item The price moves elsewhere: $x$ must affect each hazard only through one multiplicative index, constant over duration (MPH).
+\end{itemize}
+
+\subsection{The problem: Tsiatis (1975)}
+\whynow{the dependence sits in $\Lap$, but do the data reveal enough of $\Lap$? Without structure, no.}
+\begin{itemize}
+  \item Without structure, any competing-risks data can be generated by \emph{independent} $Y,D$.
+  \item Geometry, without covariates:
+    \begin{itemize}
+      \item the data reveal $\Lap$ only at points $(\Lambda_Y(t),\Lambda_D(t))$, i.e.\ along a \textbf{curve};
+      \item a curve cannot pin down a function of two variables, so the dependence is not identified.
+    \end{itemize}
+  \item With covariates moving $\varphi_Y$ and $\varphi_D$ separately: points $(\Lambda_Y(t\mid x),\Lambda_D(t\mid x))$ fill \textbf{open sets}.
+\end{itemize}
+\textbf{How to read the figure}
+\begin{itemize}
+  \item A point is a \emph{location} $(a,b)$: exit index $a$ and treatment index $b$.
+  \item Over each location sits the number $\Lap(a,b)$: the probability that \emph{nothing has happened yet} (no job, no reduction) at those index values. Think of it as a height, a third dimension not drawn.
+  \item The shape of this surface is the unknown; the dependence of $V_Y,V_D$ (selection) lives in it.
+  \item Each plotted point is one group $x$ at one duration $t$:
+    \begin{itemize}
+      \item location: $\big(\varphi_Y(x)\Lambda_Y(t),\ \varphi_D(x)\Lambda_D(t)\big)$, from model pieces identified in Section 4.6 (steps 1 and 3);
+      \item height: $\bar S_0(t\mid x)$, the share of group $x$ with neither event by $t$. This is \textbf{estimated from data}.
+    \end{itemize}
+  \item So at plotted locations the height is known; elsewhere it is not. Laplace properties (analyticity, uniqueness) are what extend the known heights to the whole surface and then to $G$.
+  \item Left (one group): as $t$ grows, the location moves along one path $t\mapsto(\Lambda_Y(t),\Lambda_D(t))$.
+    \begin{itemize}
+      \item A straight line if $\Lambda_D\propto\Lambda_Y$; a curve otherwise. Here $\Lambda_Y(t)=t$, $\Lambda_D(t)=t^{1.6}$, for illustration.
+      \item Either way it is \textbf{one-dimensional}: heights along one path cannot pin down a surface.
+    \end{itemize}
+  \item Right (many groups): at a fixed $t$ (one colour), groups spread over a \textbf{two-dimensional patch} because $x$ moves the two indices differently (Assumption 3).
+    \begin{itemize}
+      \item Heights on a patch pin down the whole surface (analyticity).
+      \item Dotted line: the left panel's path.
+    \end{itemize}
+\end{itemize}
+\begin{center}
+  \includegraphics[width=0.85\textwidth]{fig4_competing_risks_geometry.png}
+\end{center}
+
+\subsection{Identification (Prop.~2) in three steps}
+\whynow{show that MPH + covariates fix the Tsiatis problem: the steps of Section 3.3, in two dimensions.}
+\textbf{Assumptions.} (A3) Assumption 3, Section 4.4. (A4) $\E V_Y,\E V_D<\infty$. Normalize $\varphi_Y(x^*)=\varphi_D(x^*)=1$, $\Lambda_Y(t^*)=\Lambda_D(t^*)=1$.
+
+\textbf{Step 1: $\varphi_Y,\varphi_D$.}
+\begin{align}
+  \frac{\bar\theta^Y_0(t\mid x)}{\bar\theta^Y_0(t\mid x^*)} &= \varphi_Y(x)\,\frac{\E[V_Y\mid R_t,x]}{\E[V_Y\mid R_t,x^*]} && \why{by \eqref{eq:hY}; $\lambda_Y(t)$ cancels} \nonumber\\
+  &\xrightarrow{\;t\downarrow0\;}\varphi_Y(x)\,\frac{\E V_Y}{\E V_Y}=\varphi_Y(x) && \why{risk set $\to$ everyone; $V\perp X$; (A4)} \nonumber
+\end{align}
+Same for $\varphi_D$ with $\bar\theta^D_0$. Uses \emph{which} event happened.
+
+\textbf{Step 2: $G$, including the dependence.}
+\begin{align}
+  \bar S_0(t^*\mid x) &= \Lap\big(\varphi_Y(x),\varphi_D(x)\big) && \why{\eqref{eq:P0} with $\Lambda_Y(t^*)=\Lambda_D(t^*)=1$} \nonumber
+\end{align}
+\begin{itemize}
+  \item Known points fill an open set (A3) $\Rightarrow$ $\Lap$ known there.
+  \item Analytic $\Rightarrow$ known on $(0,\infty)^2$ $\Rightarrow$ joint $G$ known.
+\end{itemize}
+
+\textbf{Step 3: baselines.} For each $t$, $(\Lambda_Y(t),\Lambda_D(t))$ is the unique $(a,b)$ with
+\begin{align}
+  \bar S_0(t\mid x)=\Lap\big(\varphi_Y(x)a,\ \varphi_D(x)b\big)\quad\text{for all }x. && \why{\eqref{eq:P0}; $\Lap,\varphi$'s known} \nonumber
+\end{align}
+\begin{itemize}
+  \item Uniqueness: two solutions would give $\Lap(u,v)=\Lap(ku,mv)$ on $(0,\infty)^2$, $(k,m)\neq(1,1)$.
+  \item Iterating, $\Lap$ would be constant, contradicting strict monotonicity.
+  \item These three steps are our reconstruction; the paper cites Abbring \& Van den Berg (2003, JRSSB).
+\end{itemize}
+\takeaway{the competing-risks data alone reveal $\lambda_Y,\lambda_D,\varphi_Y,\varphi_D$ and the joint $G$, i.e.\ how selected those still at risk are. Next: introduce the treatment and define its causal effect.}
+
+% =====================================================================
+\section{Adding a treatment}
+\whynow{so far no causal effect. We need to define ``the effect of a benefits reduction at $d$'', and say when the pre-treatment competing-risks part of Section 4 is untouched by the treatment.}
+
+\subsection{Potential outcomes indexed by treatment time}
+\whynow{a dynamic treatment is a choice of \emph{date}, so the causal objects are one outcome per date.}
+\begin{itemize}
+  \item Treatment = benefits reduction at date $d\in[0,\infty]$; $d=\infty$: never.
+  \item One potential outcome per date: $Y^*(d)$, with hazard $\theta_{Y^*(d)}$, integrated hazard $\Theta_{Y^*(d)}$.
+  \item Each $Y^*(d)$ is fully described by its hazard, so ``the effect of $d$'' = how the hazard changes with $d$.
+  \item Actual treatment date $D$; observed outcome $Y=Y^*(D)$.
+\end{itemize}
+
+\subsection{No anticipation (Assumption 1)}
+\whynow{for Section 4 to apply before treatment, the future treatment date must not affect the hazard before it.}
+\begin{align}
+  \Theta_{Y^*(d)}(y) = \Theta_{Y^*(d')}(y) \qquad\text{for all } y\le\min\{d,d'\}. \nonumber
+\end{align}
+Take $d'=\infty$ and differentiate in $y$:
+\begin{align}
+  \theta_{Y^*(d)}(y) = \theta_{Y^*(\infty)}(y) \qquad\text{for } y<d. && \why{derivative of both sides} \nonumber
+\end{align}
+\begin{itemize}
+  \item Before treatment, everyone has the \textbf{untreated} hazard, whatever their future date.
+  \item Economic content: people do not act on knowledge of their own future reduction date.
+  \item Violated if, e.g., the date is announced in advance and people search harder before it.
+  \item Not ruled out: reacting to the \emph{policy} (e.g.\ the rate at which reductions happen).
+    \begin{itemize}
+      \item This reaction is in every $Y^*(d)$.
+      \item So the effect is ``treated at $d$ vs.\ later, under this policy'', not ``policy vs.\ no policy''.
+    \end{itemize}
+  \item Prop.~1: without more structure, data cannot distinguish (i) causal effects from selection, nor (ii) anticipation from no anticipation. Hence Assumption 1 is maintained, and selection must be modelled.
+\end{itemize}
+\takeaway{under no anticipation, the period before treatment is a pure competing-risks problem, as in Section 4. Next: what exactly do the data contain?}
+
+% =====================================================================
+\section{What we actually observe}
+\whynow{identification means recovering the model from the data distribution. We need that distribution precisely, including what is censored.}
+
+\textbf{The censoring}
+\begin{itemize}
+  \item $D$ is seen only if $D<Y$: if the worker finds a job first, the reduction date is never seen.
+  \item Paper's data (per $x$; the paper writes $Q_S$, $S$, $s$): $Q_D(y,d):=\Pr(Y>y,D>d,Y>D)$ and $Q_Y(y):=\Pr(Y>y,Y<D)$. Assume $\Pr(Y=D)=0$.
+\end{itemize}
+
+\textbf{Pre-treatment objects}
+\begin{align}
+  \bar S_0(t) &= \Pr(Y>t,D>t,Y>D)+\Pr(Y>t,D>t,Y<D) && \why{partition by $Y\gtrless D$; $\Pr(Y=D)=0$} \nonumber\\
+  &= Q_D(t,t)+Q_Y(t) && \why{$Y>t,Y<D$ implies $D>t$} \nonumber\\[3pt]
+  \bar\theta^Y_0(t) &= \frac{-Q_Y'(t)}{\bar S_0(t)} && \why{$-Q_Y'$: density of untreated exits} \nonumber\\
+  \bar\theta^D_0(t) &= \frac{-\partial_dQ_D(y,d)\big|_{y\downarrow t,\,d=t}}{\bar S_0(t)} && \why{density of $D$ at $t$, still unemployed} \nonumber
+\end{align}
+
+\textbf{Post-treatment object: survival of the cohort treated at $d$.} For $y>d$:
+\begin{align}
+  -\partial_dQ_D(y,d) &= \lim_{h\downarrow0}\frac{\Pr(Y>y,\ d\le D<d+h,\ Y>D)}{h} && \why{derivative of $Q_D$ in $d$} \nonumber\\
+  &= \lim_{h\downarrow0}\frac{\Pr(Y>y,\ d\le D<d+h)}{h} && \why{$Y>y>D$ implies $Y>D$} \nonumber\\[3pt]
+  \bar S_1(y\mid d) &:= \Pr(Y>y\mid D=d,\,Y>d) && \why{definition} \nonumber\\
+  &= \frac{\partial_dQ_D(y,d)}{\lim_{y'\downarrow d}\partial_dQ_D(y',d)} && \why{cond.\ probability; $h$ cancels} \label{eq:P1data}
+\end{align}
+\begin{itemize}
+  \item $(\bar S_0,\bar\theta^Y_0,\bar\theta^D_0)$ = competing-risks data, as in Section 4.
+  \item $\bar S_1$ = the only place where the treatment effect can show up.
+\end{itemize}
+\takeaway{pre-treatment data identify the competing-risks model (Section 4). Post-treatment data $\bar S_1$ must deliver $\delta$. Next: the model linking both.}
+
+% =====================================================================
+\section{The model of the paper (Model 1a)}
+\whynow{combine the pieces: the competing-risks MPH model of Section 4 before treatment, and a causal effect $\delta$ after it.}
+
+\textbf{Assumption 2 (selection on observables and unobservables):} $Y^*(\cdot)\perp D\mid(X,V)$, with $V$ time-invariant.
+
+\textbf{Model 1a}
+\begin{align}
+  \theta_Y(t\mid d,x,V) &= \begin{cases}\lambda_Y(t)\varphi_Y(x)V_Y & t\le d\\ \lambda_Y(t)\varphi_Y(x)V_Y\,\delta(t\mid d,x) & t>d\end{cases} \nonumber\\
+  \theta_D(t\mid x,V) &= \lambda_D(t)\varphi_D(x)V_D, \qquad (V_Y,V_D)\sim G,\ \ V\perp X. \nonumber
+\end{align}
+\begin{itemize}
+  \item $\delta$: \textbf{the treatment effect}, a multiplier on the exit rate after treatment.
+    \begin{itemize}
+      \item May depend on $t$, $d$ (hence on time since treatment $t-d$), and $x$; not on $V$.
+    \end{itemize}
+  \item No anticipation is built in: $\delta$ only acts for $t>d$.
+  \item Selection on unobservables: $V_Y$ and $V_D$ may be dependent in any way.
+  \item The same $x$ in both hazards: \textbf{no exclusion restriction}.
+  \item $\lambda_Y,\lambda_D,\varphi_Y,\varphi_D,G,\delta$ all nonparametric.
+  \item Plus (A3), (A4) from Section 4.
+\end{itemize}
+
+\textbf{Integrated outcome hazard}, with $\Delta(y\mid d,x):=\int_d^y\lambda_Y(\tau)\delta(\tau\mid d,x)\,d\tau$:
+\begin{align}
+  \Theta_Y(y\mid d,x,V) &= \int_0^d\lambda_Y\varphi_YV_Y\,d\tau+\int_d^y\lambda_Y\varphi_YV_Y\delta\,d\tau && \why{split the integral at $d$} \nonumber\\
+  &= \varphi_Y(x)V_Y\big[\Lambda_Y(d)+\Delta(y\mid d,x)\big] \quad (y>d) && \why{linearity of the integral} \label{eq:ThetaY}
+\end{align}
+
+\subsection*{Which part of the treatment time is pure chance?}
+\whynow{for causal inference we need variation in treatment that is unrelated to the outcome. In IV it comes from an excluded variable; here there is none. So: given $(x,V)$, is anything left in $D$ that is pure luck?}
+
+\textbf{Trick:} transform $D$ by its own integrated hazard, $E_D := \Theta_D(D\mid x,V) = \varphi_D(x)V_D\Lambda_D(D)$. Fix $(x,V)$; for $e\ge0$:
+\begin{align}
+  \Pr(E_D>e\mid x,V) &= \Pr\big(\Theta_D(D\mid x,V)>e\mid x,V\big) && \why{definition of $E_D$} \nonumber\\
+  &= \Pr\big(D>\Theta_D^{-1}(e\mid x,V)\mid x,V\big) && \why{$\Theta_D$ strictly increasing in $D$} \nonumber\\
+  &= \exp\!\big(-\Theta_D(\Theta_D^{-1}(e\mid x,V)\mid x,V)\big) && \why{\eqref{eq:survival}, conditional on $(x,V)$} \nonumber\\
+  &= e^{-e} && \why{$\Theta_D(\Theta_D^{-1}(e))=e$} \nonumber
+\end{align}
+\begin{itemize}
+  \item The right side does not depend on $(x,V)$. So $E_D\sim\text{Exp}(1)$ and $E_D\perp(x,V)$.
+  \item (Same as $F(D)\sim U(0,1)$ for any continuous $D$: indeed $E_D=-\log\Pr(D>d\mid x,V)\big|_{d=D}$.)
+\end{itemize}
+Invert the definition of $E_D$:
+\begin{align}
+  D = \Lambda_D^{-1}\!\Big(\frac{E_D}{\varphi_D(x)\,V_D}\Big) && \why{solve $\varphi_DV_D\Lambda_D(D)=E_D$ for $D$} \nonumber
+\end{align}
+\begin{itemize}
+  \item The treatment time splits into a \textbf{systematic part} $(x,V_D)$ and \textbf{pure luck} $E_D$.
+  \item $V_D$ is the source of selection (it may be correlated with $V_Y$).
+  \item $E_D$ moves $D$ around, and by Assumption 2 it does not enter $Y$'s hazard.
+    \begin{itemize}
+      \item It plays the role of an instrument. But what is excluded is an unobserved \textbf{shock}, not an observed variable.
+      \item This is the paper's footnote 15: in each instant, treatment is a coin flip with probability $\theta_D\,dt$ (Section 1.3).
+    \end{itemize}
+  \item Contrast with a static threshold model, treated iff $\mu(x)>U$: given $(x,U)$, treatment is deterministic, so no luck is left.
+\end{itemize}
+\takeaway{the model has a random component in timing (like an instrument) and selection through $V$ (to be learned from the competing-risks part). Next: show $\delta$ is identified.}
+
+% =====================================================================
+\section{Identification, step by step}
+\whynow{everything is in place. Plan:}
+\begin{itemize}
+  \item A: learn the selection ($G$) from pre-treatment data;
+  \item B: describe who is treated at $d$;
+  \item C: the simplest case, the moment of treatment;
+  \item D: the general case.
+\end{itemize}
+
+\subsection{Step A: the pre-treatment data are the competing-risks model of Section 4}
+\whynow{check that the pre-treatment data are exactly the competing-risks model of Section 4, so its results apply.}
+\begin{align}
+  \bar S_0(t\mid x) &= \E\big[\Pr(Y>t,D>t\mid x,V)\big] && \why{LIE; $V\perp X$} \nonumber\\
+  &= \E\big[e^{-\varphi_Y(x)\Lambda_Y(t)V_Y}\,e^{-\varphi_D(x)\Lambda_D(t)V_D}\big] && \why{Assumption 2; before $D$, $\delta$ absent (no anticipation)} \nonumber\\
+  &= \Lap\big(\Lambda_Y(t\mid x),\Lambda_D(t\mid x)\big) && \why{as in \eqref{eq:P0}} \nonumber
+\end{align}
+\begin{itemize}
+  \item Same for $\bar\theta^Y_0,\bar\theta^D_0$. So Prop.~2 (Section 4.6) applies: $\varphi_Y,\varphi_D,\Lambda_Y,\Lambda_D,G$ are identified.
+  \item This uses no post-treatment data.
+\end{itemize}
+
+\subsection{Step B: who gets treated at $d$}
+\whynow{the effect is estimated by following the cohort treated at $d$. We need its type distribution.}
+Risk set at $d$:
+\begin{align}
+  dG_{R_d}(v) &= \frac{\Pr(R_d\mid x,v)\,dG(v)}{\Pr(R_d\mid x)} && \why{Bayes' rule} \nonumber\\
+  &\propto e^{-\Lambda_Y(d\mid x)v_Y-\Lambda_D(d\mid x)v_D}\,dG(v) && \why{as in Step A} \nonumber
+\end{align}
+Cohort treated at $d$ (in the risk set and treated in $[d,d+h)$):
+\begin{align}
+  dG_d(v) &\propto \Pr(d\le D<d+h\mid R_d,x,v)\,dG_{R_d}(v) && \why{Bayes' rule} \nonumber\\
+  &\propto \lambda_D(d)\varphi_D(x)v_D\,h\;dG_{R_d}(v) && \why{definition of the hazard $\theta_D$} \nonumber\\
+  &\propto v_D\,e^{-\Lambda_Y(d\mid x)v_Y-\Lambda_D(d\mid x)v_D}\,dG(v) && \why{drop factors not depending on $v$} \label{eq:Gs}
+\end{align}
+\begin{itemize}
+  \item Treated cohort = risk set \textbf{reweighted by the treatment hazard multiplier} $v_D$ (high-$v_D$ types are treated sooner).
+  \item Fully known after Step A.
+\end{itemize}
+
+\subsection{Step C: the selection problem at the moment of treatment}
+\whynow{the cleanest comparison: right at $d$, compare the just-treated with those not yet treated. This isolates the selection problem in one factor.}
+Exit hazard of the just-treated vs.\ the not-yet-treated, at $d$:
+\begin{align}
+  \text{just treated: } &\ \lambda_Y(d)\varphi_Y(x)\delta(d\mid d,x)\,\E_{G_d}[V_Y] && \why{Model 1a, averaged over \eqref{eq:Gs}} \nonumber\\
+  \text{not yet treated: } &\ \lambda_Y(d)\varphi_Y(x)\,\E_{R_d}[V_Y] && \why{\eqref{eq:hY}} \nonumber
+\end{align}
+\begin{align}
+  \E_{G_d}[V_Y] &= \frac{\E_{R_d}[V_YV_D]}{\E_{R_d}[V_D]} && \why{\eqref{eq:Gs}: $G_d$ = $G_{R_d}$ reweighted by $v_D$} \nonumber\\
+  &= \E_{R_d}[V_Y]+\frac{\cov_{R_d}(V_Y,V_D)}{\E_{R_d}[V_D]} && \why{$\E[XY]=\E X\E Y+\cov(X,Y)$} \nonumber\\[3pt]
+  \frac{\text{just treated}}{\text{not yet treated}} &= \delta(d\mid d,x)\Big(1+\frac{\cov_{R_d}(V_Y,V_D)}{\E_{R_d}[V_Y]\E_{R_d}[V_D]}\Big) && \why{divide; $\lambda_Y\varphi_Y$ cancel} \nonumber\\
+  &= \delta(d\mid d,x)\cdot\frac{\Lap\,\Lap_{ab}}{\Lap_a\,\Lap_b}\Big|_{(\Lambda_Y(d\mid x),\Lambda_D(d\mid x))} && \why{survivor moments from Section 4.3} \nonumber
+\end{align}
+\begin{itemize}
+  \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
+  \item Selection factor $=1$ iff $V_Y,V_D$ uncorrelated in the risk set: then timing is as good as random at $d$.
+  \item The selection factor is known from Step A, so $\delta(d\mid d,x)$ is identified.
+\end{itemize}
+
+\subsection{Step D: beyond the moment of treatment (Prop.~3)}
+\whynow{Step C only gives $\delta$ at $t=d$. After $d$ the treated cohort keeps being reshaped by exits, so we need its full survival curve.}
+For $y>d$, let $g(y,d\mid x)$ be the density of ``treated at $d$ and still unemployed at $y$'', and $D:=\Delta(y\mid d,x)$:
+\begin{align}
+  g(y,d\mid x)
+  &= \E\big[f_D(d\mid x,V)\,\Pr(Y>y\mid D=d,x,V)\big] && \why{LIE; Assumption 2} \nonumber\\
+  &= \E\big[\lambda_D(d)\varphi_DV_De^{-\Lambda_D(d\mid x)V_D}\cdot e^{-\varphi_YV_Y[\Lambda_Y(d)+\Delta]}\big] && \why{\eqref{eq:density}; \eqref{eq:survival} with \eqref{eq:ThetaY}} \nonumber\\
+  &= \lambda_D(d)\varphi_D\,\E\big[V_D\,e^{-(\Lambda_Y(d\mid x)+\varphi_YD)V_Y-\Lambda_D(d\mid x)V_D}\big] && \why{linearity; $\Lambda_Y(d\mid x)=\varphi_Y\Lambda_Y(d)$} \nonumber\\
+  &= -\lambda_D(d)\varphi_D(x)\,\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta,\ \Lambda_D(d\mid x)\big) && \why{$\Lap_b=-\E[V_De^{-aV_Y-bV_D}]$} \nonumber
+\end{align}
+Divide by the same expression at $y\downarrow d$ (where $\Delta=0$), as in \eqref{eq:P1data}:
+\begin{align}
+  \bar S_1(y\mid d,x) &= \frac{\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta(y\mid d,x),\ \Lambda_D(d\mid x)\big)}{\Lap_b(\Lambda_Y(d\mid x),\Lambda_D(d\mid x))} && \why{the $\lambda_D\varphi_D$ cancel} \nonumber\\
+  &= \E_{G_d}\big[e^{-\varphi_Y(x)V_Y \Delta(y\mid d,x)}\big] && \why{rewrite with weights \eqref{eq:Gs}} \label{eq:P1model}
+\end{align}
+\begin{itemize}
+  \item Left side: data. Right side: everything known from Step A, except $\Delta$.
+  \item Strictly decreasing in $\Delta$ $\Rightarrow$ invert for $\Delta(y\mid d,x)$.
+  \item Then $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$ \quad \why{fundamental theorem of calculus}.
+  \item This is the paper's eq.~(10), divided by its value at $y\downarrow d$.
+\end{itemize}
+\textbf{Two selection problems, both handled by knowing $G$}
+\begin{enumerate}
+  \item Selection \emph{into} treatment at $d$: the $v_D$-tilt in \eqref{eq:Gs}.
+  \item Selection \emph{out} after $d$: in \eqref{eq:P1model}, survivors of the treated cohort drift to low $V_Y$, as in Section 2.
+    \begin{itemize}
+      \item Present whenever $V_Y$ varies, even with random timing.
+      \item So naive hazard ratios at later $y$ are not $\delta$.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Summary: what is used where}
+\whynow{collect which assumption did which job.}
+\begin{center}
+\small
+\begin{tabular}{ll}
+  \toprule
+  Assumption & Where it is used \\
+  \midrule
+  No anticipation & Step A: before $D$ there is no $\delta$, so a clean competing-risks problem \\
+  Assumption 2 & Steps A, B, D: independence given $V$; treated = risk set reweighted by $v_D$ \\
+  MPH, $V\perp X$ & Step A: everything is $\Lap$ of indices \\
+  $\E V<\infty$ (A4) & Step A, step 1: short-duration hazard ratios \\
+  Open set (A3) & Step A, step 2: trace $\Lap$ in 2-D $\Rightarrow$ dependence of $V_Y,V_D$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+  \item Not used: an excluded instrument, selection on observables, parametric forms, multiple spells.
+\end{itemize}
+
+\begin{minipage}{\textwidth}
+\centering
+  \includegraphics[width=0.75\textwidth]{fig3_local_vs_global.png}\\
+\raggedright{\small Intuition. Left: causal effect, no selection; exits bunch right after treatment at every $D$ (local). Right: no effect, pure selection; $D$ and $Y$ correlated overall (global).}
+\end{minipage}
+
+
+% =====================================================================
+\appendix
+\section{Proof: any type distribution fits one survival curve}
+Setting of Section 2.5: data $\bar S$; true model $\bar S(y)=\Lap_G(\Lambda(y))$.
+
+\textbf{Construction: pick any $\tilde G$, then find the $\tilde\Lambda$ that fits.} Take any $\tilde G$ with $\Pr(\tilde V=0)=0$. We need, for every $y$,
+\begin{align}
+  \Lap_{\tilde G}\big(\tilde\Lambda(y)\big) &= \bar S(y). && \why{alternative model must reproduce the data} \label{eq:fit}
+\end{align}
+\begin{itemize}
+  \item At each $y$, \eqref{eq:fit} is \textbf{one equation in one unknown number} $\tilde\Lambda(y)$.
+  \item $\Lap_{\tilde G}$ is continuous, strictly decreasing, from $\Lap(0)=1$ to $\Lap(\infty)=\Pr(\tilde V=0)=0$ (Section 2.3).
+    \begin{itemize}
+      \item So it takes every value in $(0,1]$ exactly once, and \eqref{eq:fit} has a unique solution:
+    \end{itemize}
+\end{itemize}
+\begin{align}
+  \tilde\Lambda(y) &= \Lap_{\tilde G}^{-1}\big(\bar S(y)\big) && \why{invert \eqref{eq:fit}} \nonumber\\
+  \tilde\Lambda(0) &= \Lap_{\tilde G}^{-1}(1)=0 && \why{$\bar S(0)=1$, $\Lap(0)=1$} \nonumber\\
+  \tilde\Lambda &\text{ increasing, so } \tilde\lambda:=\tilde\Lambda'\ge0 && \why{$\bar S$ and $\Lap^{-1}_{\tilde G}$ both decreasing} \nonumber
+\end{align}
+\begin{itemize}
+  \item $\tilde\Lambda$ is a valid integrated baseline, and $(\tilde\Lambda,\tilde G)$ reproduces $\bar S$ exactly.
+  \item This works for \emph{every} $\tilde G$. So $G$, and hence the split, is not identified.
+\end{itemize}
+
+\textbf{Mechanics in hazard terms.} Differentiate \eqref{eq:fit}:
+\begin{align}
+  \bar\theta(y) &= -\frac{d}{dy}\log\Lap_{\tilde G}\big(\tilde\Lambda(y)\big) && \why{\eqref{eq:hazard}; take $-\log$ of \eqref{eq:fit}} \nonumber\\
+  &= \tilde\lambda(y)\cdot\Big(-\frac{\Lap_{\tilde G}'}{\Lap_{\tilde G}}\Big)\big(\tilde\Lambda(y)\big) && \why{chain rule; $\tilde\Lambda'=\tilde\lambda$} \nonumber\\
+  &= \tilde\lambda(y)\cdot\tilde\E[V\mid Y>y] && \why{\eqref{eq:survmean}, computed under $\tilde G$} \nonumber\\
+  \Longrightarrow\quad \tilde\lambda(y) &= \frac{\bar\theta(y)}{\tilde\E[V\mid Y>y]} && \why{rearrange} \nonumber
+\end{align}
+\begin{itemize}
+  \item The observed $\bar\theta(y)$ is fixed. Each assumed $\tilde G$ implies some sorting path $\tilde\E[V\mid Y>y]$; $\tilde\lambda$ absorbs the rest.
+  \item No heterogeneity ($\tilde V\equiv1$): $\tilde\E[V\mid Y>y]=1$, so $\tilde\lambda=\bar\theta$. The whole decline is duration dependence.
+  \item More heterogeneity: $\tilde\E[V\mid Y>y]$ falls faster (Section 2.4: speed $\propto\var$), so $\tilde\lambda$ has to fall less. More of the decline is attributed to sorting.
+  \item With one duration, \textbf{trap vs.\ sorting is not identified}. The split is a pure assumption.
+\end{itemize}
+
+
+\end{document}
