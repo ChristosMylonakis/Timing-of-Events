@@ -410,61 +410,132 @@
 
 % =====================================================================
 \section{Treatment effects}
-\begin{frame}[label=m-treat]{Adding the treatment effect \hfill {\small Abbring \& Van den Berg (2003)}}
+\begin{frame}[label=m-causal]{The causal question \hfill {\small Abbring \& Van den Berg (2003)}}
+  \textbf{Potential outcomes indexed by treatment date}
   \begin{itemize}
-    \item Potential outcomes indexed by treatment date: $Y^*(d)$, $d\in[0,\infty]$. Observed $Y=Y^*(D)$.
-    \item \textbf{No anticipation:} $\theta_{Y^*(d)}(t)=\theta_{Y^*(\infty)}(t)$ for $t<d$. The future date does not affect today's hazard.
-    \item \textbf{Selection on $(x,V)$:} $Y^*(\cdot)\perp D\mid(x,V)$.
+    \item $Y^*(d)$: unemployment duration if benefits were reduced at date $d\in[0,\infty]$ ($d=\infty$: never).
+    \item Observed $Y=Y^*(D)$. Effect of interest: how the job hazard changes with $d$.
   \end{itemize}
-  \textbf{Model 1a}
-  \[ \theta_Y(t\mid d,x,V)=\lambda_Y(t)\varphi_Y(x)V_Y\cdot\delta(t\mid d,x)^{\mathbf 1\{t>d\}},\qquad \theta_D(t\mid x,V)=\lambda_D(t)\varphi_D(x)V_D. \]
+  \textbf{No anticipation}
+  \[ \theta_{Y^*(d)}(t)=\theta_{Y^*(\infty)}(t)\qquad\text{for } t<d. \]
   \begin{itemize}
-    \item $\delta$: the causal effect, a multiplier on the exit rate after treatment. May vary with $t$, $d$, $x$.
-    \item Before $D$: exactly the competing-risks model. So $\varphi$'s, $\Lambda$'s and $G$ are identified.
-    \item After $D$: the treated cohort's survival $\bar S_1(y\mid d)=\Pr(Y>y\mid D=d,Y>d)$ carries $\delta$.
-    \item Given $(x,V)$, the timing of $D$ is still pure luck: the instrument-like variation.
+    \item Before treatment, everyone has the untreated hazard, whatever their future date.
+    \item Rules out: acting on knowledge of one's own reduction date (e.g.\ announced in advance).
+    \item Allows: reacting to the policy (how often reductions happen). So the effect is ``treated at $d$ vs.\ later, under this policy''.
+  \end{itemize}
+  \textbf{Selection on observables and unobservables}
+  \[ Y^*(\cdot)\perp D\mid(x,V). \]
+  \begin{itemize}
+    \item All dependence between outcome and treatment timing runs through $x$ and the types $V$.
   \end{itemize}
   \vfill\hfill\hyperlink{p-treat}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-sf]{Who is treated at $d$? The selection factor}
+\begin{frame}[label=m-treat]{The model (Model 1a)}
+  \[ \theta_Y(t\mid d,x,V)=\begin{cases}\lambda_Y(t)\varphi_Y(x)V_Y & t\le d\\ \lambda_Y(t)\varphi_Y(x)V_Y\cdot\delta(t\mid d,x) & t>d\end{cases}\qquad \theta_D(t\mid x,V)=\lambda_D(t)\varphi_D(x)V_D \]
+  \begin{itemize}
+    \item $\delta(t\mid d,x)$: the \textbf{treatment effect}, a multiplier on the job hazard after treatment.
+      \begin{itemize}
+        \item May vary with $t$, with $d$ (hence with time since treatment $t-d$), and with $x$; not with $V$.
+      \end{itemize}
+    \item No anticipation is built in: $\delta$ acts only after $d$.
+  \end{itemize}
+  \medskip
+  \textbf{What is already identified}
+  \begin{itemize}
+    \item Before $D$ the model \emph{is} the competing-risks model $\Rightarrow$ $\varphi_Y,\varphi_D,\Lambda_Y,\Lambda_D,G$ known.
+  \end{itemize}
+  \textbf{What is left}
+  \begin{itemize}
+    \item Only $\delta$, from the survival of the cohort treated at $d$:
+      \[ \bar S_1(y\mid d,x):=\Pr(Y>y\mid D=d,\ Y>d,\ x),\qquad y>d. \]
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}[label=m-luck]{Where the exogenous variation comes from: timing luck}
+  \small
+  Given $(x,V)$, the treatment clock is $\Theta_D(t\mid x,V)=\Lambda_D(t\mid x)V_D$. Define $E_D:=\Theta_D(D\mid x,V)$:
   \begin{align*}
-    dG_{R_d}(v) &\propto e^{-\Lambda_Y(d\mid x)v_Y-\Lambda_D(d\mid x)v_D}\,dG(v) && \why{Bayes: survivors at $d$} \\
-    dG_d(v) &\propto v_D\;dG_{R_d}(v) && \why{treated in $[d,d+h)$ w.p.\ $\propto v_D$}
-  \end{align*}
-  Exit rate right after $d$, treated vs.\ not-yet-treated:
-  \begin{align*}
-    \frac{\text{just treated}}{\text{not yet treated}} &= \delta(d\mid d,x)\cdot\frac{\E_{G_d}[V_Y]}{\E_{R_d}[V_Y]} && \why{$\lambda_Y\varphi_Y$ cancel} \\
-    &= \delta(d\mid d,x)\cdot\Big(1+\frac{\cov_{R_d}(V_Y,V_D)}{\E_{R_d}V_Y\;\E_{R_d}V_D}\Big) && \why{reweight by $v_D$}
+    \Pr(E_D>e\mid x,V) &= \Pr\big(D>\Theta_D^{-1}(e\mid x,V)\mid x,V\big) = e^{-e} && \why{$\Theta_D$ increasing; $S=e^{-\Theta}$} \\
+    \Longrightarrow\ D &= \Lambda_D^{-1}\!\Big(\frac{E_D}{\varphi_D(x)\,V_D}\Big),\qquad E_D\sim\text{Exp}(1),\ E_D\perp(x,V) && \why{invert}
   \end{align*}
   \begin{itemize}
-    \item Observed ratio = causal effect $\times$ \textbf{selection factor}.
-    \item No dependence $\Rightarrow$ factor 1: timing as good as random.
-    \item The factor is a function of $\Lap$, known from the competing-risks part $\Rightarrow$ $\delta$ identified.
+    \item Treatment date = systematic part $(x,V_D)$ + \textbf{luck} $E_D$. By Assumption 2, the luck does not enter the job hazard.
+    \item Same $(x,V)$, treated at $d$ vs.\ later: they differ \emph{only} by luck.
+    \item Static model, treated iff $\mu(x)>U$: given $(x,U)$ no luck is left, so an excluded instrument is needed.
+  \end{itemize}
+  \begin{center}
+  \begin{tabular}{lll}
+    \toprule
+    & IV / static selection & Timing of events \\
+    \midrule
+    Exogenous variation & excluded variable $Z$ & timing luck $E_D$ \\
+    What is excluded from the outcome & a \emph{variable} & a \emph{shock} \\
+    Correcting for who is treated & control function & type mix of the treated, from $G$ \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \vfill\hfill\hyperlink{p-treat}{\beamergotobutton{Proof}}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}[label=m-sf]{Who is treated at $d$? The selection factor}
+  \small
+  Luck makes timing random \emph{given} $V$. But $V$ is unobserved, so the treated cohort is still tilted. Types shown as discrete:
+  \begin{align*}
+    \Pr(V=v\mid\text{at risk at }d) &\propto \underbrace{e^{-\Lambda_Y(d\mid x)v_Y}\,e^{-\Lambda_D(d\mid x)v_D}}_{\text{still unemployed and untreated}}\Pr(V=v) && \why{Bayes} \\
+    \Pr(V=v\mid\text{treated at }d) &\propto \underbrace{\lambda_D(d)\varphi_D(x)v_D}_{\text{treatment hazard at }d}\Pr(V=v\mid\text{at risk at }d) && \why{Bayes} \\
+    &\propto v_D\,\Pr(V=v\mid\text{at risk at }d) && \why{drop terms free of $v$}
+  \end{align*}
+  \begin{itemize}
+    \item The treated at $d$ are those at risk, \textbf{reweighted by $v_D$}.
+  \end{itemize}
+  Exit rate right after $d$, just treated vs.\ not yet treated:
+  \begin{align*}
+    \frac{\lambda_Y\varphi_Y\,\delta(d\mid d,x)\,\E[V_Y\mid\text{treated at }d]}{\lambda_Y\varphi_Y\,\E[V_Y\mid\text{at risk at }d]}
+    = \delta(d\mid d,x)\cdot\underbrace{\Big(1+\frac{\cov(V_Y,V_D\mid\text{at risk})}{\E[V_Y\mid\text{at risk}]\,\E[V_D\mid\text{at risk}]}\Big)}_{\text{selection factor}}
+  \end{align*}
+  \begin{itemize}
+    \item The selection factor depends only on $G$ at the indices $\Lambda_Y(d\mid x),\Lambda_D(d\mid x)$: known from competing risks $\Rightarrow$ $\delta(d\mid d,x)$ identified.
   \end{itemize}
   \vfill\hfill\hyperlink{p-sf}{\beamergotobutton{Proof}}
 \end{frame}
 
 % ---------------------------------------------------------------------
-\begin{frame}[label=m-p1]{After the moment of treatment}
-  With $\Delta(y\mid d,x):=\int_d^y\lambda_Y(\tau)\delta(\tau\mid d,x)\,d\tau$:
+\begin{frame}[label=m-p1]{Identifying $\delta$: stripping out selection}
+  Integrated post-treatment hazard: $\Delta(y\mid d,x):=\int_d^y\lambda_Y(\tau)\,\delta(\tau\mid d,x)\,d\tau$.
   \begin{align*}
-    \bar S_1(y\mid d,x) &= \E_{G_d}\big[e^{-\varphi_Y(x)V_Y \Delta(y\mid d,x)}\big] && \why{LIE over the treated cohort} \\
-    &= \frac{\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta,\ \Lambda_D(d\mid x)\big)}{\Lap_b(\Lambda_Y(d\mid x),\Lambda_D(d\mid x))} && \why{the paper's eq.\ (10)}
+    \bar S_1(y\mid d,x) &= \E\big[e^{-\varphi_Y(x)V_Y\,\Delta(y\mid d,x)}\ \big|\ \text{treated at }d\big] && \why{LIE over the treated cohort} \\
+    &= \frac{\Lap_b\big(\Lambda_Y(d\mid x)+\varphi_Y(x)\Delta,\ \Lambda_D(d\mid x)\big)}{\Lap_b\big(\Lambda_Y(d\mid x),\Lambda_D(d\mid x)\big)} && \why{the paper's eq.\ (10)}
   \end{align*}
   \begin{itemize}
-    \item Left: data. Right: known except $\Delta$. Decreasing in $\Delta$ $\Rightarrow$ invert $\Rightarrow$ $\delta=\partial_y\Delta/\lambda_Y$.
-    \item Two selection problems, both handled by knowing $G$:
-      \begin{enumerate}
-        \item \textbf{into} treatment at $d$: the $v_D$ tilt;
-        \item \textbf{out of} the treated cohort after $d$: its survivors drift to low $V_Y$, even with random timing.
-      \end{enumerate}
+    \item Left: data. Right: everything known except $\Delta$. Decreasing in $\Delta$ $\Rightarrow$ invert for $\Delta$.
+    \item Then $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$.
   \end{itemize}
-  \bigskip
+  \textbf{Two selection problems, both handled by knowing $G$}
+  \begin{enumerate}
+    \item \textbf{Into} treatment at $d$: the $v_D$ tilt (previous slide).
+    \item \textbf{Out of} the treated cohort after $d$: its survivors drift to low $V_Y$, even with random timing.
+  \end{enumerate}
+  \medskip
   \centering
-  pre-treatment competing risks $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $d$ $\Rightarrow$ $+\,\bar S_1$ $\Rightarrow$ $\delta$
+  competing risks $\Rightarrow$ $\varphi,\Lambda,G$ $\Rightarrow$ who is treated at $d$ $\Rightarrow$ $+\,\bar S_1$ $\Rightarrow$ $\delta$
   \vfill\hfill\hyperlink{p-p1}{\beamergotobutton{Proof}}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}[label=m-local]{What the data look like}
+  \centering
+  \includegraphics[width=0.82\linewidth]{fig3_local_vs_global.png}
+
+  \raggedright\small
+  \begin{itemize}
+    \item Left: causal effect, no selection. Exits bunch right after treatment, \emph{at every} $D$: \textbf{local} dependence.
+    \item Right: no effect, pure selection. $D$ and $Y$ correlated overall: \textbf{global} dependence.
+    \item The treatment acts only after $D$; the types act throughout. The model separates the two.
+  \end{itemize}
 \end{frame}
 
 % ---------------------------------------------------------------------
@@ -715,7 +786,7 @@
     \Pr(E_D>e\mid x,V) &= \Pr\big(D>\Theta_D^{-1}(e)\mid x,V\big) = e^{-e} && \why{$\Theta_D$ increasing; $S=e^{-\Theta}$} \\
     \Longrightarrow\ D &= \Lambda_D^{-1}\big(E_D/(\varphi_D(x)V_D)\big),\quad E_D\sim\text{Exp}(1)\perp(x,V) && \why{invert}
   \end{align*}
-  \back{m-treat}
+  \back{m-causal}
 \end{frame}
 
 \begin{frame}[label=p-sf]{Proof: the selection factor}
@@ -746,17 +817,10 @@
     \item $\partial_\Delta\Lap_b(\Lambda_Y(d\mid x)+\varphi_YD,\Lambda_D(d\mid x))=\varphi_Y\E[V_YV_De^{\cdots}]>0$ and $\Lap_b<0$: $\bar S_1$ strictly decreasing in $\Delta$ $\Rightarrow$ invert.
     \item $\delta(y\mid d,x)=\partial_y\Delta(y\mid d,x)/\lambda_Y(y)$ \why{fundamental theorem of calculus}.
   \end{itemize}
-  \hyperlink{p-local}{\beamergotobutton{Local vs.\ global picture}}
+  \hyperlink{m-local}{\beamergotobutton{Local vs.\ global picture}}
   \back{m-p1}
 \end{frame}
 
-\begin{frame}[label=p-local]{Backup: local vs.\ global dependence}
-  \centering
-  \includegraphics[width=0.8\linewidth]{fig3_local_vs_global.png}
 
-  \raggedright\small
-  Left: causal effect, no selection; exits bunch right after treatment at every $D$. Right: no effect, pure selection; $D$ and $Y$ correlated overall.
-  \back{p-p1}
-\end{frame}
 
 \end{document}
