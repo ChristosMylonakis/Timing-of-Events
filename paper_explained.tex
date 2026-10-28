@@ -501,7 +501,13 @@ where $R_t:=\{Y>t,S>t\}$ is the \textbf{risk set}. Symmetrically, $\bar\theta^S_
 \begin{itemize}
   \item Notation: $\bar S_0,\bar\theta_0$ = observed survival and hazards \emph{before treatment} (later $\bar S_1$: after). Superscript: which exit.
   \item Same structure as Section 1, split by cause: $\bar\theta^Y_0+\bar\theta^S_0=\bar\theta_0$, the observed hazard of leaving by either exit (the hazard of $\bar S_0$).
-  \item $\bar\theta^Y_0$ is \emph{cause-specific}: it conditions on $S>t$ too, so it is not the hazard of $Y$ (unless $V_Y\perp V_S$).
+  \item $\bar\theta^Y_0$ is \emph{cause-specific}: the rate of exit through one route (a job) in a group the \emph{other} route (treatment) has already filtered.
+    \begin{itemize}
+      \item Observed: $\bar\theta^Y_0=\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ S>t,\ x]$, job-finding among the unemployed \emph{and} untreated.
+      \item Not observed: $\lambda_Y\varphi_Y\,\E[V_Y\mid Y>t,\ x]$, job-finding ignoring treatment. For the treated we never see when they would have found a job without treatment.
+      \item The treatment exit removes high-$V_S$ types early. If $V_S\perp V_Y$ the $V_Y$ mix is unchanged and the two coincide; if correlated (low motivation $\Rightarrow$ low $V_Y$, early treatment), the untreated group is left with higher $V_Y$.
+      \item \textbf{The gap between the two is the selection.} Section 4.3 locates it in the data.
+    \end{itemize}
 \end{itemize}
 
 \subsection{Where the dependence of $V_Y,V_S$ lives}

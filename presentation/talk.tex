@@ -301,9 +301,26 @@
   \end{align*}
   \begin{itemize}
     \item $R_t:=\{Y\ge t,\,S\ge t\}$: still unemployed and untreated. Subscript $0$: before treatment; superscript: which exit. $\bar\theta^Y_0+\bar\theta^S_0=\bar\theta_0$, the observed hazard of leaving by either exit.
-    \item $\bar\theta^Y_0$ is \emph{cause-specific}: it conditions on $S\ge t$ too, so it is not the hazard of $Y$ (unless $V_Y\perp V_S$).
   \end{itemize}
   \vfill\hfill\hyperlink{p-race}{\beamergotobutton{Proof}}
+\end{frame}
+
+% ---------------------------------------------------------------------
+\begin{frame}{The cause-specific hazard is filtered by the other exit}
+  \small
+  \textbf{Observed:} job-finding rate among those still unemployed \emph{and} untreated
+  \[ \bar\theta^Y_0(t\mid x)=\lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\ \mathbf{S\ge t},\ x)}{dt}=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ \mathbf{S\ge t},\ x] \]
+  \textbf{Not observed:} job-finding rate ignoring treatment
+  \[ \lim_{dt\downarrow0}\frac{\Pr(t\le Y<t+dt\mid Y\ge t,\ x)}{dt}=\lambda_Y(t)\varphi_Y(x)\,\E[V_Y\mid Y\ge t,\ x] \]
+  \begin{itemize}
+    \item For the treated we never see when they would have found a job \emph{without} treatment.
+    \item The treatment exit removes people from the untreated group: high-$V_S$ types leave early.
+      \begin{itemize}
+        \item $V_S\perp V_Y$: the $V_Y$ mix is unchanged, the two rates coincide.
+        \item $V_S$ correlated with $V_Y$: the mix changes. E.g.\ low-motivation workers (low $V_Y$) are treated early (high $V_S$), so the untreated group is left with higher $V_Y$.
+      \end{itemize}
+    \item \textbf{The gap between the two is the selection.} Next: how to see it in data.
+  \end{itemize}
 \end{frame}
 
 % ---------------------------------------------------------------------
